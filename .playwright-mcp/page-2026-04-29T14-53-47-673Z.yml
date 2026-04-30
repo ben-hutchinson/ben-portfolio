@@ -1,0 +1,14 @@
+- generic [ref=e3]:
+  - region "Loading transition screen" [ref=e19]:
+    - heading "Loading Character Select..." [level=2] [ref=e20]
+    - progressbar [ref=e21]
+    - paragraph [ref=e23]: 30%
+  - contentinfo [ref=e12]:
+    - navigation "External links" [ref=e13]:
+      - link "LinkedIn" [ref=e14] [cursor=pointer]:
+        - /url: https://www.linkedin.com/in/ben-hutchinson0412/
+      - link "GitHub" [ref=e15] [cursor=pointer]:
+        - /url: https://github.com/ben-hutchinson
+      - link "CV Download" [ref=e16] [cursor=pointer]:
+        - /url: /ben-portfolio/cv/ben-hutchinson-cv.pdf
+    - button "Unmute background audio" [pressed] [ref=e17] [cursor=pointer]: "Audio: Muted"

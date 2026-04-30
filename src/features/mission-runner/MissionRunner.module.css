@@ -1,0 +1,412 @@
+.runner {
+  width: 100%;
+  max-width: 100%;
+  min-height: calc(100dvh - 84px);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0.9rem;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.32rem;
+  color: var(--mission-accent);
+  font-size: 0.68rem;
+  font-family: 'Press Start 2P', 'Outfit', sans-serif;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(0.86rem, 2.2vw, 1.2rem);
+  letter-spacing: 0.02em;
+}
+
+.backButton,
+.messageActions button {
+  border: 1px solid rgba(125, 202, 255, 0.42);
+  border-radius: 8px;
+  background: rgba(11, 32, 68, 0.82);
+  color: var(--text-primary);
+  padding: 0.64rem 0.78rem;
+  font-size: 0.62rem;
+  line-height: 1.35;
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    background-color 0.16s ease;
+}
+
+.backButton:hover,
+.messageActions button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(126, 240, 236, 0.76);
+  background: rgba(26, 70, 128, 0.86);
+}
+
+.shell {
+  min-height: 0;
+  display: grid;
+  align-items: center;
+}
+
+.playfield {
+  --track-bottom: clamp(112px, 22%, 136px);
+  position: relative;
+  width: min(100%, calc(100vw - 1.4rem), 1120px);
+  height: min(68dvh, 620px);
+  min-height: 330px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(112, 179, 255, 0.42);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(7, 17, 41, 0.98), rgba(8, 30, 64, 0.96) 58%, rgba(6, 18, 38, 0.98)),
+    radial-gradient(circle at 22% 18%, rgba(99, 247, 235, 0.22), transparent 28%),
+    radial-gradient(circle at 78% 24%, rgba(159, 133, 255, 0.2), transparent 26%);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.playfield:focus {
+  outline: none;
+}
+
+.playfield:focus-visible {
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.28),
+    0 0 0 2px rgba(255, 226, 133, 0.72) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.hud {
+  position: absolute;
+  z-index: 8;
+  top: 0.8rem;
+  left: 0.8rem;
+  right: 0.8rem;
+  min-height: 4.35rem;
+  color: var(--text-primary);
+  font-family: 'Press Start 2P', 'Outfit', sans-serif;
+  font-size: clamp(0.54rem, 1.4vw, 0.68rem);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
+  pointer-events: none;
+}
+
+.hud span {
+  min-width: 0;
+  line-height: 1.45;
+}
+
+.scoreValue {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.bestValue {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.controlsBox {
+  position: absolute;
+  top: 2.1rem;
+  right: 0;
+  width: min(168px, 48%);
+  border: 1px solid rgba(126, 240, 236, 0.42);
+  border-radius: 8px;
+  background: rgba(6, 18, 42, 0.82);
+  color: var(--mission-accent);
+  padding: 0.5rem 0.62rem;
+  font-family: 'Press Start 2P', 'Outfit', sans-serif;
+  font-size: clamp(0.4rem, 0.98vw, 0.5rem);
+  line-height: 1.55;
+  text-align: right;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.36);
+  pointer-events: none;
+}
+
+.skyline,
+.starTrack,
+.horizon {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.skyline {
+  opacity: 0.42;
+  background:
+    linear-gradient(90deg, transparent 0 4%, rgba(99, 247, 235, 0.2) 4% 5%, transparent 5% 12%),
+    linear-gradient(90deg, transparent 0 16%, rgba(159, 133, 255, 0.16) 16% 17.5%, transparent 17.5% 25%);
+  background-size: 190px 100%, 260px 100%;
+  animation: skylineSlide 12s linear infinite;
+}
+
+.starTrack {
+  opacity: 0.24;
+  background-image:
+    radial-gradient(rgba(236, 248, 255, 0.9) 0.9px, transparent 1px),
+    radial-gradient(rgba(125, 202, 255, 0.72) 0.7px, transparent 1px);
+  background-size:
+    34px 34px,
+    58px 58px;
+  animation: starSlide 8s linear infinite;
+}
+
+.horizon {
+  top: auto;
+  height: 42%;
+  bottom: 0;
+  background:
+    linear-gradient(180deg, transparent, rgba(99, 247, 235, 0.12)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(125, 202, 255, 0.11) 0,
+      rgba(125, 202, 255, 0.11) 1px,
+      transparent 1px,
+      transparent 84px
+    );
+  clip-path: polygon(0 50%, 9% 38%, 18% 48%, 28% 31%, 42% 50%, 58% 34%, 70% 47%, 82% 30%, 100% 48%, 100% 100%, 0 100%);
+}
+
+.ground {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: var(--track-bottom);
+  height: 5px;
+  background: linear-gradient(90deg, var(--mission-accent), #f7c46f);
+  box-shadow:
+    0 0 18px rgba(99, 247, 235, 0.42),
+    0 18px 0 rgba(99, 247, 235, 0.08);
+}
+
+.ground::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 200%;
+  height: 42px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(125, 202, 255, 0.22) 0,
+      rgba(125, 202, 255, 0.22) 16px,
+      transparent 16px,
+      transparent 44px
+    );
+  animation: groundSlide 1.25s linear infinite;
+}
+
+.player {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  bottom: var(--track-bottom);
+  width: 78px;
+  height: 90px;
+  display: grid;
+  place-items: end center;
+  will-change: transform;
+}
+
+.player img {
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 14px 9px rgba(0, 0, 0, 0.28));
+  pointer-events: none;
+}
+
+.obstacle {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  bottom: var(--track-bottom);
+  border: 2px solid rgba(240, 249, 255, 0.65);
+  border-radius: 5px 5px 2px 2px;
+  box-shadow:
+    0 8px 0 rgba(0, 0, 0, 0.16),
+    0 0 18px rgba(99, 247, 235, 0.22);
+  will-change: transform;
+}
+
+.obstacle::before,
+.obstacle::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.obstacle::before {
+  top: 10px;
+  left: 8px;
+  width: 8px;
+  height: 8px;
+}
+
+.obstacle::after {
+  right: 7px;
+  bottom: 8px;
+  width: 7px;
+  height: 18px;
+}
+
+.cyan {
+  background: linear-gradient(180deg, rgba(99, 247, 235, 0.86), rgba(39, 126, 181, 0.92));
+}
+
+.purple {
+  background: linear-gradient(180deg, rgba(178, 146, 255, 0.88), rgba(79, 66, 181, 0.92));
+}
+
+.warm {
+  background: linear-gradient(180deg, rgba(247, 196, 111, 0.9), rgba(173, 87, 53, 0.94));
+}
+
+.message {
+  position: absolute;
+  z-index: 9;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.7rem;
+  padding: 1rem;
+  text-align: center;
+  background: rgba(3, 8, 20, 0.32);
+  pointer-events: none;
+}
+
+.message p {
+  margin: 0;
+  color: var(--mission-accent);
+  font-family: 'Press Start 2P', 'Outfit', sans-serif;
+  font-size: clamp(0.78rem, 2.6vw, 1.2rem);
+}
+
+.message span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.messageActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  pointer-events: auto;
+}
+
+@keyframes skylineSlide {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: -380px 0, -520px 0;
+  }
+}
+
+@keyframes starSlide {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: -136px 0, -232px 0;
+  }
+}
+
+@keyframes groundSlide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-88px);
+  }
+}
+
+@media (max-width: 760px) {
+  .runner {
+    min-height: auto;
+  }
+
+  .header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .backButton {
+    width: 100%;
+  }
+
+  .shell {
+    align-items: start;
+  }
+
+  .playfield {
+    height: min(62dvh, 390px);
+    min-height: 300px;
+    border-radius: 14px;
+  }
+
+}
+
+@media (max-width: 440px) {
+  .playfield {
+    min-height: 280px;
+  }
+
+  .hud {
+    font-size: 0.5rem;
+  }
+
+  .controlsBox {
+    width: min(148px, 46%);
+    padding: 0.46rem 0.54rem;
+    font-size: 0.38rem;
+  }
+
+  .player {
+    width: 68px;
+  }
+
+  .player img {
+    width: 92px;
+    height: 92px;
+  }
+
+  .message span {
+    font-size: 0.78rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skyline,
+  .starTrack,
+  .ground::after {
+    animation: none;
+  }
+}

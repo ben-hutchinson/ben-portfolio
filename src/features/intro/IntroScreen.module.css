@@ -1,0 +1,71 @@
+.intro {
+  width: min(920px, 96%);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3.5vw, 2.4rem);
+  background: linear-gradient(160deg, rgba(8, 24, 48, 0.95), rgba(6, 19, 40, 0.9));
+  box-shadow:
+    0 18px 38px rgba(3, 10, 20, 0.45),
+    0 0 0 1px rgba(98, 166, 255, 0.15) inset;
+  text-align: center;
+  display: grid;
+  gap: 1rem;
+}
+
+.kicker {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.1rem, 5vw, 2rem);
+  line-height: 1.2;
+}
+
+.subtitle {
+  max-width: 56ch;
+  margin: 0 auto;
+  color: var(--text-secondary);
+  font-size: clamp(0.9rem, 2.1vw, 1.05rem);
+}
+
+.startButton {
+  justify-self: center;
+  border: 1px solid var(--accent-cyan);
+  border-radius: 12px;
+  background: linear-gradient(165deg, rgba(7, 44, 73, 0.85), rgba(12, 66, 107, 0.95));
+  padding: 0.85rem 1.1rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 220px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.startButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(54, 179, 230, 0.35);
+}
+
+.checkboxRow {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.checkboxRow input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.helper {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}

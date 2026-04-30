@@ -1,0 +1,17 @@
+- generic [ref=e3]:
+  - region "Press start screen" [ref=e6]:
+    - heading "BEN HUTCHINSON" [level=1] [ref=e7]
+    - button "PRESS START" [ref=e8] [cursor=pointer]
+    - generic [ref=e9]:
+      - checkbox "Skip intro next time" [ref=e10]
+      - text: Skip intro next time
+    - paragraph [ref=e11]: "Tip: explore each character to switch tone and context while the main content stays in place."
+  - contentinfo [ref=e12]:
+    - navigation "External links" [ref=e13]:
+      - link "LinkedIn" [ref=e14] [cursor=pointer]:
+        - /url: https://www.linkedin.com/in/ben-hutchinson0412/
+      - link "GitHub" [ref=e15] [cursor=pointer]:
+        - /url: https://github.com/ben-hutchinson
+      - link "CV Download" [ref=e16] [cursor=pointer]:
+        - /url: /ben-portfolio/cv/ben-hutchinson-cv.pdf
+    - button "Unmute background audio" [pressed] [ref=e17] [cursor=pointer]: "Audio: Muted"

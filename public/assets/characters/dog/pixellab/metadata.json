@@ -1,0 +1,111 @@
+{
+  "character": {
+    "id": "4b0c0ff0-7b88-49da-9e09-b0b78f881e05",
+    "name": "Dog Face-On Arcade v1",
+    "prompt": "Face-on pixel art dog character sprite with a chunky bright arcade style like Jetpack Joyride, based on the source photo. Small black short-haired dog, staffy or terrier mix look, smooth black coat, warm brown eyes, black nose, folded semi-floppy ears, gray-white muzzle and chin markings from age, small white chest patch, wearing a vivid purple walking harness with simple straps. Friendly attentive expression, looking directly at the viewer in the south/front view. Compact readable quadruped body, slightly oversized head, bold black pixel outline that separates dark fur from transparency, saturated clean arcade colors, simple level matching eyes, clean medium pixel shading. Transparent background, no leash, no street, no trees, no scenery.",
+    "size": {
+      "width": 104,
+      "height": 104
+    },
+    "template_id": "dog",
+    "directions": 4,
+    "view": "low top-down",
+    "created_at": "2026-04-29T11:57:30.977726+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "west": "rotations/west.png",
+      "east": "rotations/east.png",
+      "north": "rotations/north.png"
+    },
+    "animations": {
+      "animation-ee316fb6": {
+        "west": [
+          "animations/animation-ee316fb6/west/frame_000.png",
+          "animations/animation-ee316fb6/west/frame_001.png",
+          "animations/animation-ee316fb6/west/frame_002.png",
+          "animations/animation-ee316fb6/west/frame_003.png",
+          "animations/animation-ee316fb6/west/frame_004.png",
+          "animations/animation-ee316fb6/west/frame_005.png",
+          "animations/animation-ee316fb6/west/frame_006.png",
+          "animations/animation-ee316fb6/west/frame_007.png"
+        ],
+        "north": [
+          "animations/animation-ee316fb6/north/frame_000.png",
+          "animations/animation-ee316fb6/north/frame_001.png",
+          "animations/animation-ee316fb6/north/frame_002.png",
+          "animations/animation-ee316fb6/north/frame_003.png",
+          "animations/animation-ee316fb6/north/frame_004.png",
+          "animations/animation-ee316fb6/north/frame_005.png",
+          "animations/animation-ee316fb6/north/frame_006.png",
+          "animations/animation-ee316fb6/north/frame_007.png"
+        ],
+        "east": [
+          "animations/animation-ee316fb6/east/frame_000.png",
+          "animations/animation-ee316fb6/east/frame_001.png",
+          "animations/animation-ee316fb6/east/frame_002.png",
+          "animations/animation-ee316fb6/east/frame_003.png",
+          "animations/animation-ee316fb6/east/frame_004.png",
+          "animations/animation-ee316fb6/east/frame_005.png",
+          "animations/animation-ee316fb6/east/frame_006.png",
+          "animations/animation-ee316fb6/east/frame_007.png"
+        ],
+        "south": [
+          "animations/animation-ee316fb6/south/frame_000.png",
+          "animations/animation-ee316fb6/south/frame_001.png",
+          "animations/animation-ee316fb6/south/frame_002.png",
+          "animations/animation-ee316fb6/south/frame_003.png",
+          "animations/animation-ee316fb6/south/frame_004.png",
+          "animations/animation-ee316fb6/south/frame_005.png",
+          "animations/animation-ee316fb6/south/frame_006.png",
+          "animations/animation-ee316fb6/south/frame_007.png"
+        ]
+      },
+      "sneaking-1023c937": {
+        "west": [
+          "animations/sneaking-1023c937/west/frame_000.png",
+          "animations/sneaking-1023c937/west/frame_001.png",
+          "animations/sneaking-1023c937/west/frame_002.png",
+          "animations/sneaking-1023c937/west/frame_003.png",
+          "animations/sneaking-1023c937/west/frame_004.png",
+          "animations/sneaking-1023c937/west/frame_005.png",
+          "animations/sneaking-1023c937/west/frame_006.png",
+          "animations/sneaking-1023c937/west/frame_007.png"
+        ],
+        "north": [
+          "animations/sneaking-1023c937/north/frame_000.png",
+          "animations/sneaking-1023c937/north/frame_001.png",
+          "animations/sneaking-1023c937/north/frame_002.png",
+          "animations/sneaking-1023c937/north/frame_003.png",
+          "animations/sneaking-1023c937/north/frame_004.png",
+          "animations/sneaking-1023c937/north/frame_005.png",
+          "animations/sneaking-1023c937/north/frame_006.png",
+          "animations/sneaking-1023c937/north/frame_007.png"
+        ],
+        "south": [
+          "animations/sneaking-1023c937/south/frame_000.png",
+          "animations/sneaking-1023c937/south/frame_001.png",
+          "animations/sneaking-1023c937/south/frame_002.png",
+          "animations/sneaking-1023c937/south/frame_003.png",
+          "animations/sneaking-1023c937/south/frame_004.png",
+          "animations/sneaking-1023c937/south/frame_005.png",
+          "animations/sneaking-1023c937/south/frame_006.png",
+          "animations/sneaking-1023c937/south/frame_007.png"
+        ],
+        "east": [
+          "animations/sneaking-1023c937/east/frame_000.png",
+          "animations/sneaking-1023c937/east/frame_001.png",
+          "animations/sneaking-1023c937/east/frame_002.png",
+          "animations/sneaking-1023c937/east/frame_003.png",
+          "animations/sneaking-1023c937/east/frame_004.png",
+          "animations/sneaking-1023c937/east/frame_005.png",
+          "animations/sneaking-1023c937/east/frame_006.png",
+          "animations/sneaking-1023c937/east/frame_007.png"
+        ]
+      }
+    }
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-29T14:25:05.577224"
+}
