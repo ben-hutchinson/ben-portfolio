@@ -34,7 +34,12 @@
 }
 
 @media (max-width: 440px) {
-  .tabRow {
-    grid-template-columns: 1fr;
+  .tabButton {
+    min-height: 46px;
+    padding: 0.42rem;
+  }
+
+  .tabButton span {
+    font-size: 0.58rem;
   }
 }

@@ -8,6 +8,6 @@
 - Download URL used: `https://opengameart.org/sites/default/files/chiptune_3.mp3`
 
 ## Character Sprites
-- Files under `public/assets/characters/*/*.png`
-- Generated in-repo via `scripts/generate_pixel_assets.py`
+- Files under `public/assets/characters/*/pixellab`
+- Generated with PixelLab and normalized for this repository's static asset contract.
 - Raw visual references live in each character `source/` folder.

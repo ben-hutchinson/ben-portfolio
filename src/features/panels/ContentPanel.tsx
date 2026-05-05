@@ -33,14 +33,17 @@ export const ContentPanel = ({
 }: ContentPanelProps) => {
   const [projectFilter, setProjectFilter] = useState<'personal' | 'work'>('personal');
   const showProjectToggle = selectedCharacter.id === 'ben';
+  const displayTimelineEvents = selectedCharacter.timelineEvents ?? timelineEvents;
+  const displaySkillCategories = selectedCharacter.skillCategories ?? skillCategories;
+  const displayProjects = selectedCharacter.projects ?? projects;
 
   const filteredProjects = useMemo(() => {
     if (!showProjectToggle) {
-      return projects;
+      return displayProjects;
     }
 
-    return projects.filter((project) => project.kind === projectFilter);
-  }, [projectFilter, projects, showProjectToggle]);
+    return displayProjects.filter((project) => project.kind === projectFilter);
+  }, [displayProjects, projectFilter, showProjectToggle]);
 
   return (
     <div className={styles.panelFrame}>
@@ -70,12 +73,12 @@ export const ContentPanel = ({
 
           {activeSection === 'career' && (
             <ol className={styles.timeline}>
-              {timelineEvents.map((event) => (
-                <li key={`${event.year}-${event.title}`}>
-                  <span className={styles.year}>{event.year}</span>
+              {displayTimelineEvents.map((event) => (
+                <li key={`${event.year ?? 'stage'}-${event.title}`}>
+                  {event.year && <span className={styles.year}>{event.year}</span>}
                   <h4>{event.title}</h4>
                   {event.currentPosition && <p className={styles.position}>{event.currentPosition}</p>}
-                  <p>{event.description}</p>
+                  {event.description && <p>{event.description}</p>}
                 </li>
               ))}
             </ol>
@@ -83,7 +86,7 @@ export const ContentPanel = ({
 
           {activeSection === 'skills' && (
             <div className={styles.skillsGrid}>
-              {skillCategories.map((category) => (
+              {displaySkillCategories.map((category) => (
                 <section key={category.id} className={styles.skillCard}>
                   <h4>{category.label}</h4>
                   <ul>
@@ -133,11 +136,13 @@ export const ContentPanel = ({
                     <div className={styles.projectBody}>
                       <h4>{project.title}</h4>
                       <p>{project.blurb}</p>
-                      <ul className={styles.tagRow}>
-                        {project.tags.map((tag) => (
-                          <li key={tag}>{tag}</li>
-                        ))}
-                      </ul>
+                      {project.tags.length > 0 && (
+                        <ul className={styles.tagRow}>
+                          {project.tags.map((tag) => (
+                            <li key={tag}>{tag}</li>
+                          ))}
+                        </ul>
+                      )}
                       {project.links.length > 0 && (
                         <div className={styles.linkRow}>
                           {project.links.map((link) => (

@@ -24,13 +24,13 @@ url = "https://api.pixellab.ai/mcp"
 transport = "http"
 
 [mcp_servers.pixellab.env]
-AUTHORIZATION = "Bearer YOUR_PIXELLAB_TOKEN"
+AUTHORIZATION = "Bearer <PIXELLAB_TOKEN>"
 ```
 
 If your Codex build expects custom headers instead of environment-driven auth, mirror the install command shown on PixelLab's site:
 
 ```text
-claude mcp add pixellab https://api.pixellab.ai/mcp -t http -H "Authorization: Bearer YOUR_SECRET"
+claude mcp add pixellab https://api.pixellab.ai/mcp -t http -H "Authorization: Bearer <PIXELLAB_TOKEN>"
 ```
 
 The equivalent Codex setup should preserve the same `Authorization: Bearer ...` header.
@@ -40,11 +40,9 @@ The equivalent Codex setup should preserve the same `Authorization: Bearer ...` 
 Generate only the assets the app now expects:
 
 ```text
-public/assets/characters/<character>/<character>_front.png
-public/assets/characters/<character>/<character>_thumb.png
-public/assets/characters/<character>/<character>_portrait.png
-public/assets/characters/<character>/<character>_idle_01.png
-public/assets/characters/<character>/<character>_idle_02.png
+public/assets/characters/<character>/pixellab/rotations/south.png
+public/assets/characters/<character>/pixellab/rotations/east.png
+public/assets/characters/<character>/pixellab/animations/<animation-id>/east/frame_000.png
 ```
 
 Current active characters:

@@ -15,7 +15,10 @@ export const IntroScreen = ({ onStart, initialRememberSkip }: IntroScreenProps) 
 
   return (
     <section className={styles.intro} aria-label="Press start screen">
-      <h1 className={styles.title}>BEN HUTCHINSON</h1>
+      <h1 className={styles.title}>
+        <span>BEN</span>
+        <span>HUTCHINSON</span>
+      </h1>
 
       <button type="button" className={styles.startButton} onClick={() => onStart(rememberSkip)}>
         PRESS START
@@ -29,10 +32,6 @@ export const IntroScreen = ({ onStart, initialRememberSkip }: IntroScreenProps) 
         />
         Skip intro next time
       </label>
-
-      <p className={styles.helper}>
-        Tip: explore each character to switch tone and context while the main content stays in place.
-      </p>
     </section>
   );
 };

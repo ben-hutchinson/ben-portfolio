@@ -1,12 +1,5 @@
-interface CharacterAssetOptions {
-  id: string;
-  includeIdleFrames?: boolean;
-}
-
 interface PixellabCharacterAssetOptions {
   id: string;
-  idleAnimationId: string;
-  idleFrameCount?: number;
   direction?: 'south' | 'east' | 'north' | 'west';
   runnerAnimationId?: string;
   runnerFrameCount?: number;
@@ -19,20 +12,6 @@ const withBase = (path: string): string => {
 
 const characterAssetPath = (characterId: string, file: string): string => {
   return withBase(`assets/characters/${characterId}/${file}`);
-};
-
-export const buildCharacterAssets = ({
-  id,
-  includeIdleFrames = false,
-}: CharacterAssetOptions) => {
-  return {
-    thumb: characterAssetPath(id, `${id}_thumb.png`),
-    portrait: characterAssetPath(id, `${id}_portrait.png`),
-    front: characterAssetPath(id, `${id}_front.png`),
-    idleFrames: includeIdleFrames
-      ? [characterAssetPath(id, `${id}_idle_01.png`), characterAssetPath(id, `${id}_idle_02.png`)]
-      : [],
-  };
 };
 
 const pixellabAssetPath = (characterId: string, file: string): string => {
@@ -56,24 +35,19 @@ const buildPixellabAnimationFrames = (
 
 export const buildPixellabCharacterAssets = ({
   id,
-  idleAnimationId,
-  idleFrameCount = 8,
   direction = 'south',
-  runnerAnimationId = idleAnimationId,
-  runnerFrameCount = idleFrameCount,
+  runnerAnimationId,
+  runnerFrameCount = 0,
 }: PixellabCharacterAssetOptions) => {
   const front = pixellabAssetPath(id, `rotations/${direction}.png`);
-  const idleFrames = buildPixellabAnimationFrames(id, idleAnimationId, direction, idleFrameCount);
   const runnerStill = pixellabAssetPath(id, 'rotations/east.png');
-  const runnerRunFrames = buildPixellabAnimationFrames(id, runnerAnimationId, 'east', runnerFrameCount);
+  const runnerRunFrames = runnerAnimationId
+    ? buildPixellabAnimationFrames(id, runnerAnimationId, 'east', runnerFrameCount)
+    : [];
 
   return {
     thumb: front,
-    portrait: front,
     front,
-    idleFrames,
-    presentationFrames: idleFrames,
-    presentationFrameMs: 170,
     runnerStill,
     runnerRunFrames,
     runnerFrameMs: 115,

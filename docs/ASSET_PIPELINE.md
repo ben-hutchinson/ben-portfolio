@@ -28,27 +28,26 @@ public/assets/characters/<character>/source/
 ## Production Outputs
 
 ```text
-public/assets/characters/<character>/select/
-public/assets/characters/<character>/idle/
+public/assets/characters/<character>/pixellab/rotations/
+public/assets/characters/<character>/pixellab/animations/<animation-id>/<direction>/
 ```
 
 ## Technical Targets
 
 * PNG with transparency.
 * Crisp nearest-neighbor scaling.
-* Base sprite height: 96px desktop.
-* Character icon: 64x64.
-* Center showcase uses scaled front sprite.
+* Rotation sprites should include at least `south.png` and `east.png`.
+* Runner animation frames only need the `east` direction for the current mission runner.
+* Center showcase uses the `south` rotation sprite.
 
 ## File Naming Convention
 
 ```text
-<character>_front.png
-<character>_thumb.png
-<character>_portrait.png
-<character>_idle_01.png
-<character>_idle_02.png
-<character>_select.png
+rotations/south.png
+rotations/east.png
+animations/<animation-id>/east/frame_000.png
+animations/<animation-id>/east/frame_001.png
+...
 ```
 
 ## Character Notes
@@ -81,7 +80,7 @@ public/assets/characters/<character>/idle/
 3. Block silhouette at larger working scale.
 4. Reduce to limited palette.
 5. Add facial/features details.
-6. Export front sprite + idle variants.
+6. Export Pixellab rotations and east-facing runner frames.
 7. Test in browser at real size.
 8. Optimize file size.
 
@@ -108,4 +107,4 @@ All assets should be referenced from `src/data/characters.ts`. No hardcoded imag
 
 ## Versioning Rule
 
-Ship placeholders first. Replace assets without changing filenames when upgrading art later.
+Keep filenames and animation IDs stable once referenced from `src/data/characters.ts`.

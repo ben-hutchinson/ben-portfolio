@@ -7,20 +7,9 @@ export interface CharacterPanelLabels {
   projects: string;
 }
 
-export interface CharacterSectionCopy {
-  about: string;
-  career: string;
-  skills: string;
-  projects: string;
-}
-
 export interface CharacterAssets {
   thumb: string;
-  portrait: string;
   front: string;
-  idleFrames?: string[];
-  presentationFrames?: string[];
-  presentationFrameMs?: number;
   runnerStill?: string;
   runnerRunFrames?: string[];
   runnerFrameMs?: number;
@@ -39,9 +28,10 @@ export interface CharacterProfile {
   accentColor: string;
   spriteCleanup: SpriteCleanupConfig;
   panelLabels: CharacterPanelLabels;
-  sectionCopy: CharacterSectionCopy;
   aboutParagraphs?: string[];
-  skillsHighlight: string[];
+  timelineEvents?: TimelineEvent[];
+  skillCategories?: SkillCategory[];
+  projects?: ProjectEntry[];
   assets: CharacterAssets;
 }
 
@@ -52,10 +42,10 @@ export interface SectionDefinition {
 }
 
 export interface TimelineEvent {
-  year: string;
+  year?: string;
   title: string;
   currentPosition?: string;
-  description: string;
+  description?: string;
 }
 
 export interface SkillCategory {

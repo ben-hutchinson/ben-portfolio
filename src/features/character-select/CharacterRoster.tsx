@@ -14,7 +14,6 @@ export const CharacterRoster = ({
 }: CharacterRosterProps) => {
   return (
     <div className={styles.roster}>
-      <h2 className={styles.heading}>Roster</h2>
       <div className={styles.grid}>
         {characters.map((character) => {
           const isSelected = character.id === selectedCharacterId;

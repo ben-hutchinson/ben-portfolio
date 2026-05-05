@@ -24,4 +24,13 @@ export const projects: ProjectEntry[] = [
     tags: ['Python', 'uv', 'ruff', 'Developer Experience'],
     links: [],
   },
+  {
+    id: 'acca-freeze',
+    kind: 'work',
+    title: 'Acca Freeze',
+    blurb:
+      'Greenfield feature project built in Java, using Maven and Gradle. Took ownership of the testing scaffold (Cucumber) to ensure maximal coverage.',
+    tags: ['Java', 'Maven', 'Gradle', 'Cucumber'],
+    links: [],
+  },
 ];

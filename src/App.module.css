@@ -3,8 +3,9 @@
   --parallax-y: 0;
   position: relative;
   min-height: 100dvh;
+  height: 100dvh;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   color: var(--text-primary);
   background: var(--surface-root);
   overflow: hidden;
@@ -83,11 +84,15 @@
   position: relative;
   z-index: 1;
   isolation: isolate;
-  padding: clamp(0.9rem, 1.6vw, 1.5rem) clamp(0.9rem, 2.2vw, 2rem);
+  min-height: 0;
+  display: grid;
+  overflow: hidden;
+  padding: clamp(0.55rem, 1.15vw, 1rem) clamp(0.75rem, 1.6vw, 1.45rem);
 }
 
 .stageContainer {
-  min-height: calc(100dvh - 84px);
+  min-height: 0;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,10 +108,13 @@
 }
 
 .gameScreen {
-  min-height: calc(100dvh - 84px);
+  min-height: 0;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.95rem;
+  gap: clamp(0.55rem, 1vw, 0.8rem);
+  overflow: hidden;
 }
 
 .screenHeader {
@@ -119,7 +127,7 @@
 
 .screenTitle {
   margin: 0;
-  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  font-size: clamp(0.9rem, 1.7vw, 1.18rem);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -127,7 +135,7 @@
 .screenMeta {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 0.82rem;
+  font-size: 0.86rem;
 }
 
 .screenMeta span {
@@ -152,8 +160,8 @@
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.04) inset,
     0 10px 24px rgba(0, 0, 0, 0.22);
-  padding: 0.62rem 0.75rem;
-  font-size: 0.62rem;
+  padding: 0.68rem 0.88rem;
+  font-size: 0.68rem;
   line-height: 1.35;
   text-transform: uppercase;
   cursor: pointer;
@@ -175,9 +183,11 @@
 .layoutFrame {
   flex: 1;
   min-height: 0;
+  width: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 0.9rem;
+  overflow: hidden;
 }
 
 .rosterTop,
@@ -191,7 +201,8 @@
 }
 
 .rosterTop {
-  padding: 0.72rem 0.8rem;
+  width: 100%;
+  padding: clamp(0.55rem, 0.9vw, 0.72rem);
 }
 
 .bodyGrid {
@@ -199,17 +210,20 @@
   display: grid;
   grid-template-columns: minmax(340px, 1.15fr) minmax(420px, 1fr);
   gap: 0.9rem;
+  overflow: hidden;
 }
 
 .viewerColumn {
-  padding: 0.8rem;
+  padding: clamp(0.55rem, 0.9vw, 0.8rem);
+  overflow: hidden;
 }
 
 .panelColumn {
-  padding: 0.8rem;
+  padding: clamp(0.55rem, 0.9vw, 0.8rem);
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 0.7rem;
+  overflow: hidden;
 }
 
 @media (max-width: 1180px) {
@@ -243,11 +257,14 @@
   }
 
   .layoutFrame {
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 0.7rem;
   }
 
   .bodyGrid {
     grid-template-columns: 1fr;
+    grid-template-rows: minmax(220px, 0.42fr) minmax(0, 1fr);
     gap: 0.7rem;
   }
 
