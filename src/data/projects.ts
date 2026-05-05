@@ -16,6 +16,16 @@ export const projects: ProjectEntry[] = [
     ],
   },
   {
+    id: 'safelog',
+    kind: 'personal',
+    title: 'Safelog',
+    blurb:
+      'Privacy-first log analysis for developers. Detect, redact, and analyze logs locally so you can debug without leaking sensitive data.',
+    image: projectAssetPath('project-safelog.png'),
+    tags: ['Python', 'CLI', 'Privacy', 'Log Analysis'],
+    links: [{ label: 'GitHub', href: 'https://github.com/ben-hutchinson/safelog' }],
+  },
+  {
     id: 'dependency-migration',
     kind: 'work',
     title: 'Python Dependency Migration',

@@ -88,7 +88,7 @@ export const ContentPanel = ({
             <div className={styles.skillsGrid}>
               {displaySkillCategories.map((category) => (
                 <section key={category.id} className={styles.skillCard}>
-                  <h4>{category.label}</h4>
+                  {category.label && <h4>{category.label}</h4>}
                   <ul>
                     {category.items.map((item) => (
                       <li key={item}>{item}</li>

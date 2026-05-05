@@ -54,7 +54,7 @@ export const characters: CharacterProfile[] = [
     skillCategories: [
       {
         id: 'dog-skills',
-        label: 'Skills',
+        label: '',
         items: ['Eating', 'Sniffing', 'Fetching', 'Chomping', 'Cardboard destruction', 'Sleeping', 'Napping'],
       },
     ],
@@ -108,7 +108,7 @@ export const characters: CharacterProfile[] = [
     skillCategories: [
       {
         id: 'cat-skills',
-        label: 'Skills',
+        label: '',
         items: ['Eating', 'Snoozing', 'Climbing', 'Making Biscuits', 'Bug Hunting', 'Stretching', 'Chasing', 'Hiding'],
       },
     ],
