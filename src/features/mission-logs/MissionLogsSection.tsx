@@ -18,9 +18,17 @@ export const MissionLogsSection = ({ id, projects }: MissionLogsSectionProps) =>
   return (
     <section className={styles.section} id={id} aria-labelledby={`${id}-heading`}>
       <div className={styles.inner}>
-        <h2 className={styles.sectionHeading} id={`${id}-heading`}>
-          Mission logs.
-        </h2>
+        <header className={styles.sectionIntro}>
+          <p className={styles.sectionLabel}>01 / SELECTED MISSION LOGS</p>
+          <h2 className={styles.sectionHeading} id={`${id}-heading`}>
+            PROOF, NOT JUST A STACK LIST.
+          </h2>
+          <p className={styles.sectionCopy}>
+            Each case study opens like an engineering briefing: context,
+            constraints, decisions, delivery and what changed—not a wall of
+            technology badges.
+          </p>
+        </header>
 
         <div className={styles.missionList}>
           {featuredProjects.map((project, index) => (
