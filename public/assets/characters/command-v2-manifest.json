@@ -1,0 +1,47 @@
+{
+  "ben": {
+    "hero": "assets/characters/ben/command-v2/hero.webp",
+    "front": "assets/characters/ben/command-v2/rotations/south.png",
+    "runnerStill": "assets/characters/ben/command-v2/rotations/east.png",
+    "runnerFrames": [
+      "assets/characters/ben/command-v2/runner/frame_000.png",
+      "assets/characters/ben/command-v2/runner/frame_001.png",
+      "assets/characters/ben/command-v2/runner/frame_002.png",
+      "assets/characters/ben/command-v2/runner/frame_003.png",
+      "assets/characters/ben/command-v2/runner/frame_004.png",
+      "assets/characters/ben/command-v2/runner/frame_005.png",
+      "assets/characters/ben/command-v2/runner/frame_006.png",
+      "assets/characters/ben/command-v2/runner/frame_007.png"
+    ]
+  },
+  "dog": {
+    "hero": "assets/characters/dog/command-v2/hero.webp",
+    "front": "assets/characters/dog/command-v2/rotations/south.png",
+    "runnerStill": "assets/characters/dog/command-v2/rotations/east.png",
+    "runnerFrames": [
+      "assets/characters/dog/command-v2/runner/frame_000.png",
+      "assets/characters/dog/command-v2/runner/frame_001.png",
+      "assets/characters/dog/command-v2/runner/frame_002.png",
+      "assets/characters/dog/command-v2/runner/frame_003.png",
+      "assets/characters/dog/command-v2/runner/frame_004.png",
+      "assets/characters/dog/command-v2/runner/frame_005.png",
+      "assets/characters/dog/command-v2/runner/frame_006.png",
+      "assets/characters/dog/command-v2/runner/frame_007.png"
+    ]
+  },
+  "cat": {
+    "hero": "assets/characters/cat/command-v2/hero.webp",
+    "front": "assets/characters/cat/command-v2/rotations/south.png",
+    "runnerStill": "assets/characters/cat/command-v2/rotations/east.png",
+    "runnerFrames": [
+      "assets/characters/cat/command-v2/runner/frame_000.png",
+      "assets/characters/cat/command-v2/runner/frame_001.png",
+      "assets/characters/cat/command-v2/runner/frame_002.png",
+      "assets/characters/cat/command-v2/runner/frame_003.png",
+      "assets/characters/cat/command-v2/runner/frame_004.png",
+      "assets/characters/cat/command-v2/runner/frame_005.png",
+      "assets/characters/cat/command-v2/runner/frame_006.png",
+      "assets/characters/cat/command-v2/runner/frame_007.png"
+    ]
+  }
+}

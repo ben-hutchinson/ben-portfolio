@@ -56,7 +56,7 @@ animations/<animation-id>/east/frame_001.png
 
 * Use provided headshot for face likeness.
 * Green shirt reference can inspire palette.
-* Add black trousers.
+* Command v2 uses warm sand beige (`#CBBF9E`) trousers.
 * Add black shoes.
 * Friendly, confident posture.
 
@@ -83,6 +83,51 @@ animations/<animation-id>/east/frame_001.png
 6. Export Pixellab rotations and east-facing runner frames.
 7. Test in browser at real size.
 8. Optimize file size.
+
+## Command Crew v2
+
+Command Crew v2 uses two deliberately related rendering tiers:
+
+* **Hero tier:** high-detail modern 32-bit pixel art exported as WebP, no
+  larger than 1024×1024 and no larger than 350 KB. Preserve the editable PNG
+  source outside runtime paths.
+* **Gameplay tier:** simplified derivatives on exact 104×104 transparent PNG
+  canvases. Use chunkier clusters, stable proportions, a shared baseline, and
+  a restrained one-to-two-pixel silver/violet edge highlight. This tier is not
+  a new costume and must preserve each character's established identity,
+  colours, clothing, and proportions.
+
+The approved gameplay palette must be reviewed on command navy (`#0E2148`),
+deep violet (`#483AA0`), and silver (`#C7CCD8`).
+
+### Command v2 output contract
+
+```text
+public/assets/characters/<character>/command-v2/hero.webp
+public/assets/characters/<character>/command-v2/rotations/south.png
+public/assets/characters/<character>/command-v2/rotations/east.png
+public/assets/characters/<character>/command-v2/runner/frame_000.png
+...
+public/assets/characters/<character>/command-v2/runner/frame_007.png
+```
+
+All runtime paths are declared in
+`public/assets/characters/command-v2-manifest.json`.
+
+### Transparent gameplay workflow
+
+1. Generate a south-facing still and an east-facing eight-frame run sheet on
+   a perfectly flat chroma-key background.
+2. Remove the key with the installed ImageGen chroma-removal helper using a
+   soft matte and despill.
+3. Identify the eight separated animation components, preserving overlapping
+   frame extents without clipping.
+4. Fit every sprite to the 104×104 canvas with nearest-neighbour resampling
+   only, center horizontally, and align the lowest opaque pixel to the shared
+   baseline.
+5. Confirm RGBA output, transparent corners, exact dimensions, eight runner
+   frames per character, and readability on all three approved surfaces.
+6. Keep all pre-v2 assets unchanged until browser review is complete.
 
 ## Recommended Tools
 
