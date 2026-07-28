@@ -72,7 +72,7 @@ Desktop (1440 × 900):
 
 ![Desktop baseline](./command-centre-before-desktop.png)
 
-Mobile (390 × 844):
+Mobile (390 × 844, captured after the 450 ms intro fade had settled):
 
 ![Mobile baseline](./command-centre-before-mobile.png)
 
