@@ -279,11 +279,11 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
   } as CSSProperties;
 
   return (
-    <main className={styles.runner} style={runnerStyle} aria-label="Start mission runner">
+    <div className={styles.runner} style={runnerStyle} aria-label="Signal Sprint runner">
       <header className={styles.header}>
         <div>
           <p className={styles.eyebrow}>Mission active</p>
-          <h1 className={styles.title}>{character.name}: Signal Sprint</h1>
+          <h3 className={styles.title}>Signal Sprint</h3>
         </div>
         <button type="button" className={styles.backButton} onClick={onExit}>
           Back to Portfolio
@@ -359,6 +359,6 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
           )}
         </div>
       </section>
-    </main>
+    </div>
   );
 };

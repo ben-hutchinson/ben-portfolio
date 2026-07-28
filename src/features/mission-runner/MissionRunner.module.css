@@ -1,7 +1,7 @@
 .runner {
   width: 100%;
   max-width: 100%;
-  min-height: calc(100dvh - 84px);
+  min-height: 0;
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 0.9rem;
@@ -62,7 +62,7 @@
   --track-bottom: clamp(112px, 22%, 136px);
   position: relative;
   width: min(100%, calc(100vw - 1.4rem), 1120px);
-  height: min(68dvh, 620px);
+  height: min(58dvh, 620px);
   min-height: 330px;
   margin: 0 auto;
   overflow: hidden;
@@ -367,7 +367,7 @@
   }
 
   .playfield {
-    height: min(62dvh, 390px);
+    height: min(54dvh, 390px);
     min-height: 300px;
     border-radius: 14px;
   }
