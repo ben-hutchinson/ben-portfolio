@@ -59,6 +59,15 @@ export interface ProjectLink {
   href: string;
 }
 
+export interface ProjectBriefing {
+  context: string;
+  constraint: string;
+  responsibilities: string[];
+  decisions: string[];
+  delivery: string;
+  outcome: string;
+}
+
 export interface ProjectEntry {
   id: string;
   kind: 'personal' | 'work';
@@ -67,4 +76,18 @@ export interface ProjectEntry {
   image?: string;
   tags: string[];
   links: ProjectLink[];
+  featured?: boolean;
+  category?: string;
+  systemShape?: string[];
+  engineeringStory?: string;
+  briefing?: ProjectBriefing;
+}
+
+export type TopologyGroupId = 'platform' | 'product' | 'tooling';
+
+export interface TopologyNode {
+  id: 'skao' | 'flutter' | 'pokeleximon' | 'safelog' | 'observability';
+  label: string;
+  description: string;
+  groups: TopologyGroupId[];
 }
