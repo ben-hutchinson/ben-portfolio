@@ -31,7 +31,18 @@ export const HeroSection = ({ benHeroSrc }: HeroSectionProps) => {
           <p className={styles.eyebrow}>
             {profile.role} <span aria-hidden="true">·</span> {profile.location}
           </p>
-          <h1 className={styles.headline}>{profile.headline}</h1>
+          <h1 aria-label={profile.headline} className={styles.headline}>
+            <span aria-hidden="true" className={styles.headlineLead}>
+              I engineer the calm
+            </span>{' '}
+            <span
+              aria-hidden="true"
+              className={styles.headlineOutline}
+              data-headline-treatment="outline"
+            >
+              inside complexity.
+            </span>
+          </h1>
           <p className={styles.summary}>{profile.summary}</p>
           <div className={styles.actions}>
             <CommandButton href="#work" variant="primary">

@@ -1,5 +1,5 @@
 import { LazyMotion, domAnimation } from 'framer-motion';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/test/render';
 import { profile } from '@/data/profile';
@@ -48,5 +48,24 @@ describe('HeroSection', () => {
     for (const proof of profile.proof) {
       expect(screen.getByText(proof)).toBeInTheDocument();
     }
+  });
+
+  it('presents the closing headline phrase with the outlined treatment', () => {
+    renderWithProviders(
+      <LazyMotion features={domAnimation}>
+        <HeroSection benHeroSrc="/ben-command.png" />
+      </LazyMotion>,
+    );
+
+    const heading = screen.getByRole('heading', {
+      level: 1,
+      name: profile.headline,
+    });
+
+    expect(
+      within(heading).getByText('inside complexity.', {
+        selector: '[data-headline-treatment="outline"]',
+      }),
+    ).toBeInTheDocument();
   });
 });
