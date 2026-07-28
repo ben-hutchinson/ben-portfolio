@@ -7,16 +7,18 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --surface-root: linear-gradient(140deg, #030814, #071224 45%, #081832);
-  --surface-panel: linear-gradient(170deg, rgba(6, 20, 44, 0.88), rgba(8, 28, 61, 0.82));
-  --surface-elevated: rgba(8, 33, 70, 0.92);
-  --stroke: rgba(97, 170, 255, 0.4);
-  --accent-cyan: #63f7eb;
-  --accent-purple: #9f85ff;
-  --accent-warm: #f7c46f;
-  --text-primary: #eff7ff;
-  --text-secondary: #b4c6db;
-  --focus-ring: #ffe285;
+  --color-void: #07142f;
+  --color-command-navy: #0e2148;
+  --color-deep-violet: #483aa0;
+  --color-orbit-lilac: #7965c1;
+  --color-silver: #c7ccd8;
+  --color-signal-white: #f7f8fc;
+  --color-muted: #9da9c5;
+  --color-status: #a9f4d0;
+  --color-line: rgb(199 204 216 / 18%);
+  --color-line-strong: rgb(221 231 255 / 38%);
+  --focus-ring: #f7f8fc;
+  color-scheme: dark;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -60,16 +62,16 @@ body,
 #root {
   width: 100%;
   min-height: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
   font-family: 'Outfit', 'Segoe UI', sans-serif;
-  color: var(--text-primary);
-  background: #050b17;
-  overflow: hidden;
+  color: var(--color-signal-white);
+  background: var(--color-void);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 h1,
