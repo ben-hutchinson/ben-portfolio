@@ -1,5 +1,6 @@
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -20,16 +21,35 @@ const NavigationLinks = ({ mobile = false }: { mobile?: boolean }) => (
   <ul className={mobile ? styles.mobileLinks : styles.links}>
     {links.map((link) => (
       <li key={link.href}>
-        <a
-          className={
-            link.href === '#training'
-              ? styles.trainingLink
-              : styles.navigationLink
-          }
-          href={link.href}
-        >
-          {link.label}
-        </a>
+        {mobile ? (
+          <SheetClose
+            nativeButton={false}
+            render={
+              <a
+                className={
+                  link.href === '#training'
+                    ? styles.trainingLink
+                    : styles.navigationLink
+                }
+                href={link.href}
+                role="link"
+              >
+                {link.label}
+              </a>
+            }
+          />
+        ) : (
+          <a
+            className={
+              link.href === '#training'
+                ? styles.trainingLink
+                : styles.navigationLink
+            }
+            href={link.href}
+          >
+            {link.label}
+          </a>
+        )}
       </li>
     ))}
   </ul>

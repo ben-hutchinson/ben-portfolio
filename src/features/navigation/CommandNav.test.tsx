@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { renderWithProviders } from '@/test/render';
@@ -39,5 +39,19 @@ describe('CommandNav', () => {
     expect(
       within(sheet).getByRole('link', { name: 'Training sim' }),
     ).toHaveAttribute('href', '#training');
+  });
+
+  it('closes the mobile sheet after activating a destination', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<CommandNav />);
+
+    await user.click(screen.getByRole('button', { name: 'Open navigation' }));
+
+    const sheet = await screen.findByRole('dialog');
+    await user.click(within(sheet).getByRole('link', { name: 'Mission logs' }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
   });
 });
