@@ -214,6 +214,8 @@ The current command concept is not accepted as final. A revised Ben must:
 
 The art workstream produces two Ben candidates for review. Only the selected candidate proceeds into production derivatives.
 
+Candidate A is selected. Its approved production revision keeps the selected face, hair, beard, posture, navy overshirt, silver piping, violet accent, and boots while changing only the trousers to a warm sand beige (`#CBBF9E`) for stronger separation from the navy command-centre palette.
+
 ### Production asset contract
 
 The concept images are art-direction references, not final runtime files. Production assets must include:
@@ -223,6 +225,8 @@ The concept images are art-direction references, not final runtime files. Produc
 - an east-facing runner still;
 - an east-facing runner animation for Signal Sprint;
 - stable paths referenced only through `src/data/characters.ts` and `src/utils/assets.ts`.
+
+The artwork uses a two-tier system. Hero and crew artwork keeps the selected high-detail 32-bit treatment. Gameplay artwork is a deliberately simplified derivative on a consistent 104×104 transparent canvas: chunkier clusters, stable proportions and baseline, and a restrained one-to-two-pixel silver/violet edge highlight. This preserves identity while keeping every character readable against the dark navy and violet rocket interior. The gameplay treatment does not introduce a separate spacesuit or change character colours, clothing, or identity.
 
 Hero/crew images should use WebP or AVIF where browser support and quality are acceptable. Gameplay sprites remain PNG with transparency and nearest-neighbour scaling. Existing asset filenames remain available until the replacement set passes browser review.
 

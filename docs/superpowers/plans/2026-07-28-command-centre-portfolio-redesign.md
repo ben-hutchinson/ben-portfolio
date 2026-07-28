@@ -457,6 +457,7 @@ git commit -m "feat: define command centre portfolio content"
 **Files:**
 - Create: `public/assets/characters/ben/command-v2/candidate-a.png`
 - Create: `public/assets/characters/ben/command-v2/candidate-b.png`
+- Create after approval: `public/assets/characters/ben/command-v2/candidate-a-approved.png`
 - Create after approval: `public/assets/characters/ben/command-v2/hero.webp`
 - Create after approval: `public/assets/characters/ben/command-v2/rotations/south.png`
 - Create after approval: `public/assets/characters/ben/command-v2/rotations/east.png`
@@ -489,13 +490,15 @@ Candidate A should be more naturalistic; candidate B should use slightly chunkie
 
 Present both candidates at 512 px and 128 px beside the source photo and approved Blue/Toni art. Stop this workstream until the user selects one candidate or requests a targeted revision.
 
+Approval result: Candidate A is selected. Produce a targeted production revision that changes only the trousers to warm sand beige (`#CBBF9E`); preserve the selected likeness, hair, beard, expression, posture, navy overshirt, silver piping, violet accent, and boots. Save the revised editable source as `candidate-a-approved.png` and use it for Ben's production derivatives.
+
 - [ ] **Step 3: Produce hero assets**
 
 Create matching Blue and Toni command portraits from their source photos and approved traits. Export all selected hero assets as WebP at a maximum of 1024×1024 and a maximum of 350 KB each. Preserve the original generated PNG outside runtime paths for future editing.
 
 - [ ] **Step 4: Produce transparent gameplay sprites**
 
-For each character, generate a south-facing still and an east-facing eight-frame run sheet on a perfectly flat chroma-key background. Split the run sheet into `frame_000.png` through `frame_007.png`, remove the key colour, and validate transparent corners and stable character proportions. Use nearest-neighbour resampling only.
+For each character, generate a south-facing still and an east-facing eight-frame run sheet on a perfectly flat chroma-key background. The gameplay set is a simplified derivative of the hero art, not a separate costume: use chunkier pixel clusters, a consistent 104×104 canvas and baseline, and a restrained one-to-two-pixel silver/violet edge highlight so the silhouettes remain legible inside the navy/violet rocket environment. Preserve each character's established identity, colours, clothing, and proportions. Split the run sheet into `frame_000.png` through `frame_007.png`, remove the key colour, and validate transparent corners, stable baselines and proportions, and readability on `#0E2148`, `#483AA0`, and a representative silver panel. Use nearest-neighbour resampling only.
 
 - [ ] **Step 5: Create the manifest**
 
