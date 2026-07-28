@@ -8,6 +8,7 @@ export interface CharacterPanelLabels {
 }
 
 export interface CharacterAssets {
+  hero: string;
   thumb: string;
   front: string;
   runnerStill?: string;

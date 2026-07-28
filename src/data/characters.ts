@@ -1,4 +1,5 @@
-import { buildPixellabCharacterAssets } from '../utils/assets';
+import type { CrewMember } from '../features/crew/CrewSection';
+import { buildCommandCharacterAssets } from '../utils/assets';
 import type { CharacterProfile } from './types';
 
 export const characters: CharacterProfile[] = [
@@ -23,7 +24,7 @@ export const characters: CharacterProfile[] = [
       'I am AI-adoptive and proficient, using modern AI tools to accelerate delivery, automate repetitive work, and explore better engineering workflows without losing sight of code quality or ownership.',
       'What makes me a little different is the route I took to get here. Before software engineering, I studied science to postgraduate level, which means I naturally approach problems with curiosity, evidence, and a healthy obsession with finding root causes. I am also big on continuous improvement - whether that is mentoring junior engineers, working towards AWS certifications, building side projects, or learning new tech just because it looks interesting. In short: I like building things that work, improving things that do not, and working with good people along the way.',
     ],
-    assets: buildPixellabCharacterAssets({
+    assets: buildCommandCharacterAssets({
       id: 'ben',
     }),
   },
@@ -76,10 +77,8 @@ export const characters: CharacterProfile[] = [
         links: [],
       },
     ],
-    assets: buildPixellabCharacterAssets({
+    assets: buildCommandCharacterAssets({
       id: 'dog',
-      runnerAnimationId: 'animation-ee316fb6',
-      runnerFrameCount: 8,
     }),
   },
   {
@@ -122,12 +121,36 @@ export const characters: CharacterProfile[] = [
         links: [],
       },
     ],
-    assets: buildPixellabCharacterAssets({
+    assets: buildCommandCharacterAssets({
       id: 'cat',
-      runnerAnimationId: 'animation-967576f1',
-      runnerFrameCount: 8,
     }),
   },
 ];
 
 export const defaultCharacterId: CharacterProfile['id'] = 'ben';
+
+const crewDetails: Record<
+  CharacterProfile['id'],
+  Pick<CrewMember, 'assignment' | 'callSign'>
+> = {
+  ben: {
+    assignment: 'Systems architect / mission owner',
+    callSign: 'Ben',
+  },
+  dog: {
+    assignment: 'Reliability officer',
+    callSign: 'Blue',
+  },
+  cat: {
+    assignment: 'Chaos engineering',
+    callSign: 'Toni',
+  },
+};
+
+export const buildCrewMembers = (characterProfiles: CharacterProfile[]): CrewMember[] =>
+  characterProfiles.map((character) => ({
+    id: character.id,
+    name: character.name,
+    heroSrc: character.assets.hero,
+    ...crewDetails[character.id],
+  }));

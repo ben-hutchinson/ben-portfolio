@@ -67,7 +67,7 @@ body,
 }
 
 body {
-  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-family: 'Geist Variable', 'Outfit', 'Segoe UI', sans-serif;
   color: var(--color-signal-white);
   background: var(--color-void);
   overflow-x: hidden;
@@ -80,7 +80,7 @@ h3,
 h4,
 button,
 [role='tab'] {
-  font-family: 'Press Start 2P', 'Outfit', sans-serif;
+  font-family: 'Geist Variable', 'Outfit', 'Segoe UI', sans-serif;
 }
 
 p,
@@ -106,6 +106,10 @@ textarea {
 :focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+main > section[id] {
+  scroll-margin-top: 5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
