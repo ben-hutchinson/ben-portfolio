@@ -1,4 +1,5 @@
 import { LazyMotion, domAnimation } from 'framer-motion';
+import { useState } from 'react';
 import { TooltipProvider } from './components/ui/tooltip';
 import { buildCrewMembers, characters } from './data/characters';
 import { projects } from './data/projects';
@@ -11,11 +12,14 @@ import { MissionLogsSection } from './features/mission-logs/MissionLogsSection';
 import { CommandNav } from './features/navigation/CommandNav';
 import { ProofStrip } from './features/proof-strip/ProofStrip';
 import { SystemsTopology } from './features/systems-topology/SystemsTopology';
+import { TrainingDialog } from './features/training/TrainingDialog';
+import { TrainingModule } from './features/training/TrainingModule';
 import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
 import styles from './App.module.css';
 
 const App = () => {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [trainingOpen, setTrainingOpen] = useState(false);
   const crewMembers = buildCrewMembers(characters);
 
   return (
@@ -33,8 +37,10 @@ const App = () => {
             <SystemsTopology id="systems" />
             <ExperienceTimeline id="experience" events={timelineEvents} />
             <CrewSection members={crewMembers} />
+            <TrainingModule onLaunch={() => setTrainingOpen(true)} />
           </main>
           <CommandFooter />
+          <TrainingDialog open={trainingOpen} onOpenChange={setTrainingOpen} />
         </div>
       </TooltipProvider>
     </LazyMotion>

@@ -13,6 +13,6 @@ describe('portfolio document', () => {
   it('uses the approved section order', () => {
     render(<App />);
     const ids = Array.from(document.querySelectorAll('main > section')).map((section) => section.id);
-    expect(ids).toEqual(['top', 'work', 'systems', 'experience', 'crew']);
+    expect(ids).toEqual(['top', 'work', 'systems', 'experience', 'crew', 'training']);
   });
 });
