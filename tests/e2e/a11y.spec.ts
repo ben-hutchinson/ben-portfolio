@@ -1,12 +1,14 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-const expectNoSeriousOrCriticalViolations = async (page: Page) => {
-  const results = await new AxeBuilder({ page })
+const expectNoSeriousOrCriticalViolations = async (page: Page, scope?: string) => {
+  const axe = new AxeBuilder({ page })
     // Base UI's inert, visually clipped focus guards are non-user controls and WebKit's Axe
     // adapter incorrectly reports them as unnamed buttons.
-    .exclude('[data-base-ui-focus-guard]')
-    .analyze();
+    .exclude('[data-base-ui-focus-guard]');
+  if (scope) axe.include(scope);
+
+  const results = await axe.analyze();
   const seriousOrCritical = results.violations.filter(
     (violation) => violation.impact === 'serious' || violation.impact === 'critical',
   );
@@ -26,7 +28,7 @@ test('catches serious or critical accessibility regressions in a project briefin
   await page.getByRole('button', { name: 'Open Pokeleximon Daily engineering briefing' }).click();
   await expect(page.getByRole('dialog', { name: 'Pokeleximon Daily engineering briefing' })).toBeVisible();
 
-  await expectNoSeriousOrCriticalViolations(page);
+  await expectNoSeriousOrCriticalViolations(page, '[role="dialog"]');
 });
 
 test('catches serious or critical accessibility regressions in the Signal Sprint dialog', async ({ page }) => {

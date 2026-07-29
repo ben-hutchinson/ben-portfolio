@@ -72,16 +72,20 @@ const belowFoldImages = (await readDirectoryFiles(belowFoldImageDirectory)).filt
   return runtimeImageNames.has(path.basename(file));
 });
 const oversizedImages = [];
+let belowFoldImageBytes = 0;
 
 for (const imagePath of belowFoldImages) {
   const bytes = (await stat(imagePath)).size;
   const imageFile = path.relative(distDirectory, imagePath);
 
+  belowFoldImageBytes += bytes;
   console.log(`Below-fold runtime image: ${imageFile} ${bytes} bytes`);
   if (bytes > BELOW_FOLD_IMAGE_BUDGET) oversizedImages.push({ imageFile, bytes });
 }
 
-console.log(`Below-fold runtime image total: ${belowFoldImages.length} files checked`);
+console.log(
+  `Below-fold runtime image total: ${belowFoldImageBytes} bytes across ${belowFoldImages.length} files checked`,
+);
 
 const failures = [];
 if (initialJavaScriptBytes > INITIAL_JAVASCRIPT_BUDGET) {

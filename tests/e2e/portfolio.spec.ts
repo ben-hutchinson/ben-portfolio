@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 const primaryAnchors = [
-  { label: 'Mission logs', sectionHeading: 'PROOF, NOT JUST A STACK LIST.' },
-  { label: 'Systems', sectionHeading: 'Connected by operating context.' },
-  { label: 'Experience', sectionHeading: 'Experience with operating context.' },
-  { label: 'Crew', sectionHeading: 'Meet the operators' },
-  { label: 'Training sim', sectionHeading: 'Put the command reflexes to work.' },
+  { label: 'Mission logs', hash: '#work', sectionHeading: 'PROOF, NOT JUST A STACK LIST.' },
+  { label: 'Systems', hash: '#systems', sectionHeading: 'Connected by operating context.' },
+  { label: 'Experience', hash: '#experience', sectionHeading: 'Experience with operating context.' },
+  { label: 'Crew', hash: '#crew', sectionHeading: 'Meet the operators' },
+  { label: 'Training sim', hash: '#training', sectionHeading: 'Put the command reflexes to work.' },
 ] as const;
 
 test('catches a missing recruiter path from the hero to the Pokeleximon engineering briefing', async ({ page }) => {
@@ -19,13 +19,15 @@ test('catches a missing recruiter path from the hero to the Pokeleximon engineer
   ).toBeVisible();
 });
 
-for (const { label, sectionHeading } of primaryAnchors) {
+for (const { label, hash, sectionHeading } of primaryAnchors) {
   test(`catches a broken primary ${label} anchor that no longer reaches its section`, async ({ page }) => {
     await page.goto('/');
 
     const navigation = page.getByRole('navigation', { name: 'Primary' });
     await navigation.getByRole('link', { name: label, exact: true }).click();
 
-    await expect(page.getByRole('heading', { name: sectionHeading, exact: true })).toBeVisible();
+    const heading = page.getByRole('heading', { name: sectionHeading, exact: true });
+    await expect(page).toHaveURL(new RegExp(`${hash}$`));
+    await expect(heading).toBeInViewport();
   });
 }
