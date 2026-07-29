@@ -40,9 +40,56 @@ test.describe('reduced motion', () => {
 
     expect(withoutInput).toEqual(before);
 
+    await playfield.focus();
     await page.keyboard.press('Space');
-    const afterInput = await readRunnerMotion(playfield);
+    await expect
+      .poll(async () => (await readRunnerMotion(playfield)).score)
+      .toBe('Score 3');
+    await expect(playfield).toBeFocused();
 
-    expect(afterInput).not.toEqual(withoutInput);
+    await page.keyboard.press('ArrowUp');
+    await expect
+      .poll(async () => (await readRunnerMotion(playfield)).score)
+      .toBe('Score 6');
+
+    await page.keyboard.press('w');
+    await expect
+      .poll(async () => (await readRunnerMotion(playfield)).score)
+      .toBe('Score 9');
+  });
+
+  test('ignores reduced-motion jump keys from unrelated controls', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Launch Signal Sprint' }).click();
+
+    const dialog = page.getByRole('dialog', { name: 'Signal Sprint training simulation' });
+    const playfield = dialog.getByRole('application', {
+      name: 'Side scrolling jump mission. Press Space, W, Arrow Up, or tap to jump.',
+    });
+    await expect(playfield).toBeVisible();
+
+    const stationary = await readRunnerMotion(playfield);
+    const audio = dialog.getByRole('button', { name: 'Enable training audio' });
+    await audio.focus();
+    await page.keyboard.press('Space');
+    await expect(dialog.getByRole('button', { name: 'Mute training audio' })).toBeFocused();
+    expect(await readRunnerMotion(playfield)).toEqual(stationary);
+
+    const back = dialog.getByRole('button', { name: 'Back to Portfolio' });
+    await back.focus();
+    await page.keyboard.down('Space');
+    expect(await readRunnerMotion(playfield)).toEqual(stationary);
+    await page.keyboard.up('Space');
+    await expect(dialog).toBeHidden();
+
+    await page.getByRole('button', { name: 'Launch Signal Sprint' }).click();
+    await expect(playfield).toBeVisible();
+    const resetStationary = await readRunnerMotion(playfield);
+    const close = dialog.getByRole('button', { name: 'Close' });
+    await close.focus();
+    await page.keyboard.down('Space');
+    expect(await readRunnerMotion(playfield)).toEqual(resetStationary);
+    await page.keyboard.up('Space');
+    await expect(dialog).toBeHidden();
   });
 });

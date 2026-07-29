@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent } from 'react';
+import type { CSSProperties, PointerEvent } from 'react';
 import type { CharacterProfile } from '../../data/types';
 import { useChromaKeySprite } from '../../hooks/useChromaKeySprite';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -47,6 +47,11 @@ const SCORE_UNIT = 14;
 const REDUCED_MOTION_STEP_SECONDS = 0.16;
 
 const obstacleTones: Obstacle['tone'][] = ['cyan', 'purple', 'warm'];
+const interactiveControlSelector =
+  'button, a[href], input, select, textarea, summary, [contenteditable="true"]';
+
+const isInteractiveKeyboardTarget = (target: EventTarget | null): boolean =>
+  target instanceof Element && target.closest(interactiveControlSelector) !== null;
 
 const createInitialSnapshot = (status: RunnerStatus = 'ready'): RunnerSnapshot => ({
   status,
@@ -233,15 +238,6 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
     jump();
   }, [jump]);
 
-  const handlePlayfieldKeyDown = useCallback((event: ReactKeyboardEvent<HTMLDivElement>) => {
-    if (event.code !== 'Space' && event.code !== 'ArrowUp' && event.code !== 'KeyW') {
-      return;
-    }
-
-    event.preventDefault();
-    jump();
-  }, [jump]);
-
   useEffect(() => {
     resetGame();
 
@@ -260,13 +256,17 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
         return;
       }
 
+      if (isInteractiveKeyboardTarget(event.target)) {
+        return;
+      }
+
       event.preventDefault();
       jump();
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
 
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [jump]);
 
   useEffect(() => {
@@ -361,7 +361,6 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
           className={styles.playfield}
           ref={playfieldRef}
           onPointerDown={handlePlayfieldPointerDown}
-          onKeyDown={handlePlayfieldKeyDown}
           tabIndex={0}
           role="application"
           aria-label="Side scrolling jump mission. Press Space, W, Arrow Up, or tap to jump."
