@@ -5,6 +5,11 @@ interface PixellabCharacterAssetOptions {
   runnerFrameCount?: number;
 }
 
+interface CommandCharacterAssetOptions {
+  id: string;
+  runnerFrameCount?: number;
+}
+
 const withBase = (path: string): string => {
   const normalized = path.startsWith('/') ? path.slice(1) : path;
   return `${import.meta.env.BASE_URL}${normalized}`;
@@ -12,6 +17,10 @@ const withBase = (path: string): string => {
 
 const characterAssetPath = (characterId: string, file: string): string => {
   return withBase(`assets/characters/${characterId}/${file}`);
+};
+
+export const commandCharacterAssetPath = (characterId: string, file: string): string => {
+  return characterAssetPath(characterId, `command-v2/${file}`);
 };
 
 const pixellabAssetPath = (characterId: string, file: string): string => {
@@ -50,6 +59,25 @@ export const buildPixellabCharacterAssets = ({
     front,
     runnerStill,
     runnerRunFrames,
+    runnerFrameMs: 115,
+  };
+};
+
+export const buildCommandCharacterAssets = ({
+  id,
+  runnerFrameCount = 8,
+}: CommandCharacterAssetOptions) => {
+  const front = commandCharacterAssetPath(id, 'rotations/south.png');
+
+  return {
+    hero: commandCharacterAssetPath(id, 'hero.webp'),
+    thumb: front,
+    front,
+    runnerStill: commandCharacterAssetPath(id, 'rotations/east.png'),
+    runnerRunFrames: Array.from({ length: runnerFrameCount }, (_, frameIndex) => {
+      const frame = frameIndex.toString().padStart(3, '0');
+      return commandCharacterAssetPath(id, `runner/frame_${frame}.png`);
+    }),
     runnerFrameMs: 115,
   };
 };

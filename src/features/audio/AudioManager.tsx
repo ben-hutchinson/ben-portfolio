@@ -18,7 +18,7 @@ export const AudioManager = ({ enabled, muted }: AudioManagerProps) => {
 
     audioElement.muted = muted;
 
-    if (!enabled) {
+    if (!enabled || muted) {
       audioElement.pause();
       audioElement.currentTime = 0;
       return;

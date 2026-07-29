@@ -1,0 +1,114 @@
+.section {
+  scroll-margin-top: 5rem;
+  border-bottom: 1px solid var(--color-line);
+  background: rgb(14 33 72 / 28%);
+}
+
+.inner {
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(4.5rem, 8vw, 7rem) 0;
+}
+
+.sectionHeading {
+  max-width: 900px;
+  margin: 0;
+  color: var(--color-signal-white);
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-size: clamp(2.5rem, 5.5vw, 5rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.timeline {
+  padding: 0;
+  margin: clamp(2.8rem, 6vw, 5rem) 0 0;
+  list-style: none;
+}
+
+.event {
+  position: relative;
+  min-width: 0;
+  padding: 0 0 2.8rem 2.4rem;
+  display: grid;
+  grid-template-columns: minmax(120px, 0.28fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+}
+
+.event::before {
+  position: absolute;
+  top: 0.3rem;
+  bottom: -0.3rem;
+  left: 0.31rem;
+  width: 1px;
+  background: var(--color-line-strong);
+  content: '';
+}
+
+.event::after {
+  position: absolute;
+  top: 0.3rem;
+  left: 0;
+  width: 0.68rem;
+  height: 0.68rem;
+  border: 2px solid var(--color-void);
+  border-radius: 50%;
+  background: var(--color-status);
+  box-shadow: 0 0 0 1px var(--color-line-strong);
+  content: '';
+}
+
+.event:last-child {
+  padding-bottom: 0;
+}
+
+.event:last-child::before {
+  display: none;
+}
+
+.event time {
+  color: var(--color-status);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.eventCopy {
+  min-width: 0;
+}
+
+.event h3 {
+  margin: 0;
+  color: var(--color-signal-white);
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.event p {
+  max-width: 760px;
+  margin: 0.8rem 0 0;
+  color: var(--color-silver);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+@media (max-width: 680px) {
+  .inner {
+    width: calc(100% - 28px);
+    padding: 4rem 0;
+  }
+
+  .event {
+    padding-left: 1.8rem;
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+}

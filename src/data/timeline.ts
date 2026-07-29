@@ -9,7 +9,7 @@ export const timelineEvents: TimelineEvent[] = [
   },
   {
     year: '2024 - 2025',
-    title: 'Associate Software Engineer',
+    title: 'Associate Software Engineer at Flutter UKI',
     description:
       'Upskilled across Java and Scala during stack migration, and helped deliver Acca Freeze to address a clear product gap at scale.',
   },

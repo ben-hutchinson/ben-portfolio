@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, PointerEvent } from 'react';
+import type { CSSProperties, PointerEvent } from 'react';
 import type { CharacterProfile } from '../../data/types';
 import { useChromaKeySprite } from '../../hooks/useChromaKeySprite';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -44,8 +44,14 @@ const MAX_SPEED = 520;
 const GRAVITY = 1820;
 const JUMP_VELOCITY = 720;
 const SCORE_UNIT = 14;
+const REDUCED_MOTION_STEP_SECONDS = 0.16;
 
 const obstacleTones: Obstacle['tone'][] = ['cyan', 'purple', 'warm'];
+const interactiveControlSelector =
+  'button, a[href], input, select, textarea, summary, [contenteditable="true"]';
+
+const isInteractiveKeyboardTarget = (target: EventTarget | null): boolean =>
+  target instanceof Element && target.closest(interactiveControlSelector) !== null;
 
 const createInitialSnapshot = (status: RunnerStatus = 'ready'): RunnerSnapshot => ({
   status,
@@ -140,10 +146,67 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
     }
   }, [commitSnapshot]);
 
+  const advanceReducedMotionRun = useCallback(() => {
+    const current = snapshotRef.current;
+
+    if (current.status === 'gameOver') {
+      return;
+    }
+
+    const speed = clamp(BASE_SPEED + current.distance * 0.018, BASE_SPEED, MAX_SPEED);
+    const distance = current.distance + speed * REDUCED_MOTION_STEP_SECONDS;
+    const startingVelocity = current.y <= 1 ? JUMP_VELOCITY : current.velocity;
+    const velocity = startingVelocity - GRAVITY * REDUCED_MOTION_STEP_SECONDS;
+    const y = Math.max(0, current.y + velocity * REDUCED_MOTION_STEP_SECONDS);
+    const resolvedVelocity = y === 0 && velocity < 0 ? 0 : velocity;
+    let obstacles = current.obstacles
+      .map((obstacle) => ({
+        ...obstacle,
+        x: obstacle.x - speed * REDUCED_MOTION_STEP_SECONDS,
+      }))
+      .filter((obstacle) => obstacle.x + obstacle.width > -32);
+
+    const lastObstacle = obstacles[obstacles.length - 1];
+    if (!lastObstacle || lastObstacle.x < WORLD_WIDTH - nextGapRef.current) {
+      obstacles = [...obstacles, createObstacle(nextObstacleIdRef.current)];
+      nextObstacleIdRef.current += 1;
+      nextGapRef.current = randomGap(speed);
+    }
+
+    const nextSnapshot: RunnerSnapshot = {
+      ...current,
+      status: 'running',
+      y,
+      velocity: resolvedVelocity,
+      distance,
+      speed,
+      score: Math.floor(distance / SCORE_UNIT),
+      obstacles,
+    };
+
+    if (hasCollision(nextSnapshot)) {
+      const gameOverSnapshot = {
+        ...nextSnapshot,
+        status: 'gameOver' as const,
+        velocity: 0,
+      };
+      setBestScore((currentBest) => Math.max(currentBest, gameOverSnapshot.score));
+      commitSnapshot(gameOverSnapshot);
+      return;
+    }
+
+    commitSnapshot(nextSnapshot);
+  }, [commitSnapshot, setBestScore]);
+
   const jump = useCallback(() => {
     const current = snapshotRef.current;
 
     if (current.status === 'gameOver') {
+      return;
+    }
+
+    if (reducedMotion) {
+      advanceReducedMotionRun();
       return;
     }
 
@@ -159,7 +222,7 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
         velocity: JUMP_VELOCITY,
       });
     }
-  }, [commitSnapshot]);
+  }, [advanceReducedMotionRun, commitSnapshot, reducedMotion]);
 
   const handleRetry = useCallback(() => {
     resetGame('running');
@@ -175,19 +238,14 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
     jump();
   }, [jump]);
 
-  const handlePlayfieldKeyDown = useCallback((event: ReactKeyboardEvent<HTMLDivElement>) => {
-    if (event.code !== 'Space' && event.code !== 'ArrowUp' && event.code !== 'KeyW') {
-      return;
-    }
-
-    event.preventDefault();
-    jump();
-  }, [jump]);
-
   useEffect(() => {
     resetGame();
-    const startDelay = reducedMotion ? 120 : 560;
-    const timeout = window.setTimeout(startRun, startDelay);
+
+    if (reducedMotion) {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(startRun, 560);
 
     return () => window.clearTimeout(timeout);
   }, [character.id, reducedMotion, resetGame, startRun]);
@@ -198,16 +256,24 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
         return;
       }
 
+      if (isInteractiveKeyboardTarget(event.target)) {
+        return;
+      }
+
       event.preventDefault();
       jump();
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
 
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [jump]);
 
   useEffect(() => {
+    if (reducedMotion) {
+      return undefined;
+    }
+
     const tick = (time: number) => {
       const current = snapshotRef.current;
 
@@ -272,18 +338,18 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
         window.cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [commitSnapshot, setBestScore]);
+  }, [commitSnapshot, reducedMotion, setBestScore]);
 
   const runnerStyle = {
     '--mission-accent': character.accentColor,
   } as CSSProperties;
 
   return (
-    <main className={styles.runner} style={runnerStyle} aria-label="Start mission runner">
+    <div className={styles.runner} style={runnerStyle} aria-label="Signal Sprint runner">
       <header className={styles.header}>
         <div>
           <p className={styles.eyebrow}>Mission active</p>
-          <h1 className={styles.title}>{character.name}: Signal Sprint</h1>
+          <h3 className={styles.title}>Signal Sprint</h3>
         </div>
         <button type="button" className={styles.backButton} onClick={onExit}>
           Back to Portfolio
@@ -295,7 +361,6 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
           className={styles.playfield}
           ref={playfieldRef}
           onPointerDown={handlePlayfieldPointerDown}
-          onKeyDown={handlePlayfieldKeyDown}
           tabIndex={0}
           role="application"
           aria-label="Side scrolling jump mission. Press Space, W, Arrow Up, or tap to jump."
@@ -359,6 +424,6 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
           )}
         </div>
       </section>
-    </main>
+    </div>
   );
 };
