@@ -62,7 +62,7 @@ function DialogContent({
             render={
               <button
                 type="button"
-                className="absolute top-2 right-2"
+                className="absolute top-0 right-0 grid size-12 place-items-center"
               />
             }
           >

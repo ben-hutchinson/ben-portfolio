@@ -44,6 +44,7 @@ const MAX_SPEED = 520;
 const GRAVITY = 1820;
 const JUMP_VELOCITY = 720;
 const SCORE_UNIT = 14;
+const REDUCED_MOTION_STEP_SECONDS = 0.16;
 
 const obstacleTones: Obstacle['tone'][] = ['cyan', 'purple', 'warm'];
 
@@ -140,10 +141,67 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
     }
   }, [commitSnapshot]);
 
+  const advanceReducedMotionRun = useCallback(() => {
+    const current = snapshotRef.current;
+
+    if (current.status === 'gameOver') {
+      return;
+    }
+
+    const speed = clamp(BASE_SPEED + current.distance * 0.018, BASE_SPEED, MAX_SPEED);
+    const distance = current.distance + speed * REDUCED_MOTION_STEP_SECONDS;
+    const startingVelocity = current.y <= 1 ? JUMP_VELOCITY : current.velocity;
+    const velocity = startingVelocity - GRAVITY * REDUCED_MOTION_STEP_SECONDS;
+    const y = Math.max(0, current.y + velocity * REDUCED_MOTION_STEP_SECONDS);
+    const resolvedVelocity = y === 0 && velocity < 0 ? 0 : velocity;
+    let obstacles = current.obstacles
+      .map((obstacle) => ({
+        ...obstacle,
+        x: obstacle.x - speed * REDUCED_MOTION_STEP_SECONDS,
+      }))
+      .filter((obstacle) => obstacle.x + obstacle.width > -32);
+
+    const lastObstacle = obstacles[obstacles.length - 1];
+    if (!lastObstacle || lastObstacle.x < WORLD_WIDTH - nextGapRef.current) {
+      obstacles = [...obstacles, createObstacle(nextObstacleIdRef.current)];
+      nextObstacleIdRef.current += 1;
+      nextGapRef.current = randomGap(speed);
+    }
+
+    const nextSnapshot: RunnerSnapshot = {
+      ...current,
+      status: 'running',
+      y,
+      velocity: resolvedVelocity,
+      distance,
+      speed,
+      score: Math.floor(distance / SCORE_UNIT),
+      obstacles,
+    };
+
+    if (hasCollision(nextSnapshot)) {
+      const gameOverSnapshot = {
+        ...nextSnapshot,
+        status: 'gameOver' as const,
+        velocity: 0,
+      };
+      setBestScore((currentBest) => Math.max(currentBest, gameOverSnapshot.score));
+      commitSnapshot(gameOverSnapshot);
+      return;
+    }
+
+    commitSnapshot(nextSnapshot);
+  }, [commitSnapshot, setBestScore]);
+
   const jump = useCallback(() => {
     const current = snapshotRef.current;
 
     if (current.status === 'gameOver') {
+      return;
+    }
+
+    if (reducedMotion) {
+      advanceReducedMotionRun();
       return;
     }
 
@@ -159,7 +217,7 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
         velocity: JUMP_VELOCITY,
       });
     }
-  }, [commitSnapshot]);
+  }, [advanceReducedMotionRun, commitSnapshot, reducedMotion]);
 
   const handleRetry = useCallback(() => {
     resetGame('running');
@@ -186,8 +244,12 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
 
   useEffect(() => {
     resetGame();
-    const startDelay = reducedMotion ? 120 : 560;
-    const timeout = window.setTimeout(startRun, startDelay);
+
+    if (reducedMotion) {
+      return undefined;
+    }
+
+    const timeout = window.setTimeout(startRun, 560);
 
     return () => window.clearTimeout(timeout);
   }, [character.id, reducedMotion, resetGame, startRun]);
@@ -208,6 +270,10 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
   }, [jump]);
 
   useEffect(() => {
+    if (reducedMotion) {
+      return undefined;
+    }
+
     const tick = (time: number) => {
       const current = snapshotRef.current;
 
@@ -272,7 +338,7 @@ export const MissionRunner = ({ character, reducedMotion, onExit }: MissionRunne
         window.cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [commitSnapshot, setBestScore]);
+  }, [commitSnapshot, reducedMotion, setBestScore]);
 
   const runnerStyle = {
     '--mission-accent': character.accentColor,

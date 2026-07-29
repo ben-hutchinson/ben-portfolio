@@ -31,6 +31,8 @@
 
 .backButton,
 .messageActions button {
+  min-width: 44px;
+  min-height: 48px;
   border: 1px solid rgba(125, 202, 255, 0.42);
   border-radius: 8px;
   background: rgba(11, 32, 68, 0.82);

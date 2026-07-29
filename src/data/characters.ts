@@ -1,6 +1,5 @@
-import type { CrewMember } from '../features/crew/CrewSection';
 import { buildCommandCharacterAssets } from '../utils/assets';
-import type { CharacterProfile } from './types';
+import type { CharacterProfile, CrewMember } from './types';
 
 export const characters: CharacterProfile[] = [
   {

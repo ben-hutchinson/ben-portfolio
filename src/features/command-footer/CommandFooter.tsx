@@ -34,12 +34,13 @@ export const CommandFooter = () => (
           {footerLinks.map((link) => (
             <li key={link.label}>
               <a
+                download={link.external ? undefined : 'ben-hutchinson-cv.pdf'}
                 href={link.href}
                 rel={link.external ? 'noreferrer' : undefined}
                 target={link.external ? '_blank' : undefined}
               >
                 {link.label}
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">{link.external ? '↗' : '↓'}</span>
               </a>
             </li>
           ))}

@@ -1,3 +1,4 @@
+import type { RefObject } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -13,18 +14,20 @@ interface ProjectBriefingSheetProps {
   project: ProjectEntry;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  finalFocusRef: RefObject<HTMLElement | null>;
 }
 
 export const ProjectBriefingSheet = ({
   project,
   open,
   onOpenChange,
+  finalFocusRef,
 }: ProjectBriefingSheetProps) => {
   const { briefing } = project;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className={styles.sheet} finalFocus>
+      <SheetContent className={styles.sheet} finalFocus={finalFocusRef}>
         <SheetHeader className={styles.sheetHeader}>
           <SheetTitle className={styles.sheetTitle}>
             {project.title} engineering briefing

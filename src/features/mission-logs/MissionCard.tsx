@@ -7,7 +7,7 @@ interface MissionCardProps {
   project: ProjectEntry;
   reducedMotion: boolean;
   reveal: boolean;
-  setSelectedProjectId: (projectId: string) => void;
+  openProject: (projectId: string, trigger: HTMLButtonElement) => void;
 }
 
 const imageDimensions: Record<string, { height: number; width: number }> = {
@@ -21,7 +21,7 @@ export const MissionCard = ({
   project,
   reducedMotion,
   reveal,
-  setSelectedProjectId,
+  openProject,
 }: MissionCardProps) => {
   const dimensions = imageDimensions[project.id] ?? fallbackImageDimensions;
   const hoverVariant = reducedMotion ? undefined : 'hover';
@@ -91,7 +91,7 @@ export const MissionCard = ({
           className={styles.openButton}
           type="button"
           aria-label={`Open ${project.title} engineering briefing`}
-          onClick={() => setSelectedProjectId(project.id)}
+          onClick={(event) => openProject(project.id, event.currentTarget)}
         >
           Open engineering briefing
         </button>

@@ -64,7 +64,7 @@ function SheetContent({
             render={
               <button
                 type="button"
-                className="absolute top-3 right-3"
+                className="absolute top-1 right-1 grid size-12 place-items-center"
               />
             }
           >

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ProjectEntry } from '@/data/types';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { MissionCard } from './MissionCard';
@@ -12,8 +12,14 @@ interface MissionLogsSectionProps {
 
 export const MissionLogsSection = ({ id, projects }: MissionLogsSectionProps) => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const openingTriggerRef = useRef<HTMLElement | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const featuredProjects = projects.filter((project) => project.featured);
+
+  const openProject = (projectId: string, trigger: HTMLButtonElement) => {
+    openingTriggerRef.current = trigger;
+    setSelectedProjectId(projectId);
+  };
 
   return (
     <section className={styles.section} id={id} aria-labelledby={`${id}-heading`}>
@@ -37,7 +43,7 @@ export const MissionLogsSection = ({ id, projects }: MissionLogsSectionProps) =>
               project={project}
               reducedMotion={reducedMotion}
               reveal={index === 0}
-              setSelectedProjectId={setSelectedProjectId}
+              openProject={openProject}
             />
           ))}
         </div>
@@ -48,6 +54,7 @@ export const MissionLogsSection = ({ id, projects }: MissionLogsSectionProps) =>
           key={project.id}
           project={project}
           open={selectedProjectId === project.id}
+          finalFocusRef={openingTriggerRef}
           onOpenChange={(open) => {
             if (!open) setSelectedProjectId(null);
           }}

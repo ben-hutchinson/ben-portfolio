@@ -36,6 +36,14 @@ export interface CharacterProfile {
   assets: CharacterAssets;
 }
 
+export interface CrewMember {
+  id: CharacterProfile['id'];
+  name: string;
+  heroSrc: string;
+  assignment: string;
+  callSign: string;
+}
+
 export interface SectionDefinition {
   id: SectionId;
   label: string;

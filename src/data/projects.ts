@@ -8,7 +8,7 @@ export const projects: ProjectEntry[] = [
     title: 'Pokeleximon Daily',
     blurb:
       'Pokeleximon is a full-stack daily puzzle app for Pokemon fans, with crosswords, cryptic clues, and Connections-style games. Built with React, TypeScript, Vite, FastAPI, PostgreSQL, Redis, and Docker, it includes custom puzzle-generation pipelines, publishing workflows, admin tooling, and player analytics.',
-    image: projectAssetPath('project-pokeleximon.png'),
+    image: projectAssetPath('project-pokeleximon-runtime.webp'),
     tags: ['React', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
     featured: true,
     category: 'Daily puzzle app',
@@ -46,7 +46,7 @@ export const projects: ProjectEntry[] = [
     title: 'Safelog',
     blurb:
       'Privacy-first log analysis for developers. Detect, redact, and analyze logs locally so you can debug without leaking sensitive data.',
-    image: projectAssetPath('project-safelog.png'),
+    image: projectAssetPath('project-safelog-runtime.webp'),
     tags: ['Python', 'CLI', 'Privacy', 'Log Analysis'],
     featured: true,
     category: 'Privacy-first log analysis',

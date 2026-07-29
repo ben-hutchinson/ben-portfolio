@@ -31,3 +31,16 @@ for (const { label, hash, sectionHeading } of primaryAnchors) {
     await expect(heading).toBeInViewport();
   });
 }
+
+test('downloads the CV from the footer action', async ({ page }) => {
+  await page.goto('/');
+
+  const cvLink = page.getByRole('link', { name: 'Download CV' });
+  await expect(cvLink).toHaveAttribute('download', 'ben-hutchinson-cv.pdf');
+
+  const downloadPromise = page.waitForEvent('download', { timeout: 5_000 });
+  await cvLink.click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe('ben-hutchinson-cv.pdf');
+});

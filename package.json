@@ -13,8 +13,11 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:a11y": "playwright test tests/e2e/a11y.spec.ts",
+    "test:e2e:motion": "playwright test tests/e2e/motion.spec.ts",
     "test:e2e:visual": "playwright test tests/e2e/visual.spec.ts",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run test && npm run build",
+    "check:dist-budget": "node scripts/check-dist-budget.mjs",
+    "release": "npm run check && npm run test:e2e && npm run check:dist-budget"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

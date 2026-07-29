@@ -1,15 +1,8 @@
 import { m } from 'framer-motion';
+import type { CrewMember } from '@/data/types';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { revealViewport, sectionReveal } from '@/lib/motion';
 import styles from './CrewSection.module.css';
-
-export interface CrewMember {
-  id: 'ben' | 'dog' | 'cat';
-  name: string;
-  heroSrc: string;
-  assignment: string;
-  callSign: string;
-}
 
 export interface CrewSectionProps {
   members: CrewMember[];

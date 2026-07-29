@@ -51,8 +51,11 @@
 }
 
 .links a {
+  min-width: 44px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   color: var(--color-silver);
   font-size: 0.9rem;
