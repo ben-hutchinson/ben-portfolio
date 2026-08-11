@@ -1,6 +1,6 @@
 # PORT-001 — Establish the Portfolio OS foundation and quality gates
 
-Status: IN_TEST
+Status: ACCEPTED
 
 Requirement links:
 
@@ -56,22 +56,22 @@ Delivery sequence and setup exception:
 
 Acceptance criteria:
 
-- [ ] `.nvmrc` contains exactly `24`, and a clean `npm ci` succeeds using Node.js 24 LTS.
-- [ ] `package.json` and `package-lock.json` resolve React and React DOM 19.2 with their 19.2 type packages, TypeScript 6, Vite 8, `@vitejs/plugin-react` 6, and `motion` 12; `framer-motion` is absent.
-- [ ] Vitest, jsdom, React Testing Library, user-event, jest-dom, Playwright, axe-core, and the V8 coverage provider are development dependencies and install from the committed lockfile.
-- [ ] `package.json` exposes `test`, `test:watch`, `test:coverage`, `test:e2e`, `test:e2e:a11y`, and `test:e2e:visual`; `build`, `lint`, and `typecheck` remain independently runnable.
-- [ ] TypeScript remains in strict mode with unused-symbol checking, and ESLint retains React Hooks rules while recognising the required test globals.
-- [ ] `tests/setup.ts` installs jest-dom matchers and performs Testing Library cleanup after each test; Vitest uses jsdom and V8 coverage.
-- [ ] `vitest.config.ts` includes all `src/**/*.{ts,tsx}` and excludes only `src/main.tsx`, `src/vite-env.d.ts`, `src/**/*.d.ts`, and `src/**/*.types.ts` from global coverage.
-- [ ] Coverage thresholds are exactly `{ statements: 91, branches: 91, functions: 91, lines: 91 }`; a result of exactly 90% fails for every metric.
-- [ ] Playwright uses `baseURL: http://127.0.0.1:4173/ben-portfolio/`, `webServer.command: npm run preview -- --host 127.0.0.1`, and Chromium, Firefox, WebKit, mobile-Chrome, and mobile-Safari projects.
-- [ ] Before production UI work begins, `tests/unit/foundation.test.tsx` asserts Ben Hutchinson, “Mid-level platform engineer”, and “Migrated 50+ repositories and reduced average build time by four minutes.”; the Tester runs it against the legacy UI and records the expected RED result.
-- [ ] After the RED evidence is recorded, the Developer replaces the legacy root with a semantic, unstyled foundation view containing only the three required assertions; all three are visible on initial load without interaction.
-- [ ] Before legacy modules or data are removed, their verified timeline and project content is transferred to the PORT-002 content packet; the old intro, character select, character viewer, mission runner, audio manager, panels, chroma-key hook, stage machine, obsolete components, data, utilities, and styles do not remain in the new root.
-- [ ] `.gitignore` retains every existing entry and adds `coverage/`, `playwright-report/`, `test-results/`, and `.superpowers/`.
-- [ ] The committed dependency tree contains none of the excluded frameworks or replacement packages listed under Out of scope.
-- [ ] The Tester records current results for `npm test -- tests/unit/foundation.test.tsx`, `npm run typecheck`, `npm run lint`, and `npm run build` against the tested commit.
-- [ ] The Product Owner confirms the dependency lock matches the locked technology decisions, the foundation text is visible without interaction, and no excluded framework entered the dependency tree.
+- [x] `.nvmrc` contains exactly `24`, and a clean `npm ci` succeeds using Node.js 24 LTS.
+- [x] `package.json` and `package-lock.json` resolve React and React DOM 19.2 with their 19.2 type packages, TypeScript 6, Vite 8, `@vitejs/plugin-react` 6, and `motion` 12; `framer-motion` is absent.
+- [x] Vitest, jsdom, React Testing Library, user-event, jest-dom, Playwright, axe-core, and the V8 coverage provider are development dependencies and install from the committed lockfile.
+- [x] `package.json` exposes `test`, `test:watch`, `test:coverage`, `test:e2e`, `test:e2e:a11y`, and `test:e2e:visual`; `build`, `lint`, and `typecheck` remain independently runnable.
+- [x] TypeScript remains in strict mode with unused-symbol checking, and ESLint retains React Hooks rules while recognising the required test globals.
+- [x] `tests/setup.ts` installs jest-dom matchers and performs Testing Library cleanup after each test; Vitest uses jsdom and V8 coverage.
+- [x] `vitest.config.ts` includes all `src/**/*.{ts,tsx}` and excludes only `src/main.tsx`, `src/vite-env.d.ts`, `src/**/*.d.ts`, and `src/**/*.types.ts` from global coverage.
+- [x] Coverage thresholds are exactly `{ statements: 91, branches: 91, functions: 91, lines: 91 }`; a result of exactly 90% fails for every metric.
+- [x] Playwright uses `baseURL: http://127.0.0.1:4173/ben-portfolio/`, `webServer.command: npm run preview -- --host 127.0.0.1`, and Chromium, Firefox, WebKit, mobile-Chrome, and mobile-Safari projects.
+- [x] Before production UI work begins, `tests/unit/foundation.test.tsx` asserts Ben Hutchinson, “Mid-level platform engineer”, and “Migrated 50+ repositories and reduced average build time by four minutes.”; the Tester runs it against the legacy UI and records the expected RED result.
+- [x] After the RED evidence is recorded, the Developer replaces the legacy root with a semantic, unstyled foundation view containing only the three required assertions; all three are visible on initial load without interaction.
+- [x] Before legacy modules or data are removed, their verified timeline and project content is transferred to the PORT-002 content packet; the old intro, character select, character viewer, mission runner, audio manager, panels, chroma-key hook, stage machine, obsolete components, data, utilities, and styles do not remain in the new root.
+- [x] `.gitignore` retains every existing entry and adds `coverage/`, `playwright-report/`, `test-results/`, and `.superpowers/`.
+- [x] The committed dependency tree contains none of the excluded frameworks or replacement packages listed under Out of scope.
+- [x] The Tester records current results for `npm test -- tests/unit/foundation.test.tsx`, `npm run typecheck`, `npm run lint`, and `npm run build` against the tested commit.
+- [x] The Product Owner confirms the dependency lock matches the locked technology decisions, the foundation text is visible without interaction, and no excluded framework entered the dependency tree.
 
 Required coverage configuration:
 
@@ -104,4 +104,4 @@ Defects: None recorded. For each defect, add severity, reproduction steps, expec
 
 Tester verification: PASS for exact commit `99ab57a106cab473136633c0e1ae988e0347df6a`. Automated, coverage, dependency, configuration, desktop, mobile, and direct-path checks satisfy the PORT-001 Tester gate. Product Owner acceptance remains pending.
 
-Product Owner decision: PENDING — acceptance requires a Tester pass for the tested commit and Product Owner confirmation of every acceptance criterion; otherwise record a bounded change request.
+Product Owner decision: ACCEPTED — 2026-08-11. Reviewed tested production commit `99ab57a106cab473136633c0e1ae988e0347df6a` and Tester evidence commit `dc59ea7fa197d3029e3ddcc9051435518d0196bb`: Node 24.19 focused suite reported 3/3 passing, V8 coverage reported 100% statements/branches/functions/lines against the exact 91% thresholds, and typecheck, lint, build, lock/dependency, browser configuration, desktop, mobile, and direct `/ben-portfolio/` checks were recorded as passing. Product Owner inspection confirmed `.nvmrc` is exactly `24`, the manifest/lock use the locked stack with direct/source `framer-motion` absent (the required `motion` package carries it transitively), the foundation renders only the required visible semantic content, the legacy inventory was preserved in PORT-002 before deletion, and no excluded framework is a direct dependency or source import. No Important or Critical issue found.
