@@ -1,6 +1,6 @@
 # PORT-006 — Compose the recruiter-first desktop
 
-Status: IN_PROGRESS
+Status: TESTER_BLOCKED
 
 Requirement links: [PRD §7](../PRD.md#7-approved-information-architecture), [PRD §8](../PRD.md#8-core-user-journeys), [PRD §9](../PRD.md#9-functional-requirements), [DESIGN §5](../DESIGN.md#5-shell-anatomy), [DESIGN §6](../DESIGN.md#6-window-system), [DESIGN §9](../DESIGN.md#9-responsive-behaviour), [DESIGN §14](../DESIGN.md#14-performance-and-delivery), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 6](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-6-compose-the-recruiter-first-desktop).
 
@@ -102,12 +102,12 @@ Tester RED evidence: 2026-08-11 at accepted production baseline `cd1b528`, befor
 
 Developer GREEN evidence: Not yet run.
 
-Tester verification: Not yet run.
+Tester verification: 2026-08-11 against `14ca891` (including Tester correction `64b2e99`), Node 24 at `/opt/homebrew/opt/node@24/bin`. Focused command `npm test -- tests/component/Desktop.test.tsx tests/component/PortfolioShell.test.tsx tests/component/WindowLayer.test.tsx tests/unit/portfolioReducer.test.ts`: 4 files, 53/53 tests passed. Full `npm test`: 12 files, 112/112 passed. `npm run test:coverage`: 112/112 passed; statements 98.70%, branches 94.71%, functions 98.90%, lines 99.41% (all exceed 91%). `npm run typecheck`, `npm run lint`, and `npm run build` each exited 0. No Tester test correction was needed.
 
-Automated evidence: `tests/e2e/recruiter-scan.spec.ts` is defined against the production shell with locked semantic roles and `data-desktop-shortcut-app-id`; it was not executed at RED because the checked-in Playwright server remains configured for port 4173, which is already owned by the unrelated legacy worktree preview recorded in PORT-005. Running it would test the wrong build. The Developer/Tester GREEN phase must use the production build on an independently owned free port without changing the locked project configuration solely for this local conflict.
+Automated evidence: A temporary ignored Playwright config served this production build on independently owned `http://127.0.0.1:4176/ben-portfolio/`, leaving the locked 4173 configuration and unrelated 4173/4174/4175 previews untouched. `npx playwright test recruiter-scan.spec.ts --config=.superpowers/port-006-playwright.config.ts --project=Chromium --project=mobile-Chrome --reporter=line`: 2 relevant projects/tests passed; 2 opposite-project tests skipped by their explicit guards. Browser-plugin connection was unavailable, so permitted Playwright fallback captured `/private/tmp/portfolio-os-task6-desktop.png` and `/private/tmp/portfolio-os-task6-mobile.png`. It verified desktop title, one exact flagship claim, one h1, initial About z-index 3, Work upper-right, Profile lower-left, Command lower-right, keyboard `Open Work` → `#work` → Desktop → `#desktop` → Career → `#career` → Contact → `#contact`, and the CV/GitHub/LinkedIn actions. Mobile verified only About visible by default, one h1, zero visible shortcuts, no horizontal overflow, no About drag attribute, and Work reachable through the dock.
 
-Manual evidence: Not yet run.
+Manual evidence: Screenshot inspection at 1440×1000 and 390×844 confirms the first-viewport recruiter content, tactile mint/paper/ink/yellow/coral treatment, strong outlines/shadows, and intended asymmetric shortcut-left / Work-upper-right / Profile-offset-lower / Command-lower-right arrangement. Compared with `/private/tmp/portfolio-os-accepted-desktop.png`, the implementation preserves the accepted tactile application-window language and shortcut hierarchy; it intentionally renders a fuller composition with MenuBar, Dock, and larger recruiter evidence. No clipping or mobile overflow observed.
 
-Defects: PORT-005 mobile `page-has-heading-one` P3 is carried here for closure; no other defect recorded.
+Defects: BLOCKER — axe-core 4.13.0 reports `color-contrast` as serious at both required viewports, so the zero-serious/critical criterion fails. Repro: serve production `14ca891` at port 4176, visit `/#desktop` at 1440×1000 and 390×844, inject `axe.source`, then run `axe.run()`. Desktop nodes are `AboutApp.module.css .identityLine` and `FeaturedWork.module.css .context`; mobile node is `.identityLine`. Each uses coral `#ff4e2a` on paper `#f6ffeb` at 11.2px bold, contrast 3.2:1 versus required 4.5:1. PORT-005's mobile `page-has-heading-one` P3 is closed: one `h1` named `Ben Hutchinson` is present at 390×844 and axe reports no `page-has-heading-one` violation. No production changes were made by Tester.
 
-Product Owner decision: PENDING — READY packet issued; implementation awaits Tester RED evidence.
+Product Owner decision: PENDING — Tester verdict BLOCKED until the serious contrast defect is fixed and this verification is rerun.
