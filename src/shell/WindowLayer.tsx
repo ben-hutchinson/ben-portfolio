@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type JSX, type ReactNode } from 'react';
+import { AboutApp } from '../apps/about/AboutApp';
+import { FeaturedWork } from '../apps/work/FeaturedWork';
 import { usePortfolio } from '../app/PortfolioContext';
 import type { PortfolioState } from '../app/portfolioState';
 import type { AppId } from '../data/models';
-import { profile } from '../data/profile';
-import { flagshipWork } from '../data/work';
 import { clampWindowPosition, type WindowSize, type WindowWorkArea } from '../utils/windowGeometry';
 import { WindowFrame } from './WindowFrame';
 import styles from './WindowLayer.module.css';
@@ -20,38 +20,20 @@ const WINDOW_TITLES: Readonly<Record<AppId, string>> = {
 };
 
 const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
-  about: { width: 520, height: 390 },
-  work: { width: 620, height: 440 },
+  about: { width: 520, height: 360 },
+  work: { width: 620, height: 340 },
   career: { width: 520, height: 320 },
   projects: { width: 520, height: 320 },
   contact: { width: 480, height: 300 },
-  command: { width: 560, height: 240 },
+  command: { width: 540, height: 220 },
 };
 
 function appContent(appId: AppId): ReactNode {
   switch (appId) {
     case 'about':
-      return (
-        <div className={styles.appContent}>
-          <p className={styles.eyebrow}>About this portfolio</p>
-          <h1>{profile.name}</h1>
-          <p className={styles.lede}>{profile.positioning}</p>
-          <p>{profile.focus}</p>
-          <p>{profile.location} · {profile.availability}</p>
-        </div>
-      );
+      return <AboutApp />;
     case 'work':
-      return (
-        <article className={styles.appContent}>
-          <p className={styles.eyebrow}>{flagshipWork.context}</p>
-          <h3>{flagshipWork.title}</h3>
-          <p>{flagshipWork.friction}</p>
-          <p>{flagshipWork.ownership} {flagshipWork.technicalApproach}</p>
-          <p>{flagshipWork.rollout}</p>
-          <p className={styles.result}>{flagshipWork.result}</p>
-          <p className={styles.technologyList}>{flagshipWork.technologies.join(' · ')}</p>
-        </article>
-      );
+      return <FeaturedWork />;
     case 'command':
       return (
         <div className={styles.appContent}>
@@ -159,6 +141,15 @@ export function WindowLayer(): JSX.Element {
     return () => observer.disconnect();
   }, []);
 
+  useLayoutEffect(() => {
+    const frames = layerRef.current?.querySelectorAll<HTMLElement>('[data-window-id]') ?? [];
+    for (const frame of frames) {
+      const isMobileInactive = !capability.wideViewport
+        && frame.dataset.windowId !== state.focusedAppId;
+      frame.style.display = isMobileInactive ? 'none' : '';
+    }
+  }, [capability.wideViewport, state.focusedAppId, state.openAppIds, state.minimizedAppIds]);
+
   useEffect(() => {
     if (!desktopCapable || workArea.width <= 0 || workArea.height <= 0) return;
     for (const appId of visibleAppIds(state)) {
@@ -198,7 +189,8 @@ export function WindowLayer(): JSX.Element {
       const dockControl = document.querySelector(`[data-dock-app-id="${focusTarget}"]`);
       const resetControl = document.querySelector('[data-window-control="reset-layout"]');
       const frame = document.querySelector(`[data-window-id="${focusTarget}"]`);
-      if (activeElement === dockControl || activeElement === resetControl || frame?.contains(activeElement)) {
+      const restoredFromInsideFrame = restored !== null && frame?.contains(activeElement);
+      if (activeElement === dockControl || activeElement === resetControl || restoredFromInsideFrame) {
         focusFrameHeading(focusTarget);
       }
     }
@@ -231,6 +223,7 @@ export function WindowLayer(): JSX.Element {
     <div
       className={styles.layer}
       data-desktop-windows={desktopCapable || undefined}
+      data-mobile-windows={!capability.wideViewport || undefined}
       ref={layerRef}
     >
       {allVisibleIds.map((appId) => {

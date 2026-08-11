@@ -30,12 +30,7 @@
 .appContent { max-width: 46rem; }
 .appContent > :first-child { margin-top: 0; }
 .appContent > :last-child { margin-bottom: 0; }
-.appContent h1,
-.appContent h3 { margin: 0 0 var(--space-3); font-family: var(--font-display); font-size: 1.8rem; line-height: 1; }
 .eyebrow { color: var(--color-muted); font-size: 0.72rem; font-weight: 900; text-transform: uppercase; }
-.lede { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; line-height: 1.2; }
-.result { padding-left: var(--space-3); border-left: 0.55rem solid var(--color-orange); font-family: var(--font-display); font-size: 1.12rem; font-weight: 900; line-height: 1.2; }
-.technologyList { color: var(--color-muted); font-size: 0.74rem; font-weight: 800; }
 
 @media (max-width: 767px), (pointer: coarse), (pointer: none) {
   .layer {
@@ -52,6 +47,12 @@
   }
 }
 
-.layer:not([data-desktop-windows]) [data-window-id]:not([data-focused='true']) {
+.layer[data-mobile-windows] [data-window-id]:not([data-focused='true']) {
   display: none;
+}
+
+@media (pointer: coarse), (pointer: none) {
+  .layer:not([data-desktop-windows]) [data-window-id]:not([data-focused='true']) {
+    display: none;
+  }
 }

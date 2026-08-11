@@ -4,6 +4,6 @@ export const profile = {
   positioning:
     'Backend engineer moving deeper into platform engineering, building reliable paths and reducing friction for engineering teams.',
   focus: 'Production-minded systems, developer experience, and internal tooling.',
-  location: 'United Kingdom',
+  location: 'Manchester, UK',
   availability: 'Open to platform and backend engineering opportunities.',
 } as const;

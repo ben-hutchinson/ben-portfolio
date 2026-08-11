@@ -1,13 +1,11 @@
 .page { min-height: 100vh; padding: clamp(var(--space-3), 3vw, var(--space-6)); background: var(--color-charcoal); }
 .frame { display: flex; width: min(100%, 92rem); min-height: calc(100vh - var(--space-6) - var(--space-6)); margin: 0 auto; overflow: hidden; border: var(--border-heavy) solid var(--color-ink); border-radius: var(--radius-frame); background: var(--color-mint); box-shadow: 9px 9px 0 var(--color-ink); flex-direction: column; }
 .header { flex: 0 0 auto; }
-.main { position: relative; display: flex; flex: 1 1 auto; min-height: 42rem; padding: var(--space-3); overflow: hidden; }
-.backgroundStatement { position: absolute; top: 4%; right: -3%; z-index: 0; margin: 0; color: var(--color-ink); font-family: var(--font-display); font-size: clamp(4rem, 13vw, 12rem); font-weight: 950; letter-spacing: -0.09em; line-height: 0.78; opacity: 0.09; pointer-events: none; text-align: right; }
+.main { position: relative; display: flex; flex: 1 1 auto; min-height: 42rem; overflow: hidden; }
 .footer { flex: 0 0 auto; }
 
 @media (max-width: 767px), (pointer: coarse), (pointer: none) {
   .page { padding: var(--space-2); }
   .frame { min-height: calc(100vh - var(--space-2) - var(--space-2)); overflow: visible; border-radius: 10px; box-shadow: 5px 5px 0 var(--color-ink); }
-  .main { min-height: 0; padding: var(--space-3); overflow: visible; }
-  .backgroundStatement { top: 9%; font-size: 30vw; }
+  .main { min-height: 0; overflow: visible; }
 }

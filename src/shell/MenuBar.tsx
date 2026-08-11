@@ -48,7 +48,7 @@ export function MenuBar() {
         </nav>
 
         <div className={styles.status}>
-          <span className={styles.location}>Manchester, UK</span>
+          <span className={styles.location}>{profile.location}</span>
           <span className={styles.availability}><span aria-hidden="true" className={styles.statusDot} />{profile.availability}</span>
         </div>
       </div>

@@ -26,22 +26,22 @@ export interface PortfolioState {
 }
 
 export const DEFAULT_WINDOW_POSITIONS: Readonly<Record<AppId, Point>> = {
-  about: { x: 48, y: 72 },
-  work: { x: 620, y: 96 },
+  about: { x: 220, y: 300 },
+  work: { x: 650, y: 36 },
   career: { x: 180, y: 104 },
   projects: { x: 240, y: 120 },
   contact: { x: 360, y: 152 },
-  command: { x: 360, y: 520 },
+  command: { x: 760, y: 500 },
 };
 
 export function createInitialPortfolioState(): PortfolioState {
   return {
     route: { kind: 'desktop' },
     openAppIds: ['about', 'work', 'command'],
-    focusedAppId: 'command',
+    focusedAppId: 'about',
     minimizedAppIds: [],
     maximizedAppId: null,
-    windowOrder: ['about', 'work', 'command'],
+    windowOrder: ['work', 'command', 'about'],
     windowPositions: DEFAULT_WINDOW_POSITIONS,
     activeCareerStageId: 'graduate',
     activeProjectId: null,
