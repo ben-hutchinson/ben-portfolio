@@ -1,6 +1,6 @@
 # PORT-003 — Make shell and hash state deterministic
 
-Status: READY
+Status: IN PROGRESS — Tester RED complete; awaiting Developer GREEN
 
 Requirement links:
 
@@ -186,7 +186,7 @@ Menu, dock, desktop shortcut, command, and later UI components dispatch the same
 
 ## Evidence record
 
-Tester RED evidence: Not yet run.
+Tester RED evidence: 2026-08-11 — Node v24.19.0, tested commit `2887e36`. Command: `npm test -- tests/unit/portfolioReducer.test.ts tests/unit/hashState.test.ts tests/component/PortfolioContext.test.tsx` (with the Node 24 runtime first on `PATH`; the default Node 25 executable cannot load its missing Homebrew `simdjson` dependency). Expected RED result: all three suites fail import resolution because the five Developer-owned production modules do not yet exist: `src/app/portfolioState.ts`, `src/app/portfolioReducer.ts`, `src/app/hashState.ts`, `src/app/PortfolioContext.tsx`, and `src/hooks/useHashNavigation.ts`. The new tests define the initial/reset state, all ten action contracts and no-op/reference cases, route and window invariants, seven exact parse/serialize routes plus recovery, hash hook lifecycle, and provider boundary/state dispatch.
 
 Developer GREEN evidence: Not yet run.
 
