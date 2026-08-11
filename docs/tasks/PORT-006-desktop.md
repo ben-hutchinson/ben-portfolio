@@ -1,6 +1,6 @@
 # PORT-006 — Compose the recruiter-first desktop
 
-Status: READY
+Status: IN_PROGRESS
 
 Requirement links: [PRD §7](../PRD.md#7-approved-information-architecture), [PRD §8](../PRD.md#8-core-user-journeys), [PRD §9](../PRD.md#9-functional-requirements), [DESIGN §5](../DESIGN.md#5-shell-anatomy), [DESIGN §6](../DESIGN.md#6-window-system), [DESIGN §9](../DESIGN.md#9-responsive-behaviour), [DESIGN §14](../DESIGN.md#14-performance-and-delivery), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 6](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-6-compose-the-recruiter-first-desktop).
 
@@ -69,10 +69,10 @@ Use the approved tactile mint/paper/Ink/yellow/coral palette, strong outlines, h
 
 ### Tester RED gate
 
-- [ ] Before production changes, add `Desktop.test.tsx`. It fails on the PORT-005 production shell and proves the zero-click desktop contract, one exact flagship result, one visible `h1`, canonical MenuBar location, asymmetric relationships, initial About topness, mobile About-only default, and shortcut action mapping.
-- [ ] Update stale state/shell expectations to make the new initial-focus amendment observable: same three default open apps, About focused/topmost, no new route/hash/action.
-- [ ] Add `recruiter-scan.spec.ts` against the production shell. At 1440×1000, assert the first-viewport contract, one-action Work → Desktop → Career → CV journey, and semantic selector coverage. At 390×844, assert About-only default, one visible `h1`, no shortcut requirement, dock recovery, natural scrolling, and no horizontal overflow.
-- [ ] Record Node 24 command, baseline commit, expected failing assertion, and confirmation that no production file changed.
+- [x] Before production changes, add `Desktop.test.tsx`. It fails on the PORT-005 production shell and proves the zero-click desktop contract, one exact flagship result, one visible `h1`, canonical MenuBar location, asymmetric relationships, initial About topness, mobile About-only default, and shortcut action mapping.
+- [x] Update stale state/shell expectations to make the new initial-focus amendment observable: same three default open apps, About focused/topmost, no new route/hash/action.
+- [x] Add `recruiter-scan.spec.ts` against the production shell. At 1440×1000, assert the first-viewport contract, one-action Work → Desktop → Career → CV journey, and semantic selector coverage. At 390×844, assert About-only default, one visible `h1`, no shortcut requirement, dock recovery, natural scrolling, and no horizontal overflow.
+- [x] Record Node 24 command, baseline commit, expected failing assertion, and confirmation that no production file changed.
 
 ### Developer GREEN handoff
 
@@ -98,13 +98,13 @@ Use the approved tactile mint/paper/Ink/yellow/coral palette, strong outlines, h
 
 ## Evidence record
 
-Tester RED evidence: Not yet run.
+Tester RED evidence: 2026-08-11 at accepted production baseline `cd1b528`, before any PORT-006 production edit. Command: `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/component/Desktop.test.tsx tests/component/PortfolioShell.test.tsx tests/component/WindowLayer.test.tsx tests/unit/portfolioReducer.test.ts`. Result: 4 failing files; 11 expected failing tests and 42 passing tests (53 total). `Desktop.test.tsx` failed all five new behaviour cases because canonical `profile.location` is still `United Kingdom`, About is not the initial focused/topmost app, the asymmetric points are absent, all three desktop shortcuts are absent, recruiter exits via shortcuts are absent, and coarse mobile still displays Command rather than About. The three stale suites failed only their intentionally amended default-state, z-index/position, Reset, and keyboard-order assertions. There was no import, transform, environment, or test-harness failure. `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` exited 0, confirming the Tester additions type-check. Only the five authorized Tester files and this packet changed; no production file changed and `.DS_Store` was not touched by the Tester.
 
 Developer GREEN evidence: Not yet run.
 
 Tester verification: Not yet run.
 
-Automated evidence: Not yet run.
+Automated evidence: `tests/e2e/recruiter-scan.spec.ts` is defined against the production shell with locked semantic roles and `data-desktop-shortcut-app-id`; it was not executed at RED because the checked-in Playwright server remains configured for port 4173, which is already owned by the unrelated legacy worktree preview recorded in PORT-005. Running it would test the wrong build. The Developer/Tester GREEN phase must use the production build on an independently owned free port without changing the locked project configuration solely for this local conflict.
 
 Manual evidence: Not yet run.
 

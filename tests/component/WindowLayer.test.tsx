@@ -94,7 +94,7 @@ describe('WindowLayer', () => {
       .toEqual(['about', 'work', 'command']);
     const about = document.querySelector('[data-window-id="about"]') as HTMLElement;
     const command = document.querySelector('[data-window-id="command"]') as HTMLElement;
-    expect(Number(command.style.zIndex)).toBeGreaterThan(Number(about.style.zIndex));
+    expect(Number(about.style.zIndex)).toBeGreaterThan(Number(command.style.zIndex));
 
     await userEvent.setup().click(screen.getByRole('region', { name: 'About' }));
     expect([...document.querySelectorAll('[data-window-id]')].map((node) => node.getAttribute('data-window-id')))
@@ -116,6 +116,7 @@ describe('WindowLayer', () => {
     await user.click(screen.getByRole('button', { name: 'Reset layout' }));
     expect([...document.querySelectorAll('[data-window-id]')].map((node) => node.getAttribute('data-window-id')))
       .toEqual(['about', 'work', 'command']);
+    expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"focusedAppId":"about"');
   });
 
   it('uses existing actions for close, minimize, maximize, restore, dock recovery, and focus placement', async () => {
@@ -197,11 +198,10 @@ describe('WindowLayer', () => {
     const observer = ResizeObserverMock.instances[0];
     observer.emit(1440, 900);
 
-    const expectedDesktopPositions = {
-      about: { x: 48, y: 72 },
-      work: { x: 620, y: 96 },
-      command: { x: 360, y: 520 },
-    };
+    const expectedDesktopPositions = desktopPositions();
+    expect(expectedDesktopPositions.work.y).toBeLessThan(expectedDesktopPositions.about.y);
+    expect(expectedDesktopPositions.command.x).toBeGreaterThan(expectedDesktopPositions.about.x);
+    expect(expectedDesktopPositions.command.y).toBeGreaterThan(expectedDesktopPositions.about.y);
     expect(desktopPositions()).toEqual(expectedDesktopPositions);
 
     (media.query as unknown as { matches: boolean }).matches = false;

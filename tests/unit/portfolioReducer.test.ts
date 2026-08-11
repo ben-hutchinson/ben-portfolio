@@ -47,15 +47,18 @@ describe('createInitialPortfolioState', () => {
     expect(initial).toEqual({
       route: { kind: 'desktop' },
       openAppIds: ['about', 'work', 'command'],
-      focusedAppId: 'command',
+      focusedAppId: 'about',
       minimizedAppIds: [],
       maximizedAppId: null,
-      windowOrder: ['about', 'work', 'command'],
+      windowOrder: ['work', 'command', 'about'],
       windowPositions: DEFAULT_WINDOW_POSITIONS,
       activeCareerStageId: 'graduate',
       activeProjectId: null,
     });
     expect(reset).toEqual(initial);
+    expect(initial.windowPositions.work.y).toBeLessThan(initial.windowPositions.about.y);
+    expect(initial.windowPositions.command.x).toBeGreaterThan(initial.windowPositions.about.x);
+    expect(initial.windowPositions.command.y).toBeGreaterThan(initial.windowPositions.about.y);
     expectWindowInvariants(initial);
   });
 });
@@ -150,7 +153,7 @@ describe('portfolioReducer action contract', () => {
 describe('portfolioReducer no-ops', () => {
   it.each<readonly [string, PortfolioAction, ReturnType<typeof createInitialPortfolioState>]>([
     ['NAVIGATE to the existing desktop state', { type: 'NAVIGATE', route: { kind: 'desktop' } }, createInitialPortfolioState()],
-    ['OPEN_APP for already focused command', { type: 'OPEN_APP', appId: 'command' }, createInitialPortfolioState()],
+    ['OPEN_APP for already focused about', { type: 'OPEN_APP', appId: 'about' }, createInitialPortfolioState()],
     ['FOCUS_WINDOW for a closed app', { type: 'FOCUS_WINDOW', appId: 'career' }, createInitialPortfolioState()],
     ['MINIMIZE_WINDOW for a closed app', { type: 'MINIMIZE_WINDOW', appId: 'career' }, createInitialPortfolioState()],
     ['RESTORE_WINDOW for a normal app', { type: 'RESTORE_WINDOW', appId: 'work' }, createInitialPortfolioState()],
@@ -185,8 +188,8 @@ describe('portfolioReducer no-ops', () => {
     const minimized = portfolioReducer(initial, { type: 'MINIMIZE_WINDOW', appId: 'work' });
     const closed = portfolioReducer(initial, { type: 'CLOSE_WINDOW', appId: 'work' });
 
-    expect(portfolioReducer(initial, { type: 'OPEN_APP', appId: 'command' })).toBe(initial);
-    expect(portfolioReducer(initial, { type: 'FOCUS_WINDOW', appId: 'command' })).toBe(initial);
+    expect(portfolioReducer(initial, { type: 'OPEN_APP', appId: 'about' })).toBe(initial);
+    expect(portfolioReducer(initial, { type: 'FOCUS_WINDOW', appId: 'about' })).toBe(initial);
     expect(portfolioReducer(maximized, { type: 'MAXIMIZE_WINDOW', appId: 'command' })).toBe(maximized);
     expect(moved).toBe(initial);
     expect(portfolioReducer(minimized, { type: 'MINIMIZE_WINDOW', appId: 'work' })).toBe(minimized);
