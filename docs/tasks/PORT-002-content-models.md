@@ -1,6 +1,6 @@
 # PORT-002 — Create canonical content models
 
-Status: IN_TEST
+Status: ACCEPTED
 
 Requirement links: [PRD §2 — Positioning](../PRD.md#2-positioning), [PRD §7 — Approved Information Architecture](../PRD.md#7-approved-information-architecture), [PRD §9 — Content](../PRD.md#9-functional-requirements), [DESIGN §7 — Career.app](../DESIGN.md#7-careerapp), [DESIGN §8 — Other Applications](../DESIGN.md#8-other-applications), and [implementation plan — Task 2](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-2-create-canonical-content-models).
 
@@ -68,7 +68,7 @@ Canonical migration sentence (one canonical data literal): “Migrated 50+ repos
 - [x] All professional copy is in the new modules; generic equal-weight Work entries are absent from the personal-project catalogue. (Canonical-data audit passed.)
 - [x] Verified Pokeleximon and Safelog links are preserved; non-public SKAO links are absent, not `#`. (Focused contract and canonical-data audit passed.)
 - [x] `npm test -- tests/unit/content.test.ts` and `npm run test:coverage` are run, with content helpers measured if present. (Node 24.19.0 retest after `b5c58f9`: focused suite 9/9; full suite 12/12; statements, branches, functions, and lines all 100%, exceeding the 91% thresholds.)
-- [ ] The Product Owner has compared every rendered claim with source docs and verified content.
+- [x] The Product Owner has compared every rendered claim with source docs and verified content. (Accepted 2026-08-11: profile positioning matches PRD §2; Career labels, headlines, evidence, and supporting copy match DESIGN §7 and the preserved timeline inventory; the SKAO work file states the required ownership, rollout, exact result, and public-detail boundary; project copy, tags, and verified Pokeleximon/Safelog links match the preserved project inventory.)
 
 ## Tester GREEN evidence — 2026-08-11
 
@@ -87,7 +87,7 @@ Manual evidence: Product Owner verifies every rendered canonical value against t
 
 Defects: record severity, reproduction, expected, actual, and evidence.
 
-Product Owner decision: ACCEPTED only after all criteria pass; otherwise return a bounded copy change request.
+Product Owner decision: ACCEPTED — 2026-08-11. Reviewed production commits `95886d8` and `b5c58f9`, tester pass commit `da11002`, and the canonical modules against PRD §§2, 7, and 9; DESIGN §§7 and 8; and the preserved legacy inventory in this packet. All eight acceptance criteria are satisfied. The required SKAO case-study facts are present without extrapolated savings or invented metrics; the exact flagship migration sentence occurs once; career and personal-project IDs, verified links, and non-public SKAO link boundary are correct. Tester evidence records focused 9/9, full 12/12, 100% V8 coverage against 91% thresholds, typecheck, lint, build, and `/ben-portfolio/` base-path verification. No Important or Critical issue found.
 
 ## Preserved legacy source inventory
 
