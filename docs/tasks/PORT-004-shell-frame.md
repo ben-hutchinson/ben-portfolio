@@ -1,6 +1,6 @@
 # PORT-004 — Build the visual shell and navigation frame
 
-Status: READY
+Status: IN_PROGRESS — Tester RED gate underway
 
 Requirement links:
 
@@ -133,7 +133,7 @@ The temporary recruiter summary is deliberately in-flow so it cannot claim to be
 
 ## Evidence record
 
-Tester RED evidence: Not yet run.
+Tester RED evidence: 2026-08-11 — Node v24.13.0 executable selected at `/opt/homebrew/opt/node@24/bin/node`; baseline commit `16b51b719fa36e107b4584b7e3c2752614b56f68`; focused command: `/opt/homebrew/opt/node@24/bin/node node_modules/vitest/vitest.mjs run tests/component/MenuBar.test.tsx tests/component/Dock.test.tsx tests/component/PortfolioShell.test.tsx`; result: 3 failed suites / 0 discovered tests, each failing solely in Vite import analysis because Task 4 public modules (`src/shell/MenuBar`, `src/shell/Dock`, and `src/shell/PortfolioShell`) are not yet present. The package-script launcher could not be used because the default Node 25 binary aborts on a missing Homebrew `simdjson` dylib; direct Node 24 invocation avoids that unrelated environment fault. API assumptions: each is a named, zero-prop public component; `MenuBar` and `Dock` consume the existing `PortfolioProvider` context; shell owns provider composition separately and exposes its landmarks directly. Tests cover public roles, text, attributes, reducer/hash effects, and native interaction only.
 
 Developer GREEN evidence: Not yet run.
 
