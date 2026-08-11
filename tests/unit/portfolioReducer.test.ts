@@ -106,6 +106,13 @@ describe('portfolioReducer action contract', () => {
       expect(next).toMatchObject({ route: { kind: 'contact' }, focusedAppId: 'contact', maximizedAppId: 'contact' });
       expect(next.minimizedAppIds).not.toContain('contact');
     }],
+    ['RESTORE_WINDOW clears only the matching maximized state', (state) => {
+      const moved = portfolioReducer(state, { type: 'MOVE_WINDOW', appId: 'work', position: { x: 144, y: 88 } });
+      const maximized = portfolioReducer(moved, { type: 'MAXIMIZE_WINDOW', appId: 'work' });
+      const next = portfolioReducer(maximized, { type: 'RESTORE_WINDOW', appId: 'work' });
+      expect(next).toEqual({ ...maximized, maximizedAppId: null });
+      expectWindowInvariants(next);
+    }],
     ['CLOSE_WINDOW removes a route target and recovers to desktop without deleting selections', (state) => {
       const selected = portfolioReducer(state, { type: 'SELECT_PROJECT', projectId: 'pokeleximon' });
       const next = portfolioReducer(selected, { type: 'CLOSE_WINDOW', appId: 'projects' });
@@ -146,6 +153,7 @@ describe('portfolioReducer no-ops', () => {
     ['OPEN_APP for already focused command', { type: 'OPEN_APP', appId: 'command' }, createInitialPortfolioState()],
     ['FOCUS_WINDOW for a closed app', { type: 'FOCUS_WINDOW', appId: 'career' }, createInitialPortfolioState()],
     ['MINIMIZE_WINDOW for a closed app', { type: 'MINIMIZE_WINDOW', appId: 'career' }, createInitialPortfolioState()],
+    ['RESTORE_WINDOW for a normal app', { type: 'RESTORE_WINDOW', appId: 'work' }, createInitialPortfolioState()],
     ['CLOSE_WINDOW for a closed app', { type: 'CLOSE_WINDOW', appId: 'career' }, createInitialPortfolioState()],
     ['MOVE_WINDOW for a closed app', { type: 'MOVE_WINDOW', appId: 'career', position: { x: 1, y: 1 } }, createInitialPortfolioState()],
   ])('%s preserves the previous state reference', (_name, action, state) => {

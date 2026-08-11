@@ -114,11 +114,12 @@ describe('WindowLayer', () => {
     await user.click(screen.getByRole('button', { name: 'Work' }));
     await waitFor(() => expectFocusInFrame('Work'));
 
+    const hashBeforeMaximize = window.location.hash;
     await user.click(screen.getByRole('button', { name: 'Maximize Work' }));
     expect(screen.getByRole('button', { name: 'Restore Work' })).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Restore Work' }));
     expect(screen.getByRole('button', { name: 'Maximize Work' })).toBeVisible();
-    expect(window.location.hash).toBe('#desktop');
+    expect(window.location.hash).toBe(hashBeforeMaximize);
   });
 
   it('restores only the maximized frame that contains the Escape event target', async () => {

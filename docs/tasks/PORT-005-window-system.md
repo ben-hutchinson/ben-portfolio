@@ -11,7 +11,7 @@ Requirement links:
 
 User outcome: A visitor can explore playful desktop windows on capable screens, then always recover, operate, and reach the same content with keyboard, dock, and mobile controls without relying on drag.
 
-Dependencies: PORT-001, PORT-002, PORT-003, and PORT-004 are accepted. PORT-003 at `16b51b7` is the only state, action, hash, and default-layout contract. PORT-004 at `11c45c9` is the accepted semantic shell. This packet changes neither task's public contract.
+Dependencies: PORT-001, PORT-002, PORT-003, and PORT-004 are accepted. PORT-003 at `16b51b7` remains the state, hash, and default-layout contract, with the narrow `RESTORE_WINDOW` action amendment recorded below. PORT-004 at `11c45c9` is the accepted semantic shell.
 
 ## Scope and ownership
 
@@ -20,6 +20,7 @@ In scope:
 | File | Change | Responsibility |
 | --- | --- | --- |
 | `src/utils/windowGeometry.ts` | Create pure runtime-safe size/position normalization and clamping. | Developer |
+| `src/app/portfolioReducer.ts` | Add the route-preserving `RESTORE_WINDOW` action authorized by the Product Owner. | Developer |
 | `src/hooks/useWindowDrag.ts` | Create title-bar pointer-drag enhancement. | Developer |
 | `src/shell/WindowFrame.tsx` | Create reusable labelled non-modal application frame and its named controls. | Developer |
 | `src/shell/WindowFrame.module.css` | Create frame/chrome, focus, maximize, and motion-safe rules. | Developer |
@@ -153,11 +154,13 @@ export const WINDOW_APP_ORDER: readonly ['about', 'work', 'career', 'projects', 
 export function WindowLayer(): JSX.Element;
 ```
 
-`WindowLayer` consumes only `usePortfolio()` for existing shell state/actions. `WINDOW_APP_ORDER` is the stable source, reading, and keyboard order. It filters that list by reducer-open/non-minimized state and maps it directly to frames; it never maps `windowOrder`. It derives visual z-index from `state.windowOrder` only, with the focused/topmost application highest. A frame click/focus dispatches `FOCUS_WINDOW`; drag dispatches bounded `MOVE_WINDOW`; close/minimize/maximize/restore dispatch the corresponding existing action. Normal maximize dispatches `MAXIMIZE_WINDOW`; restore dispatches `OPEN_APP` for the same `appId`, which preserves the current route for About/Command and restores its normal geometry under the accepted reducer contract.
+`WindowLayer` consumes only `usePortfolio()` for shell state/actions. `WINDOW_APP_ORDER` is the stable source, reading, and keyboard order. It filters that list by reducer-open/non-minimized state and maps it directly to frames; it never maps `windowOrder`. It derives visual z-index from `state.windowOrder` only, with the focused/topmost application highest. A frame click/focus dispatches `FOCUS_WINDOW`; drag dispatches bounded `MOVE_WINDOW`; close/minimize/maximize/restore dispatch their corresponding actions. Normal maximize dispatches `MAXIMIZE_WINDOW`; restore dispatches `RESTORE_WINDOW` for the same `appId`.
+
+Product Owner amendment, 2026-08-11: `PortfolioAction` adds `{ type: 'RESTORE_WINDOW'; appId: AppId }`. It is valid only when `state.maximizedAppId === appId`; then it clears only `maximizedAppId`, preserving the current route, selections, open/minimized membership, focus, order, and position. Otherwise it returns the same state reference. This resolves the prior `OPEN_APP` mismatch without resetting layout, mutating history, or changing `OPEN_APP` semantics.
 
 Close/minimize cannot strand focus. If the action originated inside the disappearing focused frame, after the state commit move focus to the matching existing dock button `[data-dock-app-id="${appId}"]`; if it is absent or disabled, focus `#main-content`; do not focus a hidden frame. When a dock/control opens or restores a frame, place focus on that frame's title heading or first named window control after it mounts. These programmatic focus changes must not alter hashes and should be skipped when the user has already moved focus elsewhere before the deferred focus executes.
 
-Register one document-level `keydown` listener while the layer is mounted. It handles `Escape` only when `state.maximizedAppId` is non-null **and** `event.target` is contained by that maximized frame; it prevents default and dispatches `OPEN_APP` for that exact app, restoring the frame without creating a route. Escape anywhere else—including shell navigation, dock, a normal window, or a maximized frame that no longer contains focus—does nothing. Remove that listener on cleanup.
+Register one document-level `keydown` listener while the layer is mounted. It handles `Escape` only when `state.maximizedAppId` is non-null **and** `event.target` is contained by that maximized frame; it prevents default and dispatches `RESTORE_WINDOW` for that exact app, restoring the frame without changing its route. Escape anywhere else—including shell navigation, dock, a normal window, or a maximized frame that no longer contains focus—does nothing. Remove that listener on cleanup.
 
 Provide one visible `Reset layout` button in the layer work-area utility region with accessible name `Reset layout`, `data-window-control="reset-layout"`, and `dispatch({ type: 'RESET_LAYOUT' })`. It is reachable in normal document order, including when every frame is closed/minimized and on mobile. Reset restores the reducer's accepted default composition; do not add local defaults or persistence.
 
@@ -240,7 +243,7 @@ Record viewport, pointer/input method, scenario, observed result, tested commit,
 - [ ] Windows are labelled non-modal sections with accessible application titles, exact close/minimize/maximise-or-restore control names, visible focus, and no dialog semantics or focus trap.
 - [ ] Drag starts only from the title bar, uses pointer capture, ends on up/cancel, cleans up listeners/capture on unmount, and is available only for fine pointers at viewport widths of at least 768px.
 - [ ] Focus changes raise a window visually but source, heading, screen-reader, and keyboard order always follow the fixed `WINDOW_APP_ORDER`, never z-index or interaction order.
-- [ ] Close, minimize, maximize, restore, reducer reset, dock recovery, focus fallback, and Escape use only the accepted PORT-003 actions and preserve its route/window invariants; Escape restores only when focus is inside the maximized frame.
+- [ ] Close, minimize, maximize, restore, reducer reset, dock recovery, focus fallback, and Escape use the accepted actions plus the authorized route-preserving `RESTORE_WINDOW` amendment and preserve route/window invariants; Escape restores only when focus is inside the maximized frame.
 - [ ] Resize revalidates every applicable window position. Reset Layout is visibly and keyboard-reachable whether frames are open, closed, minimized, normal, or maximized.
 - [ ] Wide screens offer bounded overlapping windows; mobile/coarse pointer screens use no free dragging, at most one active normal-flow application, natural scrolling, practical touch targets, and no horizontal/fixed-height clipping.
 - [ ] Tester records RED-before-production evidence followed by focused GREEN, full coverage at or above all checked-in 91% thresholds, typecheck, lint, build, desktop/mobile Playwright, accessibility, and manual recovery evidence for the tested commit.

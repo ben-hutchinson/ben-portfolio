@@ -34,6 +34,7 @@ export function Dock() {
               key={app.appId}
               onClick={onClick}
               aria-pressed={isActive}
+              data-dock-app-id={app.appId}
             >
               {app.label}
             </button>

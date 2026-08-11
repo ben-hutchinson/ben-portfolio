@@ -15,6 +15,7 @@ export type PortfolioAction =
   | { type: 'FOCUS_WINDOW'; appId: AppId }
   | { type: 'MINIMIZE_WINDOW'; appId: AppId }
   | { type: 'MAXIMIZE_WINDOW'; appId: AppId }
+  | { type: 'RESTORE_WINDOW'; appId: AppId }
   | { type: 'CLOSE_WINDOW'; appId: AppId }
   | { type: 'MOVE_WINDOW'; appId: AppId; position: Point }
   | { type: 'SELECT_CAREER_STAGE'; stageId: CareerStageId }
@@ -170,6 +171,9 @@ export function portfolioReducer(state: PortfolioState, action: PortfolioAction)
       const projectId = action.appId === 'projects' ? null : state.activeProjectId;
       return openAndFocus(state, action.appId, route, action.appId, projectId);
     }
+    case 'RESTORE_WINDOW':
+      if (state.maximizedAppId !== action.appId) return state;
+      return { ...state, maximizedAppId: null };
     case 'CLOSE_WINDOW': {
       if (!state.openAppIds.includes(action.appId)) return state;
       const openAppIds = without(state.openAppIds, action.appId);

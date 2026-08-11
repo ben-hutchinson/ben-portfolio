@@ -1,0 +1,57 @@
+.layer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+}
+
+.utilities {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 100;
+}
+
+.resetButton {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: var(--radius-control);
+  background: var(--color-menu-paper);
+  box-shadow: var(--shadow-hard-small);
+  color: var(--color-ink);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.resetButton:hover { background: var(--color-yellow); }
+
+.appContent { max-width: 46rem; }
+.appContent > :first-child { margin-top: 0; }
+.appContent > :last-child { margin-bottom: 0; }
+.appContent h1,
+.appContent h3 { margin: 0 0 var(--space-3); font-family: var(--font-display); font-size: 1.8rem; line-height: 1; }
+.eyebrow { color: var(--color-muted); font-size: 0.72rem; font-weight: 900; text-transform: uppercase; }
+.lede { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; line-height: 1.2; }
+.result { padding-left: var(--space-3); border-left: 0.55rem solid var(--color-orange); font-family: var(--font-display); font-size: 1.12rem; font-weight: 900; line-height: 1.2; }
+.technologyList { color: var(--color-muted); font-size: 0.74rem; font-weight: 800; }
+
+@media (max-width: 767px), (pointer: coarse), (pointer: none) {
+  .layer {
+    display: flex;
+    min-height: 0;
+    gap: var(--space-4);
+    flex-direction: column;
+  }
+
+  .utilities {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.layer:not([data-desktop-windows]) [data-window-id]:not([data-focused='true']) {
+  display: none;
+}
