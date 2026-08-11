@@ -3,6 +3,9 @@ dist/
 .DS_Store
 *.local
 coverage/
+playwright-report/
+test-results/
+.superpowers/
 *.tsbuildinfo
 .playwright-mcp/
 .worktrees/
