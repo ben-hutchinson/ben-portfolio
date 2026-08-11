@@ -1,0 +1,12 @@
+.dock { display: flex; gap: var(--space-3); align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-4); border-top: var(--border-heavy) solid var(--color-ink); background: var(--color-yellow); }
+.apps, .utilityLinks { display: flex; align-items: center; gap: var(--space-2); }
+.apps { flex-wrap: wrap; }
+.appButton, .cvLink { display: inline-flex; gap: var(--space-1); align-items: center; min-height: 2.45rem; padding: var(--space-2) var(--space-3); border: var(--border-width) solid var(--color-ink); border-radius: var(--radius-control); background: var(--color-paper); color: var(--color-ink); font-size: 0.76rem; font-weight: 800; line-height: 1; text-decoration: none; }
+.appButton:hover, .cvLink:hover { background: var(--color-mint); }
+.appButton[aria-pressed='true'] { position: relative; background: var(--color-orange); box-shadow: var(--shadow-hard-small); transform: translate(-1px, -1px); }
+.appButton[aria-pressed='true']::after { position: absolute; right: 0.2rem; bottom: 0.2rem; width: 0.35rem; height: 0.35rem; border: 1px solid var(--color-ink); border-radius: 50%; background: var(--color-success); content: ''; }
+.utilityLinks { flex: 0 0 auto; }
+.utilityLinks a { font-size: 0.72rem; font-weight: 800; text-underline-offset: 0.18em; }
+
+@media (max-width: 980px) { .dock { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 520px) { .dock { padding: var(--space-3); } .apps { gap: var(--space-1); } .appButton, .cvLink { min-height: 2.7rem; padding-inline: var(--space-2); } }
