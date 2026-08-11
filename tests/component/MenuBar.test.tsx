@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 import { PortfolioProvider } from '../../src/app/PortfolioContext';
@@ -17,17 +17,31 @@ function renderMenu(hash = '#desktop') {
 afterEach(() => window.history.replaceState(null, '', '#desktop'));
 
 describe('MenuBar', () => {
-  it('offers a focusable skip link that moves focus to the shell main content', async () => {
+  it('keeps focus on main and the Portfolio route after the skip-link hash event', async () => {
     const user = userEvent.setup();
-    renderMenu();
+    const modelBrowserFragmentFocus = () => {
+      if (window.location.hash === '#main-content') document.activeElement?.blur();
+    };
+    window.addEventListener('hashchange', modelBrowserFragmentFocus);
 
-    await user.tab();
-    const skipLink = screen.getByRole('link', { name: /skip to main content/i });
-    expect(skipLink).toHaveFocus();
-    expect(skipLink).toHaveAttribute('href', '#main-content');
+    try {
+      renderMenu();
 
-    await user.click(skipLink);
-    expect(screen.getByRole('main')).toHaveFocus();
+      await user.tab();
+      const skipLink = screen.getByRole('link', { name: /skip to main content/i });
+      expect(skipLink).toHaveFocus();
+      expect(skipLink).toHaveAttribute('href', '#main-content');
+
+      await user.click(skipLink);
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+
+      await waitFor(() => {
+        expect(window.location.hash).toBe('#desktop');
+        expect(screen.getByRole('main')).toHaveFocus();
+      });
+    } finally {
+      window.removeEventListener('hashchange', modelBrowserFragmentFocus);
+    }
   });
 
   it('exposes the labelled primary routes and identifies the active base route', () => {
