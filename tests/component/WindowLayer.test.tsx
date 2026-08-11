@@ -46,6 +46,14 @@ function StateProbe() {
   return <output aria-label="portfolio state">{JSON.stringify(state)}</output>;
 }
 
+function desktopPositions() {
+  const state = JSON.parse(screen.getByRole('status', { name: 'portfolio state' }).textContent ?? '{}') as {
+    windowPositions: Record<'about' | 'work' | 'command', { x: number; y: number }>;
+  };
+  const { about, work, command } = state.windowPositions;
+  return { about, work, command };
+}
+
 function renderLayer() {
   window.history.replaceState(null, '', '#desktop');
   return render(
@@ -179,6 +187,34 @@ describe('WindowLayer', () => {
     expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"work":{"x":0,"y":0}');
     unmount();
     expect(observer.disconnect).toHaveBeenCalledOnce();
+  });
+
+  it('preserves desktop reducer positions through a coarse mobile measurement before returning wide', async () => {
+    const media = installFinePointer(true);
+    vi.stubGlobal('ResizeObserver', ResizeObserverMock);
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1440 });
+    renderLayer();
+    const observer = ResizeObserverMock.instances[0];
+    observer.emit(1440, 900);
+
+    const expectedDesktopPositions = {
+      about: { x: 48, y: 72 },
+      work: { x: 620, y: 96 },
+      command: { x: 360, y: 520 },
+    };
+    expect(desktopPositions()).toEqual(expectedDesktopPositions);
+
+    (media.query as unknown as { matches: boolean }).matches = false;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 390 });
+    fireEvent(window, new Event('resize'));
+    observer.emit(390, 400);
+
+    (media.query as unknown as { matches: boolean }).matches = true;
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1440 });
+    fireEvent(window, new Event('resize'));
+    observer.emit(1440, 900);
+
+    await waitFor(() => expect(desktopPositions()).toEqual(expectedDesktopPositions));
   });
 
   it('gates title-bar drag for fine pointers at 768px and cleans media and resize listeners on unmount', () => {

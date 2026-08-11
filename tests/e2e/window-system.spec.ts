@@ -5,6 +5,22 @@ const workTitlebar = '[data-titlebar="work"]';
 const resetLayout = '[data-window-control="reset-layout"]';
 
 test.describe('window system desktop', () => {
+  test('returns to the same wide Work geometry after a narrow viewport round trip', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Desktop breakpoint coverage runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('./#desktop');
+
+    const before = await page.locator(workFrame).boundingBox();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.locator(workFrame)).toBeHidden();
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await expect(page.locator(workFrame)).toBeVisible();
+    const after = await page.locator(workFrame).boundingBox();
+
+    expect(after?.x).toBe(before?.x);
+    expect(after?.y).toBe(before?.y);
+  });
+
   test('keeps drag recoverable, source order stable, and controls keyboard-operable', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Desktop coverage runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });
