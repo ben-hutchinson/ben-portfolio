@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PortfolioProvider } from '../../src/app/PortfolioContext';
 import { PortfolioShell } from '../../src/shell/PortfolioShell';
 
@@ -9,7 +9,10 @@ function renderShell(hash = '#desktop') {
   return render(<PortfolioProvider><PortfolioShell /></PortfolioProvider>);
 }
 
-afterEach(() => window.history.replaceState(null, '', '#desktop'));
+afterEach(() => {
+  vi.restoreAllMocks();
+  window.history.replaceState(null, '', '#desktop');
+});
 
 describe('PortfolioShell', () => {
   it('provides the shell landmarks and one canonical recruiter claim in the window layer', () => {
@@ -63,6 +66,11 @@ describe('PortfolioShell', () => {
   });
 
   it('keeps shell navigation and persistent actions in a natural keyboard order', async () => {
+    const defaultMatchMedia = window.matchMedia;
+    vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
+      ...defaultMatchMedia(query),
+      matches: query === '(pointer: fine)',
+    }));
     const user = userEvent.setup();
     renderShell();
 
@@ -75,15 +83,13 @@ describe('PortfolioShell', () => {
       ['button', 'Open About'],
       ['button', 'Open Career'],
       ['button', 'Open Work'],
-      ['heading', 'About'],
       ['button', 'Close About'],
       ['button', 'Minimize About'],
       ['button', 'Maximize About'],
-      ['heading', 'Work'],
       ['button', 'Close Work'],
       ['button', 'Minimize Work'],
       ['button', 'Maximize Work'],
-      ['heading', 'Command'],
+      ['button', 'View Work'],
       ['button', 'Close Command'],
       ['button', 'Minimize Command'],
       ['button', 'Maximize Command'],
