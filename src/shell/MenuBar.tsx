@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react';
 import { usePortfolio } from '../app/PortfolioContext';
 import { profile } from '../data/profile';
 import styles from './MenuBar.module.css';
@@ -13,7 +14,8 @@ function isCurrentRoute(routeKind: string, menuRoute: string): boolean {
   return routeKind === menuRoute || (routeKind === 'project' && menuRoute === 'projects');
 }
 
-function focusMainContent() {
+function focusMainContent(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault();
   document.getElementById('main-content')?.focus();
 }
 
