@@ -109,6 +109,8 @@ export function WindowLayer(): JSX.Element {
   stateRef.current = state;
 
   const desktopCapable = capability.finePointer && capability.wideViewport;
+  const desktopCapableRef = useRef(desktopCapable);
+  desktopCapableRef.current = desktopCapable;
   const allVisibleIds = visibleAppIds(state);
   const activeDisplayedIds = desktopCapable
     ? allVisibleIds
@@ -144,19 +146,21 @@ export function WindowLayer(): JSX.Element {
         current.width === next.width && current.height === next.height ? current : next
       ));
     };
-    updateWorkArea(getWorkArea(element));
+    if (desktopCapableRef.current) updateWorkArea(getWorkArea(element));
 
     if (typeof ResizeObserver !== 'function') return undefined;
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
-      if (entry) updateWorkArea({ width: entry.contentRect.width, height: entry.contentRect.height });
+      if (entry && desktopCapableRef.current) {
+        updateWorkArea({ width: entry.contentRect.width, height: entry.contentRect.height });
+      }
     });
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    if (workArea.width <= 0 || workArea.height <= 0) return;
+    if (!desktopCapable || workArea.width <= 0 || workArea.height <= 0) return;
     for (const appId of visibleAppIds(state)) {
       if (state.maximizedAppId === appId) continue;
       const current = state.windowPositions[appId];
@@ -165,7 +169,7 @@ export function WindowLayer(): JSX.Element {
         dispatch({ type: 'MOVE_WINDOW', appId, position: normalized });
       }
     }
-  }, [dispatch, state, workArea]);
+  }, [desktopCapable, dispatch, state, workArea]);
 
   useLayoutEffect(() => {
     const pendingFallback = pendingFocusFallbackRef.current;
