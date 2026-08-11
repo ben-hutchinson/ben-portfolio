@@ -67,21 +67,21 @@ Canonical migration sentence (one canonical data literal): “Migrated 50+ repos
 - [x] The canonical migration sentence occurs once in canonical data. (Focused contract passed; `src/data/work.ts` contains the one exact literal.)
 - [x] All professional copy is in the new modules; generic equal-weight Work entries are absent from the personal-project catalogue. (Canonical-data audit passed.)
 - [x] Verified Pokeleximon and Safelog links are preserved; non-public SKAO links are absent, not `#`. (Focused contract and canonical-data audit passed.)
-- [ ] `npm test -- tests/unit/content.test.ts` and `npm run test:coverage` are run, with content helpers measured if present. (Both ran under Node 24.19.0 and fail 1/9 and 1/12 respectively: project image values are root-relative despite Vite `base: '/ben-portfolio/'`; Vitest emitted no coverage summary after the failing assertion, so the 91% thresholds cannot be certified.)
+- [x] `npm test -- tests/unit/content.test.ts` and `npm run test:coverage` are run, with content helpers measured if present. (Node 24.19.0 retest after `b5c58f9`: focused suite 9/9; full suite 12/12; statements, branches, functions, and lines all 100%, exceeding the 91% thresholds.)
 - [ ] The Product Owner has compared every rendered claim with source docs and verified content.
 
 ## Tester GREEN evidence — 2026-08-11
 
-- Verified production commit: `95886d8 feat: define canonical portfolio content models`.
+- Verified production commits: `95886d8 feat: define canonical portfolio content models` and `b5c58f9 fix: preserve project asset base path`.
 - Node runtime: `v24.19.0` (`/opt/homebrew/opt/node@24/bin`); the default Node 25 binary is unusable because its Homebrew `simdjson` dylib is missing.
-- Focused suite: `npm test -- tests/unit/content.test.ts` → 8 passed, 1 failed. The new tester-owned assertion rejects root-relative project images.
-- Full coverage: `npm run test:coverage` → 11 passed, 1 failed. Coverage configuration requires 91% statements, branches, functions, and lines; no coverage summary was emitted on this failed run, so the thresholds remain unverified.
+- Focused suite retest: `npm test -- tests/unit/content.test.ts` → 9 passed, 0 failed. The tester-owned base-path assertion passes.
+- Full coverage retest: `npm run test:coverage` → 12 passed, 0 failed. Coverage is 100% statements (7/7), branches (0/0), functions (1/1), and lines (7/7), exceeding the configured 91% thresholds.
 - Static checks: `npm run typecheck`, `npm run lint`, and `npm run build` passed under Node 24.19.0. The production build output is generated for Vite `base: '/ben-portfolio/'`.
-- Canonical audit: all six required modules exist; the migration sentence appears once; no annualised/extrapolated-savings wording, `#` link, or public SKAO action appears; Pokeleximon and Safelog HTTPS links are preserved; both referenced PNGs exist under `public/assets/ui/`.
+- Canonical audit: all six required modules exist; the migration sentence appears once; no annualised/extrapolated-savings wording, `#` link, or public SKAO action appears; Pokeleximon and Safelog HTTPS links are preserved; both referenced PNGs exist under `public/assets/ui/`; the now-relative image paths resolve below the configured Vite `/ben-portfolio/` base.
 
-Defect (P1 — static deployment reliability): `projects` supplies `/assets/ui/project-pokeleximon.png` and `/assets/ui/project-safelog.png`. With Vite's configured `/ben-portfolio/` base, these root-relative requests target `/assets/...` rather than `/ben-portfolio/assets/...` on GitHub Pages. Expected: base-safe, relative asset paths (or URLs derived from `import.meta.env.BASE_URL`). Actual: focused contract fails at `tests/unit/content.test.ts` because both image values begin with `/`. Evidence: Node 24 focused-test failure above. Production remediation is intentionally left to the Developer.
+Resolved defect (P1 — static deployment reliability): `b5c58f9` changed both project image values from root-relative `/assets/...` to base-safe `assets/...`. Under Vite's configured `/ben-portfolio/` base these resolve to `/ben-portfolio/assets/...`; both target PNGs exist under `public/assets/ui/`. Node 24 focused retest passed the regression assertion.
 
-Automated evidence: Tester recorded the focused test, full coverage attempt, static checks, and deployment-path audit. This packet remains IN_TEST pending the base-path fix and a clean coverage run.
+Automated evidence: Tester recorded clean focused and full-coverage runs, static checks, and deployment-path audit. This packet remains IN_TEST pending Product Owner content verification.
 
 Manual evidence: Product Owner verifies every rendered canonical value against this packet, PRD §§2 and 7, DESIGN §§7 and 8, and the inventory below.
 
