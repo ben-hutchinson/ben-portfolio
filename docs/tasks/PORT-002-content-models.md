@@ -1,6 +1,6 @@
 # PORT-002 — Create canonical content models
 
-Status: READY
+Status: IN_PROGRESS
 
 Requirement links: [PRD §2 — Positioning](../PRD.md#2-positioning), [PRD §7 — Approved Information Architecture](../PRD.md#7-approved-information-architecture), [PRD §9 — Content](../PRD.md#9-functional-requirements), [DESIGN §7 — Career.app](../DESIGN.md#7-careerapp), [DESIGN §8 — Other Applications](../DESIGN.md#8-other-applications), and [implementation plan — Task 2](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-2-create-canonical-content-models).
 
@@ -10,6 +10,11 @@ Dependencies:
 
 - **Developer implementation cannot start until PORT-001 is ACCEPTED.**
 - This committed inventory is the preservation gate before PORT-001 deletes legacy `src/data/timeline.ts` or `src/data/projects.ts`.
+
+## Tester RED gate evidence
+
+- `tests/unit/content.test.ts` defines the canonical-data contract for the six future modules and their exports.
+- Node 24.19.0 focused suite (2026-08-11): RED as expected — Vitest could not resolve `../../src/data/career` because the canonical `src/data/*` modules do not yet exist; 1 test file failed before test collection.
 
 In scope:
 
