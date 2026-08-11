@@ -1,6 +1,6 @@
 # PORT-005 — Implement a recoverable, accessible window system
 
-Status: READY
+Status: IN_PROGRESS
 
 Requirement links:
 
@@ -247,13 +247,13 @@ Record viewport, pointer/input method, scenario, observed result, tested commit,
 
 ## Evidence record
 
-Tester RED evidence: Not yet run — must be recorded before production changes.
+Tester RED evidence: 2026-08-11 at base commit `246cf7b`, before any PORT-005 production edit. Command: `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/windowGeometry.test.ts tests/component/WindowFrame.test.tsx tests/component/WindowLayer.test.tsx`. Result: 3 expected failing suites / 0 executed tests, solely because `src/utils/windowGeometry`, `src/shell/WindowFrame`, and `src/shell/WindowLayer` do not exist yet. The failures were Vite import-resolution errors at the three public contract boundaries; no test-authoring failure was observed. Added the four required Tester files only; no production files were changed.
 
 Developer GREEN evidence: Not yet run.
 
 Tester verification: Not yet run.
 
-Automated evidence: Not yet run.
+Automated evidence: Focused Playwright RED command `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:e2e -- tests/e2e/window-system.spec.ts --project=Chromium --reporter=line` could not start the configured preview server: `listen EPERM 127.0.0.1:4173`. This is infrastructure, not a product RED: port 4173 is already listened to by Node PID 81765 with cwd `/Users/ben.hutchinson/code/personal/ben-portfolio/.worktrees/isometric-portfolio-redesign`. The E2E contract remains checked in for production-shell execution once that preview ownership is released.
 
 Manual evidence: Not yet run.
 
