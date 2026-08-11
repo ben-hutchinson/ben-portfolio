@@ -20,7 +20,8 @@ describe('MenuBar', () => {
   it('keeps focus on main and the Portfolio route after the skip-link hash event', async () => {
     const user = userEvent.setup();
     const modelBrowserFragmentFocus = () => {
-      if (window.location.hash === '#main-content') document.activeElement?.blur();
+      const activeElement = document.activeElement;
+      if (window.location.hash === '#main-content' && activeElement instanceof HTMLElement) activeElement.blur();
     };
     window.addEventListener('hashchange', modelBrowserFragmentFocus);
 
