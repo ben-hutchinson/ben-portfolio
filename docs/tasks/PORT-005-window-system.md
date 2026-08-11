@@ -1,6 +1,6 @@
 # PORT-005 — Implement a recoverable, accessible window system
 
-Status: IN_TEST
+Status: ACCEPTED — Product Owner review complete
 
 Requirement links:
 
@@ -238,15 +238,15 @@ Record viewport, pointer/input method, scenario, observed result, tested commit,
 
 ## Acceptance criteria
 
-- [ ] Production `PortfolioShell` mounts `WindowLayer` in its existing main landmark; the prior summary is removed rather than duplicated or hidden, no test-only route/hash exists, and the exact flagship sentence remains visibly rendered once from canonical Work data.
-- [ ] `windowGeometry` is pure and deterministically handles normal, edge, oversized, resize, zero, negative, and non-finite inputs without emitting invalid/unrecoverable geometry; constrained frames preserve a full recoverable title bar.
-- [ ] Windows are labelled non-modal sections with accessible application titles, exact close/minimize/maximise-or-restore control names, visible focus, and no dialog semantics or focus trap.
-- [ ] Drag starts only from the title bar, uses pointer capture, ends on up/cancel, cleans up listeners/capture on unmount, and is available only for fine pointers at viewport widths of at least 768px.
-- [ ] Focus changes raise a window visually but source, heading, screen-reader, and keyboard order always follow the fixed `WINDOW_APP_ORDER`, never z-index or interaction order.
-- [ ] Close, minimize, maximize, restore, reducer reset, dock recovery, focus fallback, and Escape use the accepted actions plus the authorized route-preserving `RESTORE_WINDOW` amendment and preserve route/window invariants; Escape restores only when focus is inside the maximized frame.
-- [ ] Resize revalidates every applicable window position. Reset Layout is visibly and keyboard-reachable whether frames are open, closed, minimized, normal, or maximized.
-- [ ] Wide screens offer bounded overlapping windows; mobile/coarse pointer screens use no free dragging, at most one active normal-flow application, natural scrolling, practical touch targets, and no horizontal/fixed-height clipping.
-- [ ] Tester records RED-before-production evidence followed by focused GREEN, full coverage at or above all checked-in 91% thresholds, typecheck, lint, build, desktop/mobile Playwright, accessibility, and manual recovery evidence for the tested commit.
+- [x] Production `PortfolioShell` mounts `WindowLayer` in its existing main landmark; the prior summary is removed rather than duplicated or hidden, no test-only route/hash exists, and the exact flagship sentence remains visibly rendered once from canonical Work data.
+- [x] `windowGeometry` is pure and deterministically handles normal, edge, oversized, resize, zero, negative, and non-finite inputs without emitting invalid/unrecoverable geometry; constrained frames preserve a full recoverable title bar.
+- [x] Windows are labelled non-modal sections with accessible application titles, exact close/minimize/maximise-or-restore control names, visible focus, and no dialog semantics or focus trap.
+- [x] Drag starts only from the title bar, uses pointer capture, ends on up/cancel, cleans up listeners/capture on unmount, and is available only for fine pointers at viewport widths of at least 768px.
+- [x] Focus changes raise a window visually but source, heading, screen-reader, and keyboard order always follow the fixed `WINDOW_APP_ORDER`, never z-index or interaction order.
+- [x] Close, minimize, maximize, restore, reducer reset, dock recovery, focus fallback, and Escape use the accepted actions plus the authorized route-preserving `RESTORE_WINDOW` amendment and preserve route/window invariants; Escape restores only when focus is inside the maximized frame.
+- [x] Resize revalidates every applicable desktop window position without allowing narrow/coarse presentation to overwrite desktop reducer geometry. Reset Layout is visibly and keyboard-reachable whether frames are open, closed, minimized, normal, or maximized.
+- [x] Wide screens offer bounded overlapping windows; mobile/coarse pointer screens use no free dragging, at most one active normal-flow application, natural scrolling, practical touch targets, and no horizontal/fixed-height clipping.
+- [x] Tester records RED-before-production evidence followed by focused GREEN, full coverage at or above all checked-in 91% thresholds, typecheck, lint, build, desktop/mobile Playwright, accessibility, and manual recovery evidence for the tested commit.
 
 ## Evidence record
 
@@ -269,4 +269,4 @@ Defects:
 
 The controller-observed direct/reload `#career` defect did not reproduce at `59ce4a9`: after direct navigation and reload the URL remained `#career`, `[data-window-id="career"]` had count 1, and `[aria-current="page"]` was the Career link.
 
-Product Owner decision: PENDING — Tester independently verified the bounded responsive fix at `c12de13`. The resolved P1 no longer blocks acceptance; the mobile heading finding remains a tracked non-blocking P3 for PORT-006. Product Owner re-review is required for final acceptance.
+Product Owner decision: ACCEPTED — 2026-08-11. Fix-round verdict: ADDRESSED. Spec-compliance verdict: PASS — the original Important/P1 breakpoint-state defect is closed by production commit `c12de13`; narrow/coarse measurements no longer dispatch desktop position changes, and component plus production-shell evidence proves the accepted wide composition survives the 1440×1000 → 390×844 → 1440×1000 round trip. Task/code-quality verdict: PASS — the fix is bounded to capability-aware measurement/revalidation, retains the accepted reducer and window contracts, adds focused state and browser regressions, and introduces no new Critical or Important finding. Tester independently verified 9/9 focused and 107/107 full tests, coverage 98.60% statements / 94.50% branches / 100% functions / 99.36% lines, typecheck, lint, build, and 3 passing production E2E cases. The mobile `page-has-heading-one` finding remains an explicit non-blocking P3 assigned to PORT-006; PORT-006 acceptance must require a visible page-level `h1` at 390×844 as well as desktop.
