@@ -9,6 +9,7 @@ describe('PortfolioContext', () => {
   });
 
   it('exposes reducer state and dispatch through the provider', () => {
+    window.history.replaceState(null, '', '#desktop');
     const wrapper = ({ children }: { children: ReactNode }) => <PortfolioProvider>{children}</PortfolioProvider>;
     const { result } = renderHook(() => usePortfolio(), { wrapper });
 
@@ -21,5 +22,22 @@ describe('PortfolioContext', () => {
       activeProjectId: 'pokeleximon',
       focusedAppId: 'projects',
     });
+  });
+
+  it('routes every provider dispatch through the same reducer and hash boundary', () => {
+    window.history.replaceState(null, '', '#desktop');
+    const wrapper = ({ children }: { children: ReactNode }) => <PortfolioProvider>{children}</PortfolioProvider>;
+    const { result } = renderHook(() => usePortfolio(), { wrapper });
+
+    act(() => {
+      result.current.dispatch({ type: 'SELECT_CAREER_STAGE', stageId: 'associate' });
+    });
+
+    expect(result.current.state).toMatchObject({
+      route: { kind: 'career' },
+      activeCareerStageId: 'associate',
+      focusedAppId: 'career',
+    });
+    expect(window.location.hash).toBe('#career');
   });
 });

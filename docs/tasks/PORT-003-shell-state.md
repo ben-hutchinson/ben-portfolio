@@ -1,6 +1,6 @@
 # PORT-003 — Make shell and hash state deterministic
 
-Status: IN PROGRESS — Tester RED complete; awaiting Developer GREEN
+Status: IN_TEST — Tester GREEN verification complete; Product Owner review pending
 
 Requirement links:
 
@@ -188,14 +188,14 @@ Menu, dock, desktop shortcut, command, and later UI components dispatch the same
 
 Tester RED evidence: 2026-08-11 — Node v24.19.0, tested commit `2887e36`. Command: `npm test -- tests/unit/portfolioReducer.test.ts tests/unit/hashState.test.ts tests/component/PortfolioContext.test.tsx` (with the Node 24 runtime first on `PATH`; the default Node 25 executable cannot load its missing Homebrew `simdjson` dependency). Expected RED result: all three suites fail import resolution because the five Developer-owned production modules do not yet exist: `src/app/portfolioState.ts`, `src/app/portfolioReducer.ts`, `src/app/hashState.ts`, `src/app/PortfolioContext.tsx`, and `src/hooks/useHashNavigation.ts`. The new tests define the initial/reset state, all ten action contracts and no-op/reference cases, route and window invariants, seven exact parse/serialize routes plus recovery, hash hook lifecycle, and provider boundary/state dispatch.
 
-Developer GREEN evidence: Not yet run.
+Developer GREEN evidence: Production baseline supplied as commit `16b51b7` (`feat: add deterministic shell and hash state`). No separate task-3 Developer report was present in the worktree at Tester verification time.
 
-Tester verification: Not yet run.
+Tester verification: 2026-08-11 — Node v24.19.0 (`/opt/homebrew/Cellar/node@24/24.19.0/bin` first on `PATH`), production baseline `16b51b7`. Focused command `npm test -- tests/unit/portfolioReducer.test.ts tests/unit/hashState.test.ts tests/component/PortfolioContext.test.tsx`: 3 files / 52 tests passed. The tests replace unsupported ES2022 `Array.prototype.at` calls with an indexed helper and narrow project routes through the discriminant. They exercise same-state career/project selection, duplicate OPEN/FOCUS/MAXIMIZE/MOVE/MINIMIZE/CLOSE actions, non-focused and maximized minimization, closes, about/command route preservation, catalogue selection clearing, same-target navigation, valid/invalid mount and hashchange recovery, exact listener cleanup, and route-write deduplication.
 
-Automated evidence: Not yet run.
+Automated evidence: 2026-08-11 — `npm run test:coverage`: 5 files / 64 tests passed; statements 98.41% (124/126), branches 91.04% (122/134), functions 100% (23/23), lines 99.08% (108/109), meeting every 91% threshold. `npm run typecheck`, `npm run lint`, and `npm run build` all exited 0. Build emitted `dist/assets/index-CFM6L-cL.js` (191.07 kB, gzip 60.29 kB). The system-default Node 25 executable remains unavailable because its Homebrew `simdjson` dylib is missing; all recorded commands used the cached Node 24 runtime above.
 
-Manual evidence: Not yet run.
+Manual evidence: 2026-08-11 — JSDOM provider/direct-hash harness verified supported initial `#work`, supported `#career` hashchange, invalid mount `#not-a-route`, and invalid `#unknown-again` hashchange. Supported values dispatch the parsed route without recovery writes; both invalid values synchronously dispatch Desktop and replace with `#desktop`. Provider dispatch of `SELECT_CAREER_STAGE` produced state route `career`, focused Career, and browser hash `#career`. No visual shell, dock, drag, or command controls exist in PORT-003 scope, so desktop/mobile visual interaction remains for PORT-004.
 
-Defects: None recorded. If found, record severity, reproduction steps, expected behaviour, actual behaviour, affected requirement, evidence, owner, and retest result.
+Defects: No production no-op or invariant defect found. Process finding only: no separate `task-3-developer-report.md` was available for review; testing proceeded against the supplied production commit `16b51b7` and packet contract.
 
 Product Owner decision: PENDING — task is READY for the Tester RED gate.

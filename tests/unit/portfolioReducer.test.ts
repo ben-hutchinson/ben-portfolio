@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { createInitialPortfolioState, DEFAULT_WINDOW_POSITIONS, type PortfolioRoute } from '../../src/app/portfolioState';
+import {
+  createInitialPortfolioState,
+  DEFAULT_WINDOW_POSITIONS,
+  type PortfolioRoute,
+  type PortfolioState,
+} from '../../src/app/portfolioState';
 import { portfolioReducer, type PortfolioAction } from '../../src/app/portfolioReducer';
 
 const routeCases: readonly [PortfolioRoute, string, string | null][] = [
@@ -16,7 +21,11 @@ function reduce(actions: readonly PortfolioAction[]) {
   return actions.reduce(portfolioReducer, createInitialPortfolioState());
 }
 
-function expectWindowInvariants(state: ReturnType<typeof createInitialPortfolioState>) {
+function last<T>(values: readonly T[]): T | undefined {
+  return values[values.length - 1];
+}
+
+function expectWindowInvariants(state: PortfolioState) {
   expect(new Set(state.openAppIds).size).toBe(state.openAppIds.length);
   expect(new Set(state.minimizedAppIds).size).toBe(state.minimizedAppIds.length);
   expect(new Set(state.windowOrder).size).toBe(state.windowOrder.length);
@@ -24,7 +33,7 @@ function expectWindowInvariants(state: ReturnType<typeof createInitialPortfolioS
   expect(state.windowOrder.every((appId) => !state.minimizedAppIds.includes(appId))).toBe(true);
   expect(state.focusedAppId === null || state.openAppIds.includes(state.focusedAppId)).toBe(true);
   expect(state.focusedAppId === null || !state.minimizedAppIds.includes(state.focusedAppId)).toBe(true);
-  expect(state.focusedAppId === null || state.windowOrder.at(-1) === state.focusedAppId).toBe(true);
+  expect(state.focusedAppId === null || last(state.windowOrder) === state.focusedAppId).toBe(true);
   expect(state.maximizedAppId === null || state.maximizedAppId === state.focusedAppId).toBe(true);
   expect(state.maximizedAppId === null || state.openAppIds.includes(state.maximizedAppId)).toBe(true);
   expect(state.maximizedAppId === null || !state.minimizedAppIds.includes(state.maximizedAppId)).toBe(true);
@@ -61,8 +70,8 @@ describe('portfolioReducer routes', () => {
       expect(state.openAppIds).toContain(target);
       expect(state.minimizedAppIds).not.toContain(target);
       expect(state.focusedAppId).toBe(target);
-      expect(state.windowOrder.at(-1)).toBe(target);
-      if (kind === 'project') expect(state.activeProjectId).toBe(route.projectId);
+      expect(last(state.windowOrder)).toBe(target);
+      if (route.kind === 'project') expect(state.activeProjectId).toBe(route.projectId);
       if (kind === 'projects') expect(state.activeProjectId).toBeNull();
     }
     expectWindowInvariants(state);
@@ -84,7 +93,7 @@ describe('portfolioReducer action contract', () => {
     ['FOCUS_WINDOW changes only an open non-minimized window and topmost order', (state) => {
       const next = portfolioReducer(state, { type: 'FOCUS_WINDOW', appId: 'about' });
       expect(next.focusedAppId).toBe('about');
-      expect(next.windowOrder.at(-1)).toBe('about');
+      expect(last(next.windowOrder)).toBe('about');
     }],
     ['MINIMIZE_WINDOW hides an open route target and recovers its route to desktop', (state) => {
       const next = portfolioReducer(portfolioReducer(state, { type: 'NAVIGATE', route: { kind: 'work' } }), { type: 'MINIMIZE_WINDOW', appId: 'work' });
@@ -141,5 +150,103 @@ describe('portfolioReducer no-ops', () => {
     ['MOVE_WINDOW for a closed app', { type: 'MOVE_WINDOW', appId: 'career', position: { x: 1, y: 1 } }, createInitialPortfolioState()],
   ])('%s preserves the previous state reference', (_name, action, state) => {
     expect(portfolioReducer(state, action)).toBe(state);
+  });
+
+  it('returns the existing state for repeated career and project selections', () => {
+    const career = portfolioReducer(createInitialPortfolioState(), {
+      type: 'SELECT_CAREER_STAGE',
+      stageId: 'skao',
+    });
+    const project = portfolioReducer(createInitialPortfolioState(), {
+      type: 'SELECT_PROJECT',
+      projectId: 'safelog',
+    });
+
+    expect(portfolioReducer(career, { type: 'SELECT_CAREER_STAGE', stageId: 'skao' })).toBe(career);
+    expect(portfolioReducer(project, { type: 'SELECT_PROJECT', projectId: 'safelog' })).toBe(project);
+  });
+
+  it('does not duplicate, reopen, refocus, maximize, move, minimize, or close without a state change', () => {
+    const initial = createInitialPortfolioState();
+    const maximized = portfolioReducer(initial, { type: 'MAXIMIZE_WINDOW', appId: 'command' });
+    const moved = portfolioReducer(initial, {
+      type: 'MOVE_WINDOW',
+      appId: 'work',
+      position: initial.windowPositions.work,
+    });
+    const minimized = portfolioReducer(initial, { type: 'MINIMIZE_WINDOW', appId: 'work' });
+    const closed = portfolioReducer(initial, { type: 'CLOSE_WINDOW', appId: 'work' });
+
+    expect(portfolioReducer(initial, { type: 'OPEN_APP', appId: 'command' })).toBe(initial);
+    expect(portfolioReducer(initial, { type: 'FOCUS_WINDOW', appId: 'command' })).toBe(initial);
+    expect(portfolioReducer(maximized, { type: 'MAXIMIZE_WINDOW', appId: 'command' })).toBe(maximized);
+    expect(moved).toBe(initial);
+    expect(portfolioReducer(minimized, { type: 'MINIMIZE_WINDOW', appId: 'work' })).toBe(minimized);
+    expect(portfolioReducer(closed, { type: 'CLOSE_WINDOW', appId: 'work' })).toBe(closed);
+  });
+
+  it('ignores impossible unrecognised selection identifiers', () => {
+    const state = createInitialPortfolioState();
+    expect(portfolioReducer(state, { type: 'SELECT_CAREER_STAGE', stageId: 'unknown' as never })).toBe(state);
+    expect(portfolioReducer(state, { type: 'SELECT_PROJECT', projectId: 'unknown' as never })).toBe(state);
+  });
+});
+
+describe('portfolioReducer edge transitions', () => {
+  it('preserves about and command routes while opening, focusing, maximizing, minimizing, and closing them', () => {
+    const work = portfolioReducer(createInitialPortfolioState(), { type: 'NAVIGATE', route: { kind: 'work' } });
+    const openedAbout = portfolioReducer(work, { type: 'OPEN_APP', appId: 'about' });
+    const maximizedCommand = portfolioReducer(openedAbout, { type: 'MAXIMIZE_WINDOW', appId: 'command' });
+    const minimizedAbout = portfolioReducer(maximizedCommand, { type: 'MINIMIZE_WINDOW', appId: 'about' });
+    const closedCommand = portfolioReducer(minimizedAbout, { type: 'CLOSE_WINDOW', appId: 'command' });
+
+    expect(openedAbout.route).toEqual({ kind: 'work' });
+    expect(maximizedCommand.route).toEqual({ kind: 'work' });
+    expect(minimizedAbout.route).toEqual({ kind: 'work' });
+    expect(closedCommand.route).toEqual({ kind: 'work' });
+    expect(maximizedCommand.maximizedAppId).toBe('command');
+    expect(closedCommand.maximizedAppId).toBeNull();
+    expectWindowInvariants(closedCommand);
+  });
+
+  it('minimizes a nonfocused app without changing the focused topmost app and clears a maximized target', () => {
+    const focused = portfolioReducer(createInitialPortfolioState(), { type: 'FOCUS_WINDOW', appId: 'about' });
+    const minimizedWork = portfolioReducer(focused, { type: 'MINIMIZE_WINDOW', appId: 'work' });
+    const maximized = portfolioReducer(createInitialPortfolioState(), { type: 'MAXIMIZE_WINDOW', appId: 'work' });
+    const minimizedMaximized = portfolioReducer(maximized, { type: 'MINIMIZE_WINDOW', appId: 'work' });
+
+    expect(minimizedWork.focusedAppId).toBe('about');
+    expect(last(minimizedWork.windowOrder)).toBe('about');
+    expect(minimizedMaximized).toMatchObject({ route: { kind: 'desktop' }, maximizedAppId: null });
+    expectWindowInvariants(minimizedMaximized);
+  });
+
+  it('closes minimized and non-route apps while retaining valid focus and selected content', () => {
+    const selected = portfolioReducer(createInitialPortfolioState(), { type: 'SELECT_PROJECT', projectId: 'pokeleximon' });
+    const minimized = portfolioReducer(selected, { type: 'MINIMIZE_WINDOW', appId: 'about' });
+    const closedMinimized = portfolioReducer(minimized, { type: 'CLOSE_WINDOW', appId: 'about' });
+    const closedOther = portfolioReducer(closedMinimized, { type: 'CLOSE_WINDOW', appId: 'work' });
+
+    expect(closedMinimized.activeProjectId).toBe('pokeleximon');
+    expect(closedOther.route).toEqual({ kind: 'project', projectId: 'pokeleximon' });
+    expect(closedOther.focusedAppId).toBe('projects');
+    expectWindowInvariants(closedOther);
+  });
+
+  it('keeps a career selection when navigating career and clears a project detail when navigating its catalogue', () => {
+    const career = portfolioReducer(
+      portfolioReducer(createInitialPortfolioState(), { type: 'SELECT_CAREER_STAGE', stageId: 'observability' }),
+      { type: 'NAVIGATE', route: { kind: 'career' } },
+    );
+    const project = portfolioReducer(createInitialPortfolioState(), { type: 'SELECT_PROJECT', projectId: 'safelog' });
+    const catalogue = portfolioReducer(project, { type: 'NAVIGATE', route: { kind: 'projects' } });
+
+    expect(career.activeCareerStageId).toBe('observability');
+    expect(catalogue).toMatchObject({ route: { kind: 'projects' }, activeProjectId: null, focusedAppId: 'projects' });
+  });
+
+  it('navigates to an already current route without changing its state reference', () => {
+    const state = portfolioReducer(createInitialPortfolioState(), { type: 'NAVIGATE', route: { kind: 'contact' } });
+    expect(portfolioReducer(state, { type: 'NAVIGATE', route: { kind: 'contact' } })).toBe(state);
   });
 });
