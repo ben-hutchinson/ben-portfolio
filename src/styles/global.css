@@ -1,80 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Press+Start+2P&display=swap');
-
 :root {
-  --surface-root: linear-gradient(140deg, #030814, #071224 45%, #081832);
-  --surface-panel: linear-gradient(170deg, rgba(6, 20, 44, 0.88), rgba(8, 28, 61, 0.82));
-  --surface-elevated: rgba(8, 33, 70, 0.92);
-  --stroke: rgba(97, 170, 255, 0.4);
-  --accent-cyan: #63f7eb;
-  --accent-purple: #9f85ff;
-  --accent-warm: #f7c46f;
-  --text-primary: #eff7ff;
-  --text-secondary: #b4c6db;
-  --focus-ring: #ffe285;
+  color: #1f2933;
+  background: #ffffff;
+  font-family: system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
 * {
   box-sizing: border-box;
 }
 
-html,
-body,
-#root {
-  width: 100%;
-  min-height: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 body {
-  font-family: 'Outfit', 'Segoe UI', sans-serif;
-  color: var(--text-primary);
-  background: #050b17;
-  overflow: hidden;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-h1,
-h2,
-h3,
-h4,
-button,
-[role='tab'] {
-  font-family: 'Press Start 2P', 'Outfit', sans-serif;
+#root {
+  min-height: 100vh;
 }
 
-p,
-li,
-label,
-a,
-span {
-  line-height: 1.5;
+main {
+  width: min(100%, 48rem);
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
 }
 
-a {
-  color: inherit;
+h1 {
+  margin: 0 0 1rem;
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
-}
-
-:focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
+p {
+  margin: 0.75rem 0;
+  line-height: 1.6;
 }
