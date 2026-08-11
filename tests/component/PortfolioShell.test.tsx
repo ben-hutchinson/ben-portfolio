@@ -61,4 +61,31 @@ describe('PortfolioShell', () => {
     expect(window.location.hash).toBe('#career');
     expect(screen.getByRole('link', { name: 'Career' })).toHaveAttribute('aria-current', 'page');
   });
+
+  it('keeps shell navigation and persistent actions in a natural keyboard order', async () => {
+    const user = userEvent.setup();
+    renderShell();
+
+    for (const [role, name] of [
+      ['link', 'Skip to main content'],
+      ['link', 'Desktop'],
+      ['link', 'Work'],
+      ['link', 'Career'],
+      ['link', 'Projects'],
+      ['link', 'Explore work'],
+      ['link', 'See career'],
+      ['button', 'About'],
+      ['button', 'Work'],
+      ['button', 'Career'],
+      ['button', 'Projects'],
+      ['button', 'Contact'],
+      ['button', 'Command'],
+      ['link', 'Download CV'],
+      ['link', 'GitHub'],
+      ['link', 'LinkedIn'],
+    ] as const) {
+      await user.tab();
+      expect(screen.getByRole(role, { name })).toHaveFocus();
+    }
+  });
 });

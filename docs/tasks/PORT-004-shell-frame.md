@@ -1,6 +1,6 @@
 # PORT-004 — Build the visual shell and navigation frame
 
-Status: IN_PROGRESS — Tester RED gate underway
+Status: IN_TEST — Tester GREEN verification complete; awaiting Product Owner acceptance review
 
 Requirement links:
 
@@ -137,8 +137,8 @@ Tester RED evidence: 2026-08-11 — Node v24.13.0 executable selected at `/opt/h
 
 Developer GREEN evidence: Not yet run.
 
-Tester verification: Not yet run.
+Tester verification: 2026-08-11 — Node v24.13.0 executable `/opt/homebrew/opt/node@24/bin/node`; production commit under test `f970373`. Focused command `/opt/homebrew/opt/node@24/bin/node node_modules/vitest/vitest.mjs run tests/component/MenuBar.test.tsx tests/component/Dock.test.tsx tests/component/PortfolioShell.test.tsx`: PASS, 3 files / 13 tests. Full coverage command `/opt/homebrew/opt/node@24/bin/node node_modules/vitest/vitest.mjs run --coverage`: PASS, 8 files / 77 tests; statements 98.64%, branches 91.60%, functions 100%, lines 99.23% (all at or above 91%). `/opt/homebrew/opt/node@24/bin/node node_modules/typescript/bin/tsc -b`: PASS. `/opt/homebrew/opt/node@24/bin/node node_modules/eslint/bin/eslint.js . --ext ts,tsx --max-warnings=0`: PASS. `/opt/homebrew/opt/node@24/bin/node node_modules/typescript/bin/tsc -b && /opt/homebrew/opt/node@24/bin/node node_modules/vite/bin/vite.js build`: PASS; built CV present at `dist/cv/ben-hutchinson-cv.pdf`. Tester expanded Dock coverage to exercise About/Work/Career/Projects/Contact/Command mappings and dock keyboard order, and added full shell keyboard-order coverage. Static audit: raw palette values occur only in `tokens.css`; shell modules contain no direct hash writing, component-local state, unsupported CSS syntax, Task 5 window/drag behavior, or root-absolute CV URL; one polite atomic live region is present; global reduced-motion rule is present. Browser QA against Vite preview `http://127.0.0.1:4175/ben-portfolio/`: 1440×1000 and 390×844 both show no horizontal overflow (scrollWidth equals clientWidth), readable mint/paper/Ink/yellow/orange shell, first-viewport identity/role/location/availability/flagship sentence, reachable compact navigation and all dock/external actions, and no console errors/warnings. Browser interaction confirmed Work -> `#work`, active Work semantics, and one `work selected` live update. Unit interaction confirms skip-link focus transfer and complete keyboard order. Browser media emulation is unavailable in this binding; reduced-motion verification is static-rule plus no-motion-dependency component coverage.
 
-Defects: None recorded.
+Defects: None found in Tester verification.
 
-Product Owner decision: PENDING — READY for Tester RED gate.
+Product Owner decision: PENDING — READY for acceptance review.

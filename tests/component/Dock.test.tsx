@@ -28,18 +28,39 @@ describe('Dock', () => {
     expect(screen.getByRole('link', { name: /download cv/i })).toBeVisible();
   });
 
-  it('maps application controls through the shared reducer and exposes a text or ARIA active state', async () => {
+  it('maps every application control through the shared reducer and exposes an ARIA active state', async () => {
     const user = userEvent.setup();
     renderDock();
 
-    await user.click(screen.getByRole('button', { name: 'Work' }));
-    expect(screen.getByRole('button', { name: 'Work' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('status', { name: /shell state/i })).toHaveTextContent('work');
-    expect(window.location.hash).toBe('#work');
+    await user.click(screen.getByRole('button', { name: 'About' }));
+    expect(screen.getByRole('button', { name: 'About' })).toHaveAttribute('aria-pressed', 'true');
+    expect(window.location.hash).toBe('#desktop');
+
+    for (const [label, hash] of [
+      ['Work', '#work'],
+      ['Career', '#career'],
+      ['Projects', '#projects'],
+      ['Contact', '#contact'],
+    ]) {
+      await user.click(screen.getByRole('button', { name: label }));
+      expect(screen.getByRole('button', { name: label })).toHaveAttribute('aria-pressed', 'true');
+      expect(window.location.hash).toBe(hash);
+    }
 
     await user.click(screen.getByRole('button', { name: 'Command' }));
     expect(screen.getByRole('button', { name: 'Command' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('status', { name: /shell state/i })).toHaveTextContent('work');
+    expect(screen.getByRole('status', { name: /shell state/i })).toHaveTextContent('contact');
+    expect(window.location.hash).toBe('#contact');
+  });
+
+  it('keeps dock controls reachable in their visual reading order by keyboard', async () => {
+    const user = userEvent.setup();
+    renderDock();
+
+    for (const name of ['About', 'Work', 'Career', 'Projects', 'Contact', 'Command', 'Download CV', 'GitHub', 'LinkedIn']) {
+      await user.tab();
+      expect(screen.getByRole(name === 'Download CV' || name === 'GitHub' || name === 'LinkedIn' ? 'link' : 'button', { name })).toHaveFocus();
+    }
   });
 
   it('provides a base-safe CV download and verified safe external profile links', () => {
