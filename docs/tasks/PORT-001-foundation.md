@@ -1,6 +1,6 @@
 # PORT-001 — Establish the Portfolio OS foundation and quality gates
 
-Status: READY
+Status: IN_PROGRESS
 
 Requirement links:
 
@@ -87,7 +87,7 @@ coverage: {
 Automated evidence:
 
 - Setup baseline — `node --version`; `npm ci`: Not yet run; record Node version, exit status, and lockfile result.
-- Required RED gate — `npm test -- tests/unit/foundation.test.tsx` against the unchanged legacy UI: Not yet run; Tester must record the failing assertion and tested commit before production UI work.
+- Required RED gate — `npm test -- tests/unit/foundation.test.tsx` against the unchanged legacy UI: 2026-08-11, tested commit `b64822642b0764d979691fb8be9f90fa1b5868d2`; expected RED. The real legacy initial render exposes only the `Press start screen`, so the semantic `Ben Hutchinson` heading, role, and canonical flagship impact are absent. The focused test must fail on missing required foundation content, not harness configuration, import, or typing errors. See `.superpowers/sdd/2026-08-11-portfolio-os-implementation/task-1-tester-red-report.md` for the command output and final Tester evidence.
 - Focused GREEN — `npm test -- tests/unit/foundation.test.tsx`: Not yet run; record passing test count and tested commit.
 - Coverage gate — `npm run test:coverage`: Not yet run; record statement, branch, function, and line percentages and confirm every metric is at least 91%.
 - Developer quality checks — `npm run typecheck`; `npm run lint`; `npm run build`: Not yet run; record each exit status and tested commit.
