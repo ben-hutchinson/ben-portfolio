@@ -1,6 +1,6 @@
 # PORT-001 — Establish the Portfolio OS foundation and quality gates
 
-Status: IN_PROGRESS
+Status: IN_TEST
 
 Requirement links:
 
@@ -86,20 +86,22 @@ coverage: {
 
 Automated evidence:
 
-- Setup baseline — `node --version`; `npm ci`: Not yet run; record Node version, exit status, and lockfile result.
-- Required RED gate — `npm test -- tests/unit/foundation.test.tsx` against the unchanged legacy UI: 2026-08-11, tested commit `b64822642b0764d979691fb8be9f90fa1b5868d2`; expected RED. The real legacy initial render exposes only the `Press start screen`, so the semantic `Ben Hutchinson` heading, role, and canonical flagship impact are absent. The focused test must fail on missing required foundation content, not harness configuration, import, or typing errors. See `.superpowers/sdd/2026-08-11-portfolio-os-implementation/task-1-tester-red-report.md` for the command output and final Tester evidence.
-- Focused GREEN — `npm test -- tests/unit/foundation.test.tsx`: Not yet run; record passing test count and tested commit.
-- Coverage gate — `npm run test:coverage`: Not yet run; record statement, branch, function, and line percentages and confirm every metric is at least 91%.
-- Developer quality checks — `npm run typecheck`; `npm run lint`; `npm run build`: Not yet run; record each exit status and tested commit.
-- Browser command/configuration check — `npm run test:e2e`; `npm run test:e2e:a11y`; `npm run test:e2e:visual`: Not yet run; record project coverage or any explicitly approved infrastructure limitation without treating an unrun check as a pass.
-- Dependency audit — `npm ls --all`: Not yet run; record locked versions and confirm excluded frameworks are absent.
+- Setup baseline — Node `v24.19.0`; `.nvmrc` is exactly `24`; bootstrap commit `b648226180bc295ce82a14042918ac3fd431a405` records clean `npm ci` exit 0. Independent lockfile/package inspection and `npm ls --all` on tested commit `99ab57a106cab473136633c0e1ae988e0347df6a` exited 0.
+- Required RED gate — `npm test -- tests/unit/foundation.test.tsx` against the unchanged legacy UI: 2026-08-11, tested commit `b648226180bc295ce82a14042918ac3fd431a405`; expected RED. The real legacy initial render exposed only the `Press start screen`, so the semantic `Ben Hutchinson` heading, role, and canonical flagship impact were absent. See `.superpowers/sdd/2026-08-11-portfolio-os-implementation/task-1-tester-red-report.md`.
+- Focused GREEN — `npm test -- tests/unit/foundation.test.tsx` at `99ab57a106cab473136633c0e1ae988e0347df6a`: exit 0; 1 file and 3 tests passed in 1.92s with no warnings or errors.
+- Coverage gate — `npm run test:coverage`: exit 0; statements 100% (2/2), branches 100% (0/0), functions 100% (1/1), lines 100% (2/2); every 91% threshold passed.
+- Developer quality checks — fresh Tester runs of `npm run typecheck`, `npm run lint`, and `npm run build`: all exit 0; build used Vite 8.2.1, transformed 16 modules, and completed in 727ms.
+- Browser command/configuration check — Playwright loaded `playwright.config.ts` and accepted Chromium, Firefox, WebKit, mobile-Chrome, and mobile-Safari. `test:e2e`, `test:e2e:a11y`, and `test:e2e:visual` list checks each reported the expected `0 tests in 0 files`; PORT-001 supplies configuration and manual checks, not browser specs.
+- Dependency audit — `npm ls --all`: exit 0; required top-level versions match the lock. `npm ls react-router react-router-dom redux @reduxjs/toolkit zustand three @react-three/fiber --all` returned `(empty)`. Required `motion@12.43.0` transitively contains `framer-motion@12.43.0`, but `framer-motion` is absent from direct dependencies and application source.
 
 Manual evidence:
 
-- Desktop — production preview at `http://127.0.0.1:4173/ben-portfolio/`, 1440 × 1000 viewport, pointer and keyboard: Not yet run; confirm all three required texts are visible without interaction and the document has semantic readable structure.
-- Mobile — production preview at `http://127.0.0.1:4173/ben-portfolio/`, 390 × 844 viewport, touch emulation and keyboard: Not yet run; confirm all three required texts are visible without interaction, naturally scrollable, and not clipped.
-- GitHub Pages path — direct load and refresh at `/ben-portfolio/`: Not yet run; confirm the foundation and assets load without a history fallback or runtime API.
+- Desktop — controller-assisted in-app Browser verification at `http://127.0.0.1:4174/ben-portfolio/`, 1440 × 1000: PASS. The title is `Ben Hutchinson | Portfolio`; the semantic h1, role, and exact flagship claim are visible without interaction; no overlay or console error was observed. Screenshot: `/private/tmp/portfolio-os-task1-desktop.png`.
+- Mobile — controller-assisted in-app Browser verification at the same exact `/ben-portfolio/` path, 390 × 844 touch-emulated viewport: PASS. All three strings are visible, naturally laid out, and unclipped; `scrollWidth` equals `clientWidth` at 390. Screenshot: `/private/tmp/portfolio-os-task1-mobile.png`.
+- GitHub Pages path — direct load and reload at `/ben-portfolio/`: PASS with the foundation intact and no console errors. Port 4174 was used only because 4173 was occupied in the verification environment; committed Playwright `baseURL` remains the required `http://127.0.0.1:4173/ben-portfolio/`.
 
 Defects: None recorded. For each defect, add severity, reproduction steps, expected behaviour, actual behaviour, affected requirement, evidence, owner, and retest result.
+
+Tester verification: PASS for exact commit `99ab57a106cab473136633c0e1ae988e0347df6a`. Automated, coverage, dependency, configuration, desktop, mobile, and direct-path checks satisfy the PORT-001 Tester gate. Product Owner acceptance remains pending.
 
 Product Owner decision: PENDING — acceptance requires a Tester pass for the tested commit and Product Owner confirmation of every acceptance criterion; otherwise record a bounded change request.
