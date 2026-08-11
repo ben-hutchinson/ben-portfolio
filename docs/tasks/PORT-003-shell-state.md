@@ -1,6 +1,6 @@
 # PORT-003 — Make shell and hash state deterministic
 
-Status: IN_TEST — Tester GREEN verification complete; Product Owner review pending
+Status: ACCEPTED — Product Owner review complete
 
 Requirement links:
 
@@ -173,22 +173,22 @@ Menu, dock, desktop shortcut, command, and later UI components dispatch the same
 
 ## Acceptance criteria
 
-- [ ] The public route registry recognizes and serializes exactly the seven supported hashes, with `#projects/pokeleximon` and `#projects/safelog` tied to the accepted `ProjectId`s.
-- [ ] Empty and unknown hashes recover to Desktop, normalize to `#desktop` without a blank screen or dead history entry, and `hashchange` registration is cleaned up.
-- [ ] Browser back and forward replay supported hashes through the same parse → `NAVIGATE` reducer path.
-- [ ] One pure exhaustive reducer owns route, open/focus/minimized/maximized/order/position state, career selection, and project selection; it has no DOM, storage, timing, or viewport dependency.
-- [ ] Initial load and `RESET_LAYOUT` produce the same intentional three-window Desktop composition: Profile upper left, Featured Work upper right, Command lower centre; Career begins at `graduate` and no project is selected.
-- [ ] Open, focus, minimize/restore, maximize, close, move, and reset preserve every window invariant and always leave a valid dock-recoverable route.
-- [ ] Selecting a career stage opens/focuses Career and selects `#career`; selecting a project opens/focuses Projects and selects its exact project-detail hash.
-- [ ] Menu, dock, shortcut, command, and hashes converge on the same action union and reducer transitions, with no navigation-surface-specific state or hash-writing branch.
-- [ ] `usePortfolio` exposes reducer state and dispatch only and throws `usePortfolio must be used within a PortfolioProvider` outside the provider.
-- [ ] Tester records focused RED evidence before production changes, then focused GREEN, coverage above 91% in all metrics, typecheck, lint, build, hash-history, and manual recovery evidence for the tested commit.
+- [x] The public route registry recognizes and serializes exactly the seven supported hashes, with `#projects/pokeleximon` and `#projects/safelog` tied to the accepted `ProjectId`s.
+- [x] Empty and unknown hashes recover to Desktop, normalize to `#desktop` without a blank screen or dead history entry, and `hashchange` registration is cleaned up.
+- [x] Browser back and forward replay supported hashes through the same parse → `NAVIGATE` reducer path.
+- [x] One pure exhaustive reducer owns route, open/focus/minimized/maximized/order/position state, career selection, and project selection; it has no DOM, storage, timing, or viewport dependency.
+- [x] Initial load and `RESET_LAYOUT` produce the same intentional three-window Desktop composition: Profile upper left, Featured Work upper right, Command lower centre; Career begins at `graduate` and no project is selected.
+- [x] Open, focus, minimize/restore, maximize, close, move, and reset preserve every window invariant and always leave a valid dock-recoverable route.
+- [x] Selecting a career stage opens/focuses Career and selects `#career`; selecting a project opens/focuses Projects and selects its exact project-detail hash.
+- [x] Menu, dock, shortcut, command, and hashes converge on the same action union and reducer transitions, with no navigation-surface-specific state or hash-writing branch.
+- [x] `usePortfolio` exposes reducer state and dispatch only and throws `usePortfolio must be used within a PortfolioProvider` outside the provider.
+- [x] Tester records focused RED evidence before production changes, then focused GREEN, coverage above 91% in all metrics, typecheck, lint, build, hash-history, and manual recovery evidence for the tested commit.
 
 ## Evidence record
 
 Tester RED evidence: 2026-08-11 — Node v24.19.0, tested commit `2887e36`. Command: `npm test -- tests/unit/portfolioReducer.test.ts tests/unit/hashState.test.ts tests/component/PortfolioContext.test.tsx` (with the Node 24 runtime first on `PATH`; the default Node 25 executable cannot load its missing Homebrew `simdjson` dependency). Expected RED result: all three suites fail import resolution because the five Developer-owned production modules do not yet exist: `src/app/portfolioState.ts`, `src/app/portfolioReducer.ts`, `src/app/hashState.ts`, `src/app/PortfolioContext.tsx`, and `src/hooks/useHashNavigation.ts`. The new tests define the initial/reset state, all ten action contracts and no-op/reference cases, route and window invariants, seven exact parse/serialize routes plus recovery, hash hook lifecycle, and provider boundary/state dispatch.
 
-Developer GREEN evidence: Production baseline supplied as commit `16b51b7` (`feat: add deterministic shell and hash state`). No separate task-3 Developer report was present in the worktree at Tester verification time.
+Developer GREEN evidence: Developer report at `.superpowers/sdd/2026-08-11-portfolio-os-implementation/task-3-developer-report.md` records production baseline `16b51b7` (`feat: add deterministic shell and hash state`). Its focused GREEN run passed (3 files / 41 tests) and lint passed. The report correctly handed the Tester its then-open coverage and test-only ES2020 typecheck/build gaps; Tester closed both before the final verification below.
 
 Tester verification: 2026-08-11 — Node v24.19.0 (`/opt/homebrew/Cellar/node@24/24.19.0/bin` first on `PATH`), production baseline `16b51b7`. Focused command `npm test -- tests/unit/portfolioReducer.test.ts tests/unit/hashState.test.ts tests/component/PortfolioContext.test.tsx`: 3 files / 52 tests passed. The tests replace unsupported ES2022 `Array.prototype.at` calls with an indexed helper and narrow project routes through the discriminant. They exercise same-state career/project selection, duplicate OPEN/FOCUS/MAXIMIZE/MOVE/MINIMIZE/CLOSE actions, non-focused and maximized minimization, closes, about/command route preservation, catalogue selection clearing, same-target navigation, valid/invalid mount and hashchange recovery, exact listener cleanup, and route-write deduplication.
 
@@ -196,6 +196,6 @@ Automated evidence: 2026-08-11 — `npm run test:coverage`: 5 files / 64 tests p
 
 Manual evidence: 2026-08-11 — JSDOM provider/direct-hash harness verified supported initial `#work`, supported `#career` hashchange, invalid mount `#not-a-route`, and invalid `#unknown-again` hashchange. Supported values dispatch the parsed route without recovery writes; both invalid values synchronously dispatch Desktop and replace with `#desktop`. Provider dispatch of `SELECT_CAREER_STAGE` produced state route `career`, focused Career, and browser hash `#career`. No visual shell, dock, drag, or command controls exist in PORT-003 scope, so desktop/mobile visual interaction remains for PORT-004.
 
-Defects: No production no-op or invariant defect found. Process finding only: no separate `task-3-developer-report.md` was available for review; testing proceeded against the supplied production commit `16b51b7` and packet contract.
+Defects: No production no-op or invariant defect found. The Developer GREEN report is available in the ignored SDD delivery records; its pre-Tester coverage/typecheck limitations are resolved by the final Tester verification.
 
-Product Owner decision: PENDING — task is READY for the Tester RED gate.
+Product Owner decision: ACCEPTED — 2026-08-11. Reviewed production commit `16b51b7` and Tester evidence commit `67220f7`. The implementation supplies the exact seven-hash boundary; a pure, exhaustive DOM-free reducer; idempotent no-op handling and window invariants; deterministic initial/reset layout; reducer-backed selection transitions; one context state/dispatch contract with the specified error; and one native hash lifecycle with recovery, deduplicated writes, and listener cleanup. Tester recorded the required RED-before-production gate, then final focused 52/52, full 64/64, coverage 98.41%/91.04%/100%/99.08%, typecheck, lint, build, and direct hash/provider recovery evidence under Node 24. No Important or Critical finding.
