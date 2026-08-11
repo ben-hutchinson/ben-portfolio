@@ -313,7 +313,7 @@ The terminal may open Contact, but terminal use is optional.
 - TypeScript
 - Vite
 - CSS Modules and central design tokens
-- Framer Motion through LazyMotion for bounded transitions
+- Motion for React through LazyMotion for bounded transitions
 - Native pointer events for window movement
 - A reducer or small state machine for shell and application state
 - Vitest and React Testing Library for component behaviour

@@ -390,7 +390,7 @@ Mobile must feel like Ben OS, not like a squeezed desktop screenshot.
 
 ## 10. Motion
 
-Use Framer Motion through LazyMotion for:
+Use Motion for React through LazyMotion for:
 
 - Application open and close
 - Minimize and maximize

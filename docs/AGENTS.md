@@ -24,7 +24,69 @@ When requirements conflict, use this order:
 
 The old command-centre specification and character-select documentation are historical context, not active requirements.
 
-## 3. Non-Negotiable Product Invariants
+## 3. Multi-Agent Delivery Model
+
+Implementation uses three persistent roles. Each role has a distinct decision boundary; an agent must not silently absorb another role because it is convenient.
+
+### Product Owner
+
+The Product Owner owns intent and acceptance.
+
+Responsibilities:
+
+- Convert PRD, DESIGN, and SOUL requirements into ordered, developer-ready task packets.
+- Give every task a user outcome, exact scope, acceptance criteria, dependencies, and excluded scope.
+- Keep only one Product Owner-approved implementation task in progress unless two tasks are explicitly independent.
+- Resolve specification ambiguity before the Developer invents product behaviour.
+- Review completed behaviour against the written specification and either accept it or return a bounded change request.
+- Maintain the implementation-plan checkboxes and decision log.
+
+The Product Owner does not write production code or author the Tester's verification. It may inspect code and test evidence to make acceptance decisions.
+
+### Developer
+
+The Developer owns production implementation.
+
+Responsibilities:
+
+- Implement only an approved Product Owner task packet.
+- Write and refactor application code, styles, typed content, configuration, and build/deployment code.
+- Add the smallest developer-side smoke test needed to drive an implementation when following test-driven development, while leaving independent acceptance coverage and coverage ownership to the Tester.
+- Make components testable through semantic APIs rather than test-only production branches.
+- Run type checking, linting, focused tests, and the production build before handing work to the Tester.
+- Fix reproducible defects returned by the Tester without weakening assertions or coverage gates.
+
+The Developer does not self-approve scope or declare a task complete.
+
+### Tester
+
+The Tester owns verification and release confidence.
+
+Responsibilities:
+
+- Turn Product Owner acceptance criteria into unit, component, integration, end-to-end, accessibility, responsive, and regression tests.
+- Write and maintain the automated test suite independently of the production implementation.
+- Enforce global coverage above 90% for statements, branches, functions, and lines. Configure every checked-in threshold at 91% so the requirement cannot pass at exactly 90%.
+- Treat exclusions as exceptional. Only entry points, generated declarations, and type-only modules may be excluded; shell logic, applications, hooks, commands, and reducers remain measurable.
+- Manually test supported desktop and mobile viewports, keyboard-only use, reduced motion, window recovery, direct hashes, browser history, external actions, and the production preview under `/ben-portfolio/`.
+- Return defects with reproduction steps, expected behaviour, actual behaviour, affected requirement, severity, and evidence.
+- Re-run the full applicable verification set after a fix and issue a pass or fail report to the Product Owner.
+
+The Tester does not modify production code to make a failure disappear. Test-harness and test-code changes remain within the Tester role.
+
+### Required Handoff Loop
+
+1. Product Owner creates and marks one task packet ready.
+2. Tester translates its acceptance criteria into focused failing acceptance tests and a manual-test charter.
+3. Developer implements the packet until those tests and the developer quality checks pass, then provides a verification note.
+4. Tester completes independent coverage, runs automated checks, and performs the packet's manual checks.
+5. Developer fixes any reproducible failures; Tester verifies the fix.
+6. Product Owner compares the result and evidence with the specification.
+7. Product Owner accepts the task and releases the next packet, or returns a narrowly scoped change request.
+
+No task is complete until the Tester has passed it and the Product Owner has accepted it.
+
+## 4. Non-Negotiable Product Invariants
 
 - No intro gate, boot sequence, fake loading, or Press Start screen
 - No character-select navigation
@@ -45,32 +107,41 @@ The canonical flagship line is:
 
 Do not annualise or extrapolate this metric without new user-supplied evidence.
 
-## 4. Repository Assumptions
+## 5. Locked Technical Stack
 
-Current foundation:
+The redesign uses:
 
-- React
-- TypeScript
-- Vite
-- Framer Motion
-- CSS Modules
-- GitHub Pages base path /ben-portfolio/
+- Node.js 24 LTS for local tooling and CI
+- React 19.2 for the client application
+- TypeScript 6 in strict mode
+- Vite 8 for development and static production output
+- Motion for React through LazyMotion for bounded application and Career transitions
+- CSS Modules plus src/styles/tokens.css for styling
+- React context plus useReducer for shared shell state
+- Native hash navigation and pointer events
+- Vitest, React Testing Library, user-event, jest-dom, and V8 coverage
+- Playwright and axe-core for browser, responsive, and accessibility coverage
+- GitHub Actions and GitHub Pages, deployed at /ben-portfolio/
+
+Do not add React Router, a global state package, a component-system dependency, a server runtime, a CMS, or a WebGL engine unless the Product Owner records a new requirement and bundle-cost decision.
 
 The implementation may replace the current src feature structure. Avoid layering the new shell on top of the old stage machine.
 
-## 5. Required Quality Commands
+## 6. Required Quality Commands
 
 Before handoff, run the relevant available commands:
 
 - npm run build
 - npm run typecheck
 - npm run lint
-- npm test, after a test script exists
-- npm run test:e2e, after the end-to-end script exists
+- npm test
+- npm run test:coverage
+- npm run test:e2e
+- npm run test:e2e:a11y
 
 Do not claim success from an earlier run. Capture the current output after the final change.
 
-## 6. Recommended Source Structure
+## 7. Recommended Source Structure
 
 Suggested structure:
 
@@ -116,7 +187,7 @@ Suggested structure:
 
 Keep files focused. App.tsx should compose the root and not contain the desktop state machine.
 
-## 7. State Architecture
+## 8. State Architecture
 
 Use a reducer or explicit state machine for shell state.
 
@@ -136,7 +207,7 @@ Application actions should be shared by dock controls, menu controls, desktop sh
 
 Do not persist window positions in the initial release. Persisting arbitrary positions creates recovery and breakpoint problems without improving the recruiter journey.
 
-## 8. Component Boundaries
+## 9. Component Boundaries
 
 ### PortfolioShell
 
@@ -170,7 +241,7 @@ Owns the kinetic career presentation and direct stage controls. Career content c
 
 Parses only known commands and dispatches ordinary shell actions. It never evaluates code or arbitrary input.
 
-## 9. Styling Rules
+## 10. Styling Rules
 
 - Define approved tokens once in src/styles/tokens.css.
 - Use CSS Modules for component-specific styling.
@@ -192,7 +263,7 @@ Do not introduce:
 - Excessive rounded cards
 - A design-system dependency that overrides the approved visual language
 
-## 10. Interaction Rules
+## 11. Interaction Rules
 
 ### Windows
 
@@ -221,7 +292,7 @@ Do not introduce:
 - Dispatch existing application actions.
 - Never parse shell syntax or execute user-provided code.
 
-## 11. Accessibility Gates
+## 12. Accessibility Gates
 
 Every feature must pass these gates before it is considered complete:
 
@@ -240,7 +311,7 @@ Non-modal windows should be labelled sections. Do not add dialog semantics or fo
 
 Window position is presentation, not content. Screen-reader order remains stable regardless of z-index.
 
-## 12. Responsive Rules
+## 13. Responsive Rules
 
 Wide screens may show multiple overlapping windows.
 
@@ -255,9 +326,9 @@ At narrower breakpoints:
 
 Never restore root-level height and overflow rules that clip content on mobile.
 
-## 13. Motion Rules
+## 14. Motion Rules
 
-Use Framer Motion through LazyMotion for application transitions and Career stage changes.
+Use Motion for React through LazyMotion for application transitions and Career stage changes.
 
 Use CSS for direct hover, focus, and pressed states.
 
@@ -270,7 +341,7 @@ Avoid:
 - Long stagger sequences
 - Animation that delays text
 
-## 14. Content Integrity
+## 15. Content Integrity
 
 - Keep canonical copy in typed data modules.
 - Do not duplicate professional claims across JSX.
@@ -281,7 +352,7 @@ Avoid:
 
 If a required claim is unclear, ask the user instead of guessing.
 
-## 15. Static Hosting
+## 16. Static Hosting
 
 - Preserve Vite base path /ben-portfolio/.
 - Build all internal asset URLs from import.meta.env.BASE_URL or module imports.
@@ -289,7 +360,7 @@ If a required claim is unclear, ask the user instead of guessing.
 - Core content must not depend on runtime fetches.
 - Verify direct loading and asset resolution in the production preview.
 
-## 16. Performance Gates
+## 17. Performance Gates
 
 - No WebGL engine in the initial approved build.
 - No persistent animation loop.
@@ -301,7 +372,7 @@ If a required claim is unclear, ask the user instead of guessing.
 
 If a dependency is proposed, justify it against bundle cost, accessibility, and maintainability.
 
-## 17. Testing Expectations
+## 18. Testing Expectations
 
 ### Unit and component
 
@@ -331,7 +402,7 @@ If a dependency is proposed, justify it against bundle cost, accessibility, and 
 - Automated accessibility checks
 - Visual snapshots at 390 by 844 and 1440 by 1000
 
-## 18. Change Protocol
+## 19. Change Protocol
 
 Before making a change:
 
@@ -344,7 +415,7 @@ Before making a change:
 
 Do not perform unrelated refactors.
 
-## 19. Definition of Done
+## 20. Definition of Done
 
 A change is done when:
 
@@ -354,6 +425,8 @@ A change is done when:
 - It behaves correctly with reduced motion.
 - It works at affected responsive sizes.
 - Relevant tests pass.
+- Statements, branches, functions, and lines each report above 90% coverage.
+- The Tester has issued a pass and the Product Owner has accepted the task.
 - Build, type check, and lint pass.
 - No unverified professional claim was added.
 - No essential content became dependent on the desktop gimmick.
