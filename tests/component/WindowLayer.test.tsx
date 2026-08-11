@@ -17,15 +17,17 @@ class ResizeObserverMock {
   }
 }
 
-function installFinePointer(matches = true) {
+function installFinePointer(matches = true, legacyListeners = false) {
   const listeners = new Set<(event: MediaQueryListEvent) => void>();
   const query = {
     matches,
     media: '(pointer: fine)',
     onchange: null,
-    addEventListener: vi.fn((_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.add(listener)),
-    removeEventListener: vi.fn((_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.delete(listener)),
-    addListener: vi.fn(), removeListener: vi.fn(), dispatchEvent: vi.fn(),
+    addEventListener: legacyListeners ? undefined : vi.fn((_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.add(listener)),
+    removeEventListener: legacyListeners ? undefined : vi.fn((_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.delete(listener)),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   } as unknown as MediaQueryList;
   const matchMedia = vi.fn(() => query);
   Object.defineProperty(window, 'matchMedia', { configurable: true, value: matchMedia });
@@ -53,6 +55,17 @@ function renderLayer() {
       </main>
       <Dock />
       <StateProbe />
+    </PortfolioProvider>,
+  );
+}
+
+function renderLayerWithoutDock() {
+  window.history.replaceState(null, '', '#desktop');
+  return render(
+    <PortfolioProvider>
+      <main id="main-content" tabIndex={-1}>
+        <WindowLayer />
+      </main>
     </PortfolioProvider>,
   );
 }
@@ -138,6 +151,19 @@ describe('WindowLayer', () => {
     expect(screen.getByRole('button', { name: 'Maximize Work' })).toBeVisible();
   });
 
+  it('does not restore a maximized frame when Escape originates from the dock', async () => {
+    installFinePointer();
+    const user = userEvent.setup();
+    renderLayer();
+
+    await user.click(screen.getByRole('button', { name: 'Maximize Work' }));
+    const workDock = screen.getByRole('button', { name: 'Work' });
+    await user.click(workDock);
+    fireEvent.keyDown(workDock, { key: 'Escape' });
+
+    expect(screen.getByRole('button', { name: 'Restore Work' })).toBeVisible();
+  });
+
   it('uses ResizeObserver to revalidate a moved normal frame and disconnects on unmount', () => {
     installFinePointer();
     vi.stubGlobal('ResizeObserver', ResizeObserverMock);
@@ -150,7 +176,7 @@ describe('WindowLayer', () => {
 
     const observer = ResizeObserverMock.instances[0];
     observer.emit(320, 220);
-    expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"work"');
+    expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"work":{"x":0,"y":0}');
     unmount();
     expect(observer.disconnect).toHaveBeenCalledOnce();
   });
@@ -169,5 +195,19 @@ describe('WindowLayer', () => {
 
     expect(media.query.removeEventListener).toHaveBeenCalled();
     expect(ResizeObserverMock.instances[0].disconnect).toHaveBeenCalledOnce();
+  });
+
+  it('uses legacy media listeners and returns focus to main when a disappearing frame has no dock control', async () => {
+    const media = installFinePointer(true, true);
+    const user = userEvent.setup();
+    const { unmount } = renderLayerWithoutDock();
+
+    await user.click(screen.getByRole('region', { name: 'About' }));
+    await user.click(screen.getByRole('button', { name: 'Close About' }));
+    expect(document.getElementById('main-content')).toHaveFocus();
+    unmount();
+
+    expect(media.query.addListener).toHaveBeenCalledOnce();
+    expect(media.query.removeListener).toHaveBeenCalledOnce();
   });
 });

@@ -12,7 +12,7 @@ function renderFrame(overrides: Partial<ComponentProps<typeof WindowFrame>> = {}
     onMinimize: vi.fn(),
     onMaximize: vi.fn(),
   };
-  render(
+  const rendered = render(
     <WindowFrame
       appId="work"
       title="Work"
@@ -29,7 +29,7 @@ function renderFrame(overrides: Partial<ComponentProps<typeof WindowFrame>> = {}
       <button type="button">Body action</button>
     </WindowFrame>,
   );
-  return callbacks;
+  return { ...callbacks, unmount: rendered.unmount };
 }
 
 describe('WindowFrame', () => {
@@ -99,5 +99,31 @@ describe('WindowFrame', () => {
       await user.tab();
       expect(screen.getByRole('button', { name })).toHaveFocus();
     }
+  });
+
+  it('releases capture on cancellation and removes the fallback document listeners on unmount', () => {
+    const onPositionChange = vi.fn();
+    const { unmount } = renderFrame({ onPositionChange });
+    const titlebar = document.querySelector('[data-titlebar="work"]') as HTMLElement;
+    const setPointerCapture = vi.fn();
+    const releasePointerCapture = vi.fn();
+    const hasPointerCapture = vi.fn(() => true);
+    Object.assign(titlebar, { setPointerCapture, releasePointerCapture, hasPointerCapture });
+
+    fireEvent.pointerDown(titlebar, { button: 0, pointerId: 11, clientX: 100, clientY: 140 });
+    fireEvent.pointerMove(document, { pointerId: 11, clientX: 400, clientY: 400 });
+    expect(onPositionChange).toHaveBeenCalledWith({ x: 380, y: 380 });
+    fireEvent.pointerCancel(document, { pointerId: 11 });
+
+    expect(setPointerCapture).toHaveBeenCalledWith(11);
+    expect(hasPointerCapture).toHaveBeenCalledWith(11);
+    expect(releasePointerCapture).toHaveBeenCalledWith(11);
+    expect(document.querySelector('[data-window-id="work"]')).not.toHaveAttribute('data-dragging');
+
+    fireEvent.pointerDown(titlebar, { button: 0, pointerId: 12, clientX: 100, clientY: 140 });
+    unmount();
+    onPositionChange.mockClear();
+    fireEvent.pointerMove(document, { pointerId: 12, clientX: 500, clientY: 500 });
+    expect(onPositionChange).not.toHaveBeenCalled();
   });
 });

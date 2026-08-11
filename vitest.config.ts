@@ -10,7 +10,7 @@ export default defineConfig({
     },
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.worktrees/**', 'tests/e2e/**'],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],

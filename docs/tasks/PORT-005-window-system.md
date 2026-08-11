@@ -1,6 +1,6 @@
 # PORT-005 — Implement a recoverable, accessible window system
 
-Status: IN_PROGRESS
+Status: IN_TEST
 
 Requirement links:
 
@@ -252,14 +252,14 @@ Record viewport, pointer/input method, scenario, observed result, tested commit,
 
 Tester RED evidence: 2026-08-11 at base commit `246cf7b`, before any PORT-005 production edit. Command: `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/windowGeometry.test.ts tests/component/WindowFrame.test.tsx tests/component/WindowLayer.test.tsx`. Result: 3 expected failing suites / 0 executed tests, solely because `src/utils/windowGeometry`, `src/shell/WindowFrame`, and `src/shell/WindowLayer` do not exist yet. The failures were Vite import-resolution errors at the three public contract boundaries; no test-authoring failure was observed. Added the four required Tester files only; no production files were changed.
 
-Developer GREEN evidence: Not yet run.
+Developer GREEN evidence: Production implementation commit `59ce4a9` was inspected against `422aca3..59ce4a9`. The Tester made no production-file changes; only tester-owned configuration, test, and packet evidence files are pending in this verification commit.
 
-Tester verification: Not yet run.
+Tester verification: 2026-08-11 at production commit `59ce4a9` with Node 24 (`PATH=/opt/homebrew/opt/node@24/bin:$PATH`). Focused unit/component command `npm test -- tests/component/WindowFrame.test.tsx tests/component/WindowLayer.test.tsx tests/component/PortfolioShell.test.tsx` passed 19/19. Full `npm test` passed 11 files / 106 tests. `npm run test:coverage` passed all locked thresholds: statements 97.19% (346/356), branches 91.95% (263/286), functions 100% (79/79), and lines 97.76% (306/313). `npm run typecheck`, `npm run lint`, and `npm run build` all passed; the build emitted the GitHub Pages base-path bundle at `/ben-portfolio/`.
 
-Automated evidence: Focused Playwright RED command `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:e2e -- tests/e2e/window-system.spec.ts --project=Chromium --reporter=line` could not start the configured preview server: `listen EPERM 127.0.0.1:4173`. This is infrastructure, not a product RED: port 4173 is already listened to by Node PID 81765 with cwd `/Users/ben.hutchinson/code/personal/ben-portfolio/.worktrees/isometric-portfolio-redesign`. The E2E contract remains checked in for production-shell execution once that preview ownership is released.
+Automated evidence: Vitest now excludes `tests/e2e/**` from test discovery, preserving the existing 91% thresholds rather than allowing Playwright's `test.describe()` API to be loaded by Vitest. The legacy 4173 preview remains owned by `/Users/ben.hutchinson/code/personal/ben-portfolio/.worktrees/isometric-portfolio-redesign` and was neither changed nor stopped. An ignored temporary config targeting a separately built production preview at `http://127.0.0.1:4175/ben-portfolio/` ran `PATH=/opt/homebrew/opt/node@24/bin:$PATH npx playwright test tests/e2e/window-system.spec.ts --config=.superpowers/port-005-playwright.config.ts --project=Chromium --project=mobile-Chrome --reporter=line`: 2 passed, 2 expected project skips. The first sandboxed attempt could not launch Chromium because of macOS Mach-port permissions; the authorized rerun passed. No `@a11y`-tagged E2E specification exists (the only E2E file is `window-system.spec.ts`); a subsequent focused `--grep @a11y` run was unavailable because the approval service reached its usage limit.
 
-Manual evidence: Not yet run.
+Manual evidence: Browser-plugin checks against the production preview succeeded for direct/reload `#career` at 1440×1000: the URL remained `#career`, one Career frame was mounted, and the Career navigation item remained current. At 390×844, only the focused Command frame was visible, `document.documentElement.scrollWidth` equalled `window.innerWidth` (390), and the non-focused frames were absent from the accessibility snapshot. The Browser plugin subsequently received an auto-review policy denial for fresh desktop screenshot/console inspection of `127.0.0.1:4175`; this is a manual-evidence limitation, not a product failure. The Product Owner will complete the remaining visual/manual charter before acceptance.
 
-Defects: None recorded.
+Defects: None reproduced. The controller-observed direct/reload `#career` defect did not reproduce at `59ce4a9`: after direct navigation and reload the URL remained `#career`, `[data-window-id="career"]` had count 1, and `[aria-current="page"]` was the Career link.
 
 Product Owner decision: PENDING — READY packet issued; acceptance awaits independent Tester evidence and Product Owner comparison against every criterion.

@@ -12,7 +12,7 @@ function renderShell(hash = '#desktop') {
 afterEach(() => window.history.replaceState(null, '', '#desktop'));
 
 describe('PortfolioShell', () => {
-  it('provides the shell landmarks and one canonical recruiter claim in the main summary', () => {
+  it('provides the shell landmarks and one canonical recruiter claim in the window layer', () => {
     renderShell();
 
     expect(screen.getByRole('banner')).toBeVisible();
@@ -21,8 +21,8 @@ describe('PortfolioShell', () => {
     expect(screen.getByRole('contentinfo')).toBeVisible();
     expect(screen.getByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toBeVisible();
     expect(screen.getAllByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toHaveLength(1);
-    expect(screen.getByText(/mid-level platform engineer/i)).toBeVisible();
-    expect(screen.getByText('Manchester, UK')).toBeVisible();
+    expect(screen.getByRole('region', { name: 'About' })).toBeVisible();
+    expect(screen.getByRole('region', { name: 'Work' })).toBeVisible();
     expect(screen.getByRole('link', { name: 'Work' })).toBeVisible();
     expect(screen.getByRole('link', { name: 'Career' })).toBeVisible();
   });
@@ -72,8 +72,19 @@ describe('PortfolioShell', () => {
       ['link', 'Work'],
       ['link', 'Career'],
       ['link', 'Projects'],
-      ['link', 'Explore work'],
-      ['link', 'See career'],
+      ['heading', 'About'],
+      ['button', 'Close About'],
+      ['button', 'Minimize About'],
+      ['button', 'Maximize About'],
+      ['heading', 'Work'],
+      ['button', 'Close Work'],
+      ['button', 'Minimize Work'],
+      ['button', 'Maximize Work'],
+      ['heading', 'Command'],
+      ['button', 'Close Command'],
+      ['button', 'Minimize Command'],
+      ['button', 'Maximize Command'],
+      ['button', 'Reset layout'],
       ['button', 'About'],
       ['button', 'Work'],
       ['button', 'Career'],

@@ -41,7 +41,9 @@ test.describe('window system mobile', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('./#desktop');
 
-    await expect(page.locator('[data-window-id]')).toHaveCount(1);
+    expect(await page.locator('[data-window-id]').evaluateAll((frames) => (
+      frames.filter((frame) => getComputedStyle(frame).display !== 'none').length
+    ))).toBe(1);
     await page.getByRole('button', { name: 'Work' }).click();
     await expect(page.locator(workFrame)).toBeVisible();
     const before = await page.locator(workFrame).boundingBox();
