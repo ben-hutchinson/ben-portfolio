@@ -68,6 +68,12 @@ describe('canonical portfolio content', () => {
     expect(projects.every(({ kind }) => kind === 'personal')).toBe(true);
   });
 
+  it('uses base-safe project asset paths for the configured Vite deployment base', () => {
+    for (const project of projects) {
+      expect(project.image).not.toMatch(/^\//);
+    }
+  });
+
   it('preserves the verified Pokeleximon and Safelog actions', () => {
     const linksByProject = Object.fromEntries(
       projects.map((project) => [project.id, collectHrefs(project)]),

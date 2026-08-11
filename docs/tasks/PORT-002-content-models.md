@@ -1,6 +1,6 @@
 # PORT-002 — Create canonical content models
 
-Status: IN_PROGRESS
+Status: IN_TEST
 
 Requirement links: [PRD §2 — Positioning](../PRD.md#2-positioning), [PRD §7 — Approved Information Architecture](../PRD.md#7-approved-information-architecture), [PRD §9 — Content](../PRD.md#9-functional-requirements), [DESIGN §7 — Career.app](../DESIGN.md#7-careerapp), [DESIGN §8 — Other Applications](../DESIGN.md#8-other-applications), and [implementation plan — Task 2](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-2-create-canonical-content-models).
 
@@ -61,16 +61,27 @@ Canonical migration sentence (one canonical data literal): “Migrated 50+ repos
 
 ## Acceptance criteria
 
-- [ ] IDs are unique; Career stages provide year, role, headline, evidence, description, and accent.
-- [ ] The Career ID order is `graduate`, `observability`, `associate`, `skao`; personal Project IDs are exactly `pokeleximon` and `safelog`.
-- [ ] Internal project IDs match the supported hashes; external links are HTTPS or `mailto:`.
-- [ ] The canonical migration sentence occurs once in canonical data.
-- [ ] All professional copy is in the new modules; generic equal-weight Work entries are absent from the personal-project catalogue.
-- [ ] Verified Pokeleximon and Safelog links are preserved; non-public SKAO links are absent, not `#`.
-- [ ] `npm test -- tests/unit/content.test.ts` and `npm run test:coverage` are run, with content helpers measured if present.
+- [x] IDs are unique; Career stages provide year, role, headline, evidence, description, and accent. (Node 24.19.0 focused contract: 8 relevant assertions passed on 2026-08-11.)
+- [x] The Career ID order is `graduate`, `observability`, `associate`, `skao`; personal Project IDs are exactly `pokeleximon` and `safelog`. (Focused contract passed.)
+- [x] Internal project IDs match the supported hashes; external links are HTTPS or `mailto:`. (Focused contract passed; canonical href audit found only HTTPS or `mailto:` values.)
+- [x] The canonical migration sentence occurs once in canonical data. (Focused contract passed; `src/data/work.ts` contains the one exact literal.)
+- [x] All professional copy is in the new modules; generic equal-weight Work entries are absent from the personal-project catalogue. (Canonical-data audit passed.)
+- [x] Verified Pokeleximon and Safelog links are preserved; non-public SKAO links are absent, not `#`. (Focused contract and canonical-data audit passed.)
+- [ ] `npm test -- tests/unit/content.test.ts` and `npm run test:coverage` are run, with content helpers measured if present. (Both ran under Node 24.19.0 and fail 1/9 and 1/12 respectively: project image values are root-relative despite Vite `base: '/ben-portfolio/'`; Vitest emitted no coverage summary after the failing assertion, so the 91% thresholds cannot be certified.)
 - [ ] The Product Owner has compared every rendered claim with source docs and verified content.
 
-Automated evidence: record the focused test and coverage results on the implementation commit.
+## Tester GREEN evidence — 2026-08-11
+
+- Verified production commit: `95886d8 feat: define canonical portfolio content models`.
+- Node runtime: `v24.19.0` (`/opt/homebrew/opt/node@24/bin`); the default Node 25 binary is unusable because its Homebrew `simdjson` dylib is missing.
+- Focused suite: `npm test -- tests/unit/content.test.ts` → 8 passed, 1 failed. The new tester-owned assertion rejects root-relative project images.
+- Full coverage: `npm run test:coverage` → 11 passed, 1 failed. Coverage configuration requires 91% statements, branches, functions, and lines; no coverage summary was emitted on this failed run, so the thresholds remain unverified.
+- Static checks: `npm run typecheck`, `npm run lint`, and `npm run build` passed under Node 24.19.0. The production build output is generated for Vite `base: '/ben-portfolio/'`.
+- Canonical audit: all six required modules exist; the migration sentence appears once; no annualised/extrapolated-savings wording, `#` link, or public SKAO action appears; Pokeleximon and Safelog HTTPS links are preserved; both referenced PNGs exist under `public/assets/ui/`.
+
+Defect (P1 — static deployment reliability): `projects` supplies `/assets/ui/project-pokeleximon.png` and `/assets/ui/project-safelog.png`. With Vite's configured `/ben-portfolio/` base, these root-relative requests target `/assets/...` rather than `/ben-portfolio/assets/...` on GitHub Pages. Expected: base-safe, relative asset paths (or URLs derived from `import.meta.env.BASE_URL`). Actual: focused contract fails at `tests/unit/content.test.ts` because both image values begin with `/`. Evidence: Node 24 focused-test failure above. Production remediation is intentionally left to the Developer.
+
+Automated evidence: Tester recorded the focused test, full coverage attempt, static checks, and deployment-path audit. This packet remains IN_TEST pending the base-path fix and a clean coverage run.
 
 Manual evidence: Product Owner verifies every rendered canonical value against this packet, PRD §§2 and 7, DESIGN §§7 and 8, and the inventory below.
 
