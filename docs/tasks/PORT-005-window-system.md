@@ -1,6 +1,6 @@
 # PORT-005 — Implement a recoverable, accessible window system
 
-Status: IN_TEST
+Status: CHANGES_REQUESTED
 
 Requirement links:
 
@@ -262,6 +262,11 @@ Manual evidence: Controller Browser QA against `http://127.0.0.1:4175/ben-portfo
 
 Accessibility evidence: A temporary axe Playwright check passed in Chromium desktop and mobile-Chrome. Desktop had zero violations. Mobile had one moderate `page-has-heading-one` violation and zero serious/critical violations: with Command as the sole mobile application, the rendered page lacks a page-level `h1`. Record this as non-blocking P3 follow-up for PORT-006, which owns permanent desktop/mobile composition and heading hierarchy; it does not invalidate PORT-005's labelled non-modal frame, named-control, stable-order, or recoverability contract.
 
-Defects: P3 / non-blocking — mobile `page-has-heading-one` axe violation, assigned to PORT-006 as above. The controller-observed direct/reload `#career` defect did not reproduce at `59ce4a9`: after direct navigation and reload the URL remained `#career`, `[data-window-id="career"]` had count 1, and `[aria-current="page"]` was the Career link.
+Defects:
 
-Product Owner decision: PENDING — READY packet issued; acceptance awaits independent Tester evidence and Product Owner comparison against every criterion.
+- Important / P1 — breakpoint transitions mutate and lose desktop window positions. Reproduction at `59ce4a9`: begin on `#desktop` with a fine pointer and the accepted default points; change to a viewport below 768px or a coarse pointer and let the layer measurement update; `WindowLayer`'s resize-revalidation effect still calls `MOVE_WINDOW` for every open normal window, clamping Work and Command against the narrow work area. Return to a fine-pointer desktop viewport. Expected: narrow/coarse presentation changes only CSS/rendering, reducer positions remain the prior desktop points, and the intentional composition returns without Reset Layout. Actual: mobile measurements overwrite the reducer's desktop positions, so the wide layout returns with windows collapsed toward the narrow bounds. Affected requirements: this packet's mobile rule “Do not mutate reducer state merely because the layout is narrow,” DESIGN §6 “Arbitrary positions do not persist across breakpoints,” AGENTS §13 responsive rules, and the responsive acceptance criterion. Bounded fix: gate geometry revalidation to the fine-pointer, at-least-768px desktop-capable mode; add a component regression that crosses fine desktop → narrow/coarse → fine desktop and proves `windowPositions` are unchanged while narrow, then add a production-shell browser round trip that proves the original wide composition returns. Re-run focused tests, full coverage, typecheck, lint, build, desktop/mobile Playwright, and manual resize recovery.
+- Minor / P3 / non-blocking — mobile `page-has-heading-one` axe violation. At `#desktop`, Command is the sole interim mobile application, so there is no rendered page-level `h1`. This does not violate PORT-005's labelled non-modal-frame, control, source-order, or recovery contract. It is assigned to PORT-006, which owns the permanent recruiter-first Desktop/About/Featured Work composition and must guarantee a visible page-level `h1` at 390×844 as well as desktop. This P3 does not itself block PORT-005 acceptance.
+
+The controller-observed direct/reload `#career` defect did not reproduce at `59ce4a9`: after direct navigation and reload the URL remained `#career`, `[data-window-id="career"]` had count 1, and `[aria-current="page"]` was the Career link.
+
+Product Owner decision: CHANGES_REQUESTED — 2026-08-11. Spec-compliance verdict: FAIL with one Important responsive-state finding; all other reviewed PORT-005 acceptance criteria have supporting implementation and Tester evidence, and the mobile heading finding is a tracked non-blocking P3 for PORT-006. Task/code-quality verdict: FAIL with the same Important finding because viewport presentation currently leaks into canonical reducer geometry; no Critical finding. Acceptance is withheld until the bounded regression is fixed and independently re-verified.
