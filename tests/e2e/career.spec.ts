@@ -88,16 +88,20 @@ test.describe('Career.app desktop', () => {
     await page.evaluate(() => { document.body.style.zoom = '2'; });
 
     const zoomContractHolds = await page.evaluate(() => {
+      const stage = document.querySelector<HTMLElement>('[data-window-id="career"] [data-testid="career-stage"]');
+      if (stage === null) return false;
       const selectors = [
-        '[data-window-id="career"] .stageLead .kicker',
-        '[data-window-id="career"] .year',
-        '[data-window-id="career"] .headline',
-        '[data-window-id="career"] .evidenceStatement',
+        'div > p:first-child',
+        'div > p:nth-of-type(2)',
+        'h3',
+        'aside p:nth-of-type(2)',
         '[data-window-id="career"] input[type="range"]',
         '[data-window-id="career"] button[aria-pressed="true"]',
       ];
-      const elements = selectors.map((selector) => document.querySelector<HTMLElement>(selector));
-      const evidence = document.querySelector<HTMLElement>('[data-window-id="career"] .evidenceStatement');
+      const elements = selectors.map((selector) => selector.startsWith('[data-window-id')
+        ? document.querySelector<HTMLElement>(selector)
+        : stage.querySelector<HTMLElement>(selector));
+      const evidence = stage.querySelector<HTMLElement>('aside p:nth-of-type(2)');
       if (evidence === null || elements.some((element) => element === null)) return false;
 
       const evidenceStyle = window.getComputedStyle(evidence);
