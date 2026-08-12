@@ -49,7 +49,10 @@ describe('PortfolioShell', () => {
 
     await user.click(screen.getByRole('button', { name: 'Career' }));
     expect(liveRegion).toHaveTextContent(/career/i);
-    expect(screen.getAllByRole('status')).toHaveLength(1);
+    expect(screen.getAllByRole('status')).toHaveLength(2);
+    expect(screen.getByRole('status', { name: 'Current career stage' })).toHaveTextContent(
+      '2022 — Technology Graduate',
+    );
   });
 
   it('converges menu hash navigation and dock intent on the same observable Career state', async () => {
