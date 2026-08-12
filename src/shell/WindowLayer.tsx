@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type JSX, ty
 import { AboutApp } from '../apps/about/AboutApp';
 import { CareerApp } from '../apps/career/CareerApp';
 import { FeaturedWork } from '../apps/work/FeaturedWork';
+import { WorkApp } from '../apps/work/WorkApp';
 import { usePortfolio } from '../app/PortfolioContext';
 import type { PortfolioState } from '../app/portfolioState';
 import type { AppId } from '../data/models';
@@ -29,12 +30,12 @@ const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
   command: { width: 540, height: 220 },
 };
 
-function appContent(appId: AppId): ReactNode {
+function appContent(appId: AppId, isWorkRoute: boolean): ReactNode {
   switch (appId) {
     case 'about':
       return <AboutApp />;
     case 'work':
-      return <FeaturedWork />;
+      return isWorkRoute ? <WorkApp /> : <FeaturedWork />;
     case 'career':
       return <CareerApp />;
     case 'command':
@@ -231,12 +232,15 @@ export function WindowLayer(): JSX.Element {
       {allVisibleIds.map((appId) => {
         const title = WINDOW_TITLES[appId];
         const isMaximized = state.maximizedAppId === appId;
+        const size = appId === 'work' && state.route.kind === 'work'
+          ? { width: 1040, height: 650 }
+          : WINDOW_SIZES[appId];
         return (
           <WindowFrame
             appId={appId}
             title={title}
             position={state.windowPositions[appId]}
-            size={WINDOW_SIZES[appId]}
+            size={size}
             workArea={workArea}
             zIndex={state.windowOrder.indexOf(appId) + 1}
             isFocused={state.focusedAppId === appId}
@@ -251,7 +255,7 @@ export function WindowLayer(): JSX.Element {
             }}
             key={appId}
           >
-            {appContent(appId)}
+            {appContent(appId, state.route.kind === 'work')}
           </WindowFrame>
         );
       })}
