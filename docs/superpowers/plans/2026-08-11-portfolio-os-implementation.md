@@ -370,9 +370,9 @@ export type PortfolioAction =
 - Create: `tests/component/CommandApp.test.tsx`
 - Create: `tests/e2e/contact-command.spec.ts`
 
-- [ ] **Product Owner:** Queue PORT-010 for direct email, LinkedIn, GitHub, CV, location, and availability plus the documented command set: `help`, `about`, `work`, `career`, `projects`, `project <known-id>`, `contact`, `cv`, `reset`, and `clear`.
-- [ ] **Tester:** Add a command parsing table before implementation, including case/whitespace normalization, missing or unknown project IDs, closest-command suggestions, empty input, clear, and proof that shell syntax remains inert text.
-- [ ] **Developer:** Implement a typed registry whose entries dispatch ordinary portfolio actions:
+- [x] **Product Owner:** Queue PORT-010 for direct email, LinkedIn, GitHub, CV, location, and availability plus the documented command set: `help`, `about`, `work`, `career`, `projects`, `project <known-id>`, `contact`, `cv`, `reset`, and `clear`.
+- [x] **Tester:** Add a command parsing table before implementation, including case/whitespace normalization, missing or unknown project IDs, closest-command suggestions, empty input, clear, and proof that shell syntax remains inert text.
+- [x] **Developer:** Implement a typed registry whose entries dispatch ordinary portfolio actions:
 
 ```ts
 export interface CommandDefinition {
@@ -383,11 +383,11 @@ export interface CommandDefinition {
 }
 ```
 
-- [ ] **Developer:** Render visible command suggestions and a labelled input. Never call `eval`, `Function`, a shell, dynamic import from input, or `dangerouslySetInnerHTML`. Limit in-memory output history to 30 entries.
-- [ ] **Developer:** Keep Contact deliberately simple and semantic. External links expose useful accessible names; CV uses the checked-in PDF and download filename.
-- [ ] **Tester:** Add e2e coverage proving visible navigation reaches everything commands can reach, command execution updates the hash, unknown input helps recovery, and `#contact` works directly.
-- [ ] **Product Owner:** Accept only if the command interface rewards exploration without becoming a prerequisite or a hacker-terminal theme.
-- [ ] Commit with `feat: add contact and optional command paths`.
+- [x] **Developer:** Render visible command suggestions and a labelled input. Never call `eval`, `Function`, a shell, dynamic import from input, or `dangerouslySetInnerHTML`. Limit in-memory output history to 30 entries.
+- [x] **Developer:** Keep Contact deliberately simple and semantic. External links expose useful accessible names; CV uses the checked-in PDF and download filename.
+- [x] **Tester:** Add e2e coverage proving visible navigation reaches everything commands can reach, command execution updates the hash, unknown input helps recovery, and `#contact` works directly.
+- [x] **Product Owner:** Accept only if the command interface rewards exploration without becoming a prerequisite or a hacker-terminal theme.
+- [x] Commit with `feat: add contact and optional command paths`.
 
 ## Task 11: Integrate Responsive, Accessibility, and Failure Behaviour
 
