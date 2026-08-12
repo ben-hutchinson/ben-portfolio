@@ -1,6 +1,6 @@
 # PORT-007 — Make Career the inspectable signature interaction
 
-Status: READY
+Status: IN_PROGRESS
 
 Requirement links: [PRD §7 Career application](../PRD.md#career-application), [PRD §13 release acceptance](../PRD.md#13-release-acceptance), [DESIGN §7 Career.app](../DESIGN.md#7-careerapp), [SOUL: Product Worldview](../SOUL.md#product-worldview), [SOUL: Motion Character](../SOUL.md#motion-character), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 7](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-7-build-the-kinetic-career-application).
 
@@ -53,9 +53,9 @@ At narrow/coarse layouts Career is one normal-flow column with ordinary document
 
 ### Tester RED gate
 
-- [ ] Add failing `CareerApp.test.tsx` contracts proving four locked stage records, native labelled range/bounds, direct buttons, range arrow changes, one `SELECT_CAREER_STAGE` path, synchronized visible/accessible stage text, reduced-motion immediate mode, and no local-stage behaviour.
-- [ ] Add failing `career.spec.ts` journeys for `#career`, Menu/Dock/shortcut, browser back/forward, range and direct buttons, close/minimize/maximize/recovery, rapid stage changes, reduced motion, 390px ordinary scroll, and 200% zoom.
-- [ ] Record Node 24 command, baseline commit, expected semantic failure, and no production edits.
+- [x] Add failing `CareerApp.test.tsx` contracts proving four locked stage records, native labelled range/bounds, direct buttons, range arrow changes, one `SELECT_CAREER_STAGE` path, synchronized visible/accessible stage text, reduced-motion immediate mode, and no local-stage behaviour.
+- [x] Add failing `career.spec.ts` journeys for `#career`, Menu/Dock/shortcut, browser back/forward, range and direct buttons, close/minimize/maximize/recovery, rapid stage changes, reduced motion, 390px ordinary scroll, and 200% zoom.
+- [x] Record Node 24 command, baseline commit, expected semantic failure, and no production edits.
 
 ### Developer GREEN handoff
 
@@ -79,7 +79,7 @@ At narrow/coarse layouts Career is one normal-flow column with ordinary document
 
 ## Evidence record
 
-Tester RED evidence: Not yet run.
+Tester RED evidence: 2026-08-12 at baseline `b792a76`, Node 24 at `/opt/homebrew/opt/node@24/bin`, before any PORT-007 production change. `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/component/CareerApp.test.tsx` ran 1 file/5 tests: 5 expected semantic failures and no passes. The first requires the native accessible slider `Career stage`; the current `#career` window is present and reducer/hash wiring opens it, but its placeholder has neither slider nor career stage content. The remaining contracts fail only because the placeholder lacks the direct `2022`/`2024`/`2025`/`Now` buttons needed to exercise reducer-only selection, rapid atomic content, and reduced-motion swaps. There was no absent production-module import, transform, TypeScript, test-environment, or assertion-harness failure. `npm run typecheck` and `npm run lint` each exited 0. `tests/e2e/career.spec.ts` defines direct-hash, history, Menu/Dock/shortcut, range/button, window, mobile/zoom, reduced-motion, and axe-ready production journeys but was intentionally not run at RED against the placeholder. Only the two authorized Tester tests and this packet changed; no production file or `.DS_Store` changed.
 
 Developer GREEN evidence: Not yet run.
 
