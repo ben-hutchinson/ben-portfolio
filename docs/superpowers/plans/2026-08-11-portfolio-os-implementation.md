@@ -321,13 +321,13 @@ export type PortfolioAction =
 - Create: `tests/component/WorkApp.test.tsx`
 - Create: `tests/e2e/work.spec.ts`
 
-- [ ] **Product Owner:** Queue PORT-008 with five required sections—Problem, Ownership, Approach, Rollout, Outcome—and the exact facts from PORT-002. Mark confidential implementation details and unverified numbers out of scope.
-- [ ] **Tester:** Add a failing accessible-outline test for one `h1`, ordered section headings, the exact flagship sentence, Poetry/uv/ruff/base-Makefile references, and absence of annualized values.
-- [ ] **Developer:** Render a scan-friendly technical case file from `src/data/work.ts`. Lead with outcome, then explain context, personal initiative, reusable base Makefile, staged repository rollout, and result.
-- [ ] **Developer:** If a system-shape visual is useful, build it from semantic HTML and CSS with equivalent text; do not fabricate private architecture or use canvas.
-- [ ] **Tester:** Add direct `#work`, keyboard navigation, narrow-screen reading, and CV-exit e2e coverage; manually check that the whole story is understandable without a diagram.
-- [ ] **Product Owner:** Compare every statement with the approved evidence and accept only if Ben's ownership is clear without exaggeration.
-- [ ] Commit with `feat: present flagship platform migration case study`.
+- [x] **Product Owner:** Queue PORT-008 with five required sections—Problem, Ownership, Approach, Rollout, Outcome—and the exact facts from PORT-002. Mark confidential implementation details and unverified numbers out of scope.
+- [x] **Tester:** Add a failing accessible-outline test for one `h1`, ordered section headings, the exact flagship sentence, Poetry/uv/ruff/base-Makefile references, and absence of annualized values.
+- [x] **Developer:** Render a scan-friendly technical case file from `src/data/work.ts`. Lead with outcome, then explain context, personal initiative, reusable base Makefile, staged repository rollout, and result.
+- [x] **Developer:** If a system-shape visual is useful, build it from semantic HTML and CSS with equivalent text; do not fabricate private architecture or use canvas.
+- [x] **Tester:** Add direct `#work`, keyboard navigation, narrow-screen reading, and CV-exit e2e coverage; manually check that the whole story is understandable without a diagram.
+- [x] **Product Owner:** Compare every statement with the approved evidence and accept only if Ben's ownership is clear without exaggeration.
+- [x] Commit with `feat: present flagship platform migration case study`.
 
 ## Task 9: Build Personal Project Catalogue and Details
 
