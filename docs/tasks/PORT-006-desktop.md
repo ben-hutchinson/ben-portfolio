@@ -1,6 +1,6 @@
 # PORT-006 — Compose the recruiter-first desktop
 
-Status: TESTER_GREEN
+Status: ACCEPTED
 
 Requirement links: [PRD §7](../PRD.md#7-approved-information-architecture), [PRD §8](../PRD.md#8-core-user-journeys), [PRD §9](../PRD.md#9-functional-requirements), [DESIGN §5](../DESIGN.md#5-shell-anatomy), [DESIGN §6](../DESIGN.md#6-window-system), [DESIGN §9](../DESIGN.md#9-responsive-behaviour), [DESIGN §14](../DESIGN.md#14-performance-and-delivery), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 6](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-6-compose-the-recruiter-first-desktop).
 
@@ -76,15 +76,15 @@ Use the approved tactile mint/paper/Ink/yellow/coral palette, strong outlines, h
 
 ### Developer GREEN handoff
 
-- [ ] Implement only the listed production files/seams; use typed `profile`, `flagshipWork`, and `externalLinks`, and keep all defaults in canonical state/data modules.
-- [ ] Run focused Desktop/state/shell tests, `npm run typecheck`, `npm run lint`, `npm run build`, and record commit plus limitations without declaring Tester acceptance.
+- [x] Implement only the listed production files/seams; use typed `profile`, `flagshipWork`, and `externalLinks`, and keep all defaults in canonical state/data modules.
+- [x] Run focused Desktop/state/shell tests, `npm run typecheck`, `npm run lint`, `npm run build`, and record commit plus limitations without declaring Tester acceptance.
 
 ### Tester verification and manual charter
 
-- [ ] Run focused tests, full `npm test`, `npm run test:coverage` with all four thresholds at least 91%, typecheck, lint, build, recruiter E2E, and relevant axe checks.
-- [ ] At 1440×1000, perform a timed ten-second zero-click scan, then use mouse and keyboard to open Work, return Desktop, open Career, use CV/GitHub/LinkedIn/Contact, and verify focus/route recovery.
-- [ ] At 390×844 with coarse/touch input and keyboard, start at Desktop and confirm About alone is visible with the one visible `h1`; switch through the dock; verify no drag, clipping, overlap, or horizontal overflow.
-- [ ] Confirm the prior mobile `page-has-heading-one` axe P3 is closed with no serious or critical accessibility violation introduced.
+- [x] Run focused tests, full `npm test`, `npm run test:coverage` with all four thresholds at least 91%, typecheck, lint, build, recruiter E2E, and relevant axe checks.
+- [x] At 1440×1000, perform a timed ten-second zero-click scan, then use mouse and keyboard to open Work, return Desktop, open Career, use CV/GitHub/LinkedIn/Contact, and verify focus/route recovery.
+- [x] At 390×844 with coarse/touch input and keyboard, start at Desktop and confirm About alone is visible with the one visible `h1`; switch through the dock; verify no drag, clipping, overlap, or horizontal overflow.
+- [x] Confirm the prior mobile `page-has-heading-one` axe P3 is closed with no serious or critical accessibility violation introduced.
 
 ## Acceptance criteria
 
@@ -100,7 +100,7 @@ Use the approved tactile mint/paper/Ink/yellow/coral palette, strong outlines, h
 
 Tester RED evidence: 2026-08-11 at accepted production baseline `cd1b528`, before any PORT-006 production edit. Command: `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/component/Desktop.test.tsx tests/component/PortfolioShell.test.tsx tests/component/WindowLayer.test.tsx tests/unit/portfolioReducer.test.ts`. Result: 4 failing files; 11 expected failing tests and 42 passing tests (53 total). `Desktop.test.tsx` failed all five new behaviour cases because canonical `profile.location` is still `United Kingdom`, About is not the initial focused/topmost app, the asymmetric points are absent, all three desktop shortcuts are absent, recruiter exits via shortcuts are absent, and coarse mobile still displays Command rather than About. The three stale suites failed only their intentionally amended default-state, z-index/position, Reset, and keyboard-order assertions. There was no import, transform, environment, or test-harness failure. `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` exited 0, confirming the Tester additions type-check. Only the five authorized Tester files and this packet changed; no production file changed and `.DS_Store` was not touched by the Tester.
 
-Developer GREEN evidence: Not yet run.
+Developer GREEN evidence: Commit `14ca891` composed the recruiter-first desktop from typed `profile` and `flagshipWork` data, retained the PORT-005 reducer/window boundaries, and passed 53/53 focused tests, typecheck, lint, build, 112/112 full tests, and all 91% coverage gates. The production bundle was 89.86 kB gzip JavaScript and 3.22 kB gzip CSS.
 
 Tester verification: 2026-08-11 against `14ca891` (including Tester correction `64b2e99`), Node 24 at `/opt/homebrew/opt/node@24/bin`. Focused command `npm test -- tests/component/Desktop.test.tsx tests/component/PortfolioShell.test.tsx tests/component/WindowLayer.test.tsx tests/unit/portfolioReducer.test.ts`: 4 files, 53/53 tests passed. Full `npm test`: 12 files, 112/112 passed. `npm run test:coverage`: 112/112 passed; statements 98.70%, branches 94.71%, functions 98.90%, lines 99.41% (all exceed 91%). `npm run typecheck`, `npm run lint`, and `npm run build` each exited 0. No Tester test correction was needed.
 
@@ -114,4 +114,4 @@ Task 6 fix round Tester GREEN evidence: 2026-08-12 against `3adfa7d`, Node 24 at
 
 Defects: Prior serious `color-contrast` blocker is CLOSED. PORT-005 mobile `page-has-heading-one` P3 is CLOSED. No Critical, Important, or P3 defect found in this fix round.
 
-Product Owner decision: PENDING — Tester verdict GREEN; Product Owner acceptance remains required.
+Product Owner decision: ACCEPTED on 2026-08-12 after reviewing accepted range `51ac6f5..0f5b5e2`, the generated full diff package, source, tests, fresh fixed desktop/mobile captures, the accepted visual reference, and PRD/DESIGN/SOUL. SPEC COMPLIANCE: PASS. TASK QUALITY: PASS. The first viewport communicates the full ten-second recruiter contract with canonical typed copy and one exact flagship claim; the default layout is intentionally asymmetric; About remains topmost and is the sole mobile application with the one visible `h1`; recruiter exits and PORT-005 window invariants remain intact. Fresh Product Owner verification passed 112/112 tests, coverage at 98.70% statements / 94.71% branches / 98.90% functions / 99.41% lines, typecheck, lint, and production build. Contrast fix `3adfa7d` moves undersized coral label text to Ink while preserving coral structural accents, the tactile palette, hard outlines/shadows, hierarchy, and responsive composition. No unresolved Critical, Important, or P3 finding remains.

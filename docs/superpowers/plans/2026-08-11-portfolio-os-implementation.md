@@ -277,14 +277,14 @@ export type PortfolioAction =
 - Create: `tests/component/Desktop.test.tsx`
 - Create: `tests/e2e/recruiter-scan.spec.ts`
 
-- [ ] **Product Owner:** Queue PORT-006 with the ten-second recruiter contract: name, “Mid-level platform engineer”, Manchester, availability, backend-to-platform direction, exact flagship claim, and one-action routes to Work, Career, CV, GitHub, LinkedIn, and Contact.
-- [ ] **Tester:** Add a failing desktop component test for all contract content without clicks and an e2e recruiter journey that opens Work, returns to Desktop, opens Career, and reaches the CV action.
-- [ ] **Developer:** Compose Profile and Featured Work as intentional default windows, with the low-contrast background statement behind them. Keep the flagship sentence visible at 1440×1000 without moving a window.
-- [ ] **Developer:** Add About, Career, and Work shortcuts as secondary paths; duplicate no canonical professional copy in JSX.
-- [ ] **Developer:** Make `FeaturedWork` an evidence preview with one clear Work action, not a dashboard metric card.
-- [ ] **Tester:** Run the recruiter scan at 1440×1000 and 390×844, keyboard-only and mouse; capture results in PORT-006 and add stable screenshot assertions for both viewports.
-- [ ] **Product Owner:** Perform a timed ten-second scan without prior orientation and record whether all required positioning is understood; reject if interaction obscures evidence.
-- [ ] Commit with `feat: compose recruiter-first desktop`.
+- [x] **Product Owner:** Queue PORT-006 with the ten-second recruiter contract: name, “Mid-level platform engineer”, Manchester, availability, backend-to-platform direction, exact flagship claim, and one-action routes to Work, Career, CV, GitHub, LinkedIn, and Contact.
+- [x] **Tester:** Add a failing desktop component test for all contract content without clicks and an e2e recruiter journey that opens Work, returns to Desktop, opens Career, and reaches the CV action.
+- [x] **Developer:** Compose Profile and Featured Work as intentional default windows, with the low-contrast background statement behind them. Keep the flagship sentence visible at 1440×1000 without moving a window.
+- [x] **Developer:** Add About, Career, and Work shortcuts as secondary paths; duplicate no canonical professional copy in JSX.
+- [x] **Developer:** Make `FeaturedWork` an evidence preview with one clear Work action, not a dashboard metric card.
+- [x] **Tester:** Run the recruiter scan at 1440×1000 and 390×844, keyboard-only and mouse; capture results in PORT-006 and add stable screenshot assertions for both viewports.
+- [x] **Product Owner:** Perform a timed ten-second scan without prior orientation and record whether all required positioning is understood; reject if interaction obscures evidence.
+- [x] Commit with `feat: compose recruiter-first desktop`.
 
 ## Task 7: Build the Kinetic Career Application
 
