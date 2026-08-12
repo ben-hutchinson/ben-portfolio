@@ -1,6 +1,6 @@
 # PORT-006 — Compose the recruiter-first desktop
 
-Status: TESTER_BLOCKED
+Status: TESTER_GREEN
 
 Requirement links: [PRD §7](../PRD.md#7-approved-information-architecture), [PRD §8](../PRD.md#8-core-user-journeys), [PRD §9](../PRD.md#9-functional-requirements), [DESIGN §5](../DESIGN.md#5-shell-anatomy), [DESIGN §6](../DESIGN.md#6-window-system), [DESIGN §9](../DESIGN.md#9-responsive-behaviour), [DESIGN §14](../DESIGN.md#14-performance-and-delivery), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 6](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-6-compose-the-recruiter-first-desktop).
 
@@ -88,13 +88,13 @@ Use the approved tactile mint/paper/Ink/yellow/coral palette, strong outlines, h
 
 ## Acceptance criteria
 
-- [ ] The 1440×1000 zero-click first viewport exposes every locked recruiter-contract item, including the exact flagship sentence exactly once and one-action paths to Work, Career, CV, GitHub, LinkedIn, and Contact.
-- [ ] Desktop composition is asymmetric and ordered shortcuts-left / Work-upper-right / Profile-offset-lower / Command-lower-right; no generic cards or duplicate professional copy appear.
-- [ ] Profile and Featured Work use only their canonical typed data; MenuBar reads the exact canonical `Manchester, UK` location.
-- [ ] About is initially focused/topmost while the same three default apps remain open, and Reset Layout restores that state; no action/hash/reducer semantics change.
-- [ ] `AboutApp` owns one visible `h1` for `profile.name` at 1440×1000 and 390×844, closing PORT-005’s mobile heading P3.
-- [ ] About, Career, and Work shortcuts are secondary native controls using existing `OPEN_APP` actions; mobile has no shortcut dependency and initially shows only About.
-- [ ] Desktop/mobile keyboard, focus, dock recovery, no-drag mobile access, ordinary scrolling, accessibility checks, and all 91% coverage gates pass.
+- [x] The 1440×1000 zero-click first viewport exposes every locked recruiter-contract item, including the exact flagship sentence exactly once and one-action paths to Work, Career, CV, GitHub, LinkedIn, and Contact.
+- [x] Desktop composition is asymmetric and ordered shortcuts-left / Work-upper-right / Profile-offset-lower / Command-lower-right; no generic cards or duplicate professional copy appear.
+- [x] Profile and Featured Work use only their canonical typed data; MenuBar reads the exact canonical `Manchester, UK` location.
+- [x] About is initially focused/topmost while the same three default apps remain open, and Reset Layout restores that state; no action/hash/reducer semantics change.
+- [x] `AboutApp` owns one visible `h1` for `profile.name` at 1440×1000 and 390×844, closing PORT-005’s mobile heading P3.
+- [x] About, Career, and Work shortcuts are secondary native controls using existing `OPEN_APP` actions; mobile has no shortcut dependency and initially shows only About.
+- [x] Desktop/mobile keyboard, focus, dock recovery, no-drag mobile access, ordinary scrolling, accessibility checks, and all 91% coverage gates pass.
 
 ## Evidence record
 
@@ -108,6 +108,10 @@ Automated evidence: A temporary ignored Playwright config served this production
 
 Manual evidence: Screenshot inspection at 1440×1000 and 390×844 confirms the first-viewport recruiter content, tactile mint/paper/ink/yellow/coral treatment, strong outlines/shadows, and intended asymmetric shortcut-left / Work-upper-right / Profile-offset-lower / Command-lower-right arrangement. Compared with `/private/tmp/portfolio-os-accepted-desktop.png`, the implementation preserves the accepted tactile application-window language and shortcut hierarchy; it intentionally renders a fuller composition with MenuBar, Dock, and larger recruiter evidence. No clipping or mobile overflow observed.
 
-Defects: BLOCKER — axe-core 4.13.0 reports `color-contrast` as serious at both required viewports, so the zero-serious/critical criterion fails. Repro: serve production `14ca891` at port 4176, visit `/#desktop` at 1440×1000 and 390×844, inject `axe.source`, then run `axe.run()`. Desktop nodes are `AboutApp.module.css .identityLine` and `FeaturedWork.module.css .context`; mobile node is `.identityLine`. Each uses coral `#ff4e2a` on paper `#f6ffeb` at 11.2px bold, contrast 3.2:1 versus required 4.5:1. PORT-005's mobile `page-has-heading-one` P3 is closed: one `h1` named `Ben Hutchinson` is present at 390×844 and axe reports no `page-has-heading-one` violation. No production changes were made by Tester.
+First-pass defect (resolved in fix round 1): BLOCKER — axe-core 4.13.0 reported `color-contrast` as serious at both required viewports. Repro against `14ca891`: serve at port 4176, visit `/#desktop` at 1440×1000 and 390×844, inject `axe.source`, then run `axe.run()`. Desktop nodes were `AboutApp.module.css .identityLine` and `FeaturedWork.module.css .context`; mobile node was `.identityLine`. Each used coral `#ff4e2a` on paper `#f6ffeb` at 11.2px bold, contrast 3.2:1 versus required 4.5:1. No production changes were made by Tester.
 
-Product Owner decision: PENDING — Tester verdict BLOCKED until the serious contrast defect is fixed and this verification is rerun.
+Task 6 fix round Tester GREEN evidence: 2026-08-12 against `3adfa7d`, Node 24 at `/opt/homebrew/opt/node@24/bin`. Exact prior axe repro on the rebuilt production preview at `http://127.0.0.1:4176/ben-portfolio/#desktop`, with axe-core 4.13.0, returned zero violations and zero serious/critical at both 1440×1000 and 390×844; each viewport has exactly one `h1` named `Ben Hutchinson`. This closes both the prior coral label contrast blocker and PORT-005’s mobile `page-has-heading-one` P3. Fresh focused tests: 53/53; full `npm test`: 112/112; coverage: statements 98.70%, branches 94.71%, functions 98.90%, lines 99.41% (all ≥91%); `npm run typecheck`, `npm run lint`, and `npm run build` exited 0. Isolated E2E against this owned 4176 preview passed 2 relevant recruiter tests with 2 explicit opposite-project skips. Browser plugin bootstrap succeeded but tab acquisition reported `Browser is not available`; the permitted Playwright fallback captured `/private/tmp/portfolio-os-task6-fixed-desktop.png` and `/private/tmp/portfolio-os-task6-fixed-mobile.png`. It found no console warnings/errors, page errors, or framework overlay; verified all first-viewport content and one exact claim, keyboard Open Work → `#work` → Desktop → `#desktop` → Career → `#career` → Contact → `#contact`, CV download, GitHub, LinkedIn, About-only mobile default, no mobile shortcuts, no drag attribute, no horizontal overflow, and dock recovery to Work. Compared with `/private/tmp/portfolio-os-accepted-desktop.png` and the prior Task 6 screenshots, the fix changes only the small coral labels to a high-contrast ink treatment; tactile window fidelity, accepted composition language, and responsive layout are otherwise unchanged. Tester did not alter production or `.DS_Store`.
+
+Defects: Prior serious `color-contrast` blocker is CLOSED. PORT-005 mobile `page-has-heading-one` P3 is CLOSED. No Critical, Important, or P3 defect found in this fix round.
+
+Product Owner decision: PENDING — Tester verdict GREEN; Product Owner acceptance remains required.
