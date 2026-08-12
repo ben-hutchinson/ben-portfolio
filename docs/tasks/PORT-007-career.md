@@ -1,6 +1,6 @@
 # PORT-007 — Make Career the inspectable signature interaction
 
-Status: CHANGES_REQUESTED
+Status: TESTER_BLOCKED
 
 Requirement links: [PRD §7 Career application](../PRD.md#career-application), [PRD §13 release acceptance](../PRD.md#13-release-acceptance), [DESIGN §7 Career.app](../DESIGN.md#7-careerapp), [SOUL: Product Worldview](../SOUL.md#product-worldview), [SOUL: Motion Character](../SOUL.md#motion-character), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 7](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-7-build-the-kinetic-career-application).
 
@@ -112,3 +112,5 @@ CHANGES_REQUESTED — SPEC COMPLIANCE: CHANGES REQUIRED. TASK QUALITY: CHANGES R
 - P3 — A direct 390px Career route still reports the moderate `page-has-heading-one` axe violation. This is not acceptable for the mobile route that exposes Career as the sole visible application. Provide one visible, route-appropriate mobile Career `h1` without creating a competing visible desktop `h1`, then update the axe and browser evidence.
 
 The hash-history P1 remains closed. Re-run the complete Tester Career desktop/mobile/200%/axe matrix after the bounded visual fixes, then return the updated packet for acceptance.
+
+Task 7 fix round 2/5 Tester RED evidence: against unchanged production `35664e9`, three real-browser regressions were added to `tests/e2e/career.spec.ts` for the Product Owner's remaining P3 findings: (1) desktop 1440×1000 requires the Reset layout bounding box not to intersect Career's visible range/direct-stage controls; (2) after selecting Now and applying 200% zoom, requires normal word-boundary wrapping, no document horizontal overflow, and ordinary-scroll reachability for role, year, headline, evidence, range, and Now; and (3) direct 390×844 `#career` requires one visible Career-appropriate `h1` and no axe `page-has-heading-one` violation. On an owned 4177 preview, the isolated two-project Playwright run executed six project entries: three intentional opposite-project skips and exactly three semantic failures—`controlsAreClear`, `zoomContractHolds`, and `careerHeadingContractHolds`, each received `false` instead of `true`. `npm run build`, `npm run typecheck`, and `npm run lint` exited 0. No production or `.DS_Store` file changed.
