@@ -7,7 +7,7 @@ export const projects = [
     title: 'Pokeleximon Daily',
     blurb:
       'Pokeleximon is a full-stack daily puzzle app for Pokemon fans, with crosswords, cryptic clues, and Connections-style games. Built with React, TypeScript, Vite, FastAPI, PostgreSQL, Redis, and Docker, it includes custom puzzle-generation pipelines, publishing workflows, admin tooling, and player analytics.',
-    image: 'assets/ui/project-pokeleximon.png',
+    image: 'assets/ui/project-pokeleximon.webp',
     tags: ['React', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
     links: [
       { label: 'Live', href: 'https://pokeleximon.com/daily' },
@@ -20,7 +20,7 @@ export const projects = [
     title: 'Safelog',
     blurb:
       'Privacy-first log analysis for developers. Detect, redact, and analyze logs locally so you can debug without leaking sensitive data.',
-    image: 'assets/ui/project-safelog.png',
+    image: 'assets/ui/project-safelog.webp',
     tags: ['Python', 'CLI', 'Privacy', 'Log Analysis'],
     links: [{ label: 'GitHub', href: 'https://github.com/ben-hutchinson/safelog' }],
   },

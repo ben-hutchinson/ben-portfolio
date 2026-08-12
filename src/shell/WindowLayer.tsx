@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type JSX, type ReactNode } from 'react';
 import { AboutApp } from '../apps/about/AboutApp';
 import { CareerApp } from '../apps/career/CareerApp';
+import { ProjectDetailApp } from '../apps/projects/ProjectDetailApp';
+import { ProjectsApp } from '../apps/projects/ProjectsApp';
 import { FeaturedWork } from '../apps/work/FeaturedWork';
 import { WorkApp } from '../apps/work/WorkApp';
 import { usePortfolio } from '../app/PortfolioContext';
@@ -30,14 +32,16 @@ const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
   command: { width: 540, height: 220 },
 };
 
-function appContent(appId: AppId, isWorkRoute: boolean): ReactNode {
+function appContent(appId: AppId, route: PortfolioState['route']): ReactNode {
   switch (appId) {
     case 'about':
       return <AboutApp />;
     case 'work':
-      return isWorkRoute ? <WorkApp /> : <FeaturedWork />;
+      return route.kind === 'work' ? <WorkApp /> : <FeaturedWork />;
     case 'career':
       return <CareerApp />;
+    case 'projects':
+      return route.kind === 'project' ? <ProjectDetailApp /> : <ProjectsApp />;
     case 'command':
       return (
         <div className={styles.appContent}>
@@ -45,7 +49,6 @@ function appContent(appId: AppId, isWorkRoute: boolean): ReactNode {
           <p>The command application is available as an optional way to explore this portfolio.</p>
         </div>
       );
-    case 'projects':
     case 'contact':
       return (
         <div className={styles.appContent}>
@@ -158,7 +161,14 @@ export function WindowLayer(): JSX.Element {
     for (const appId of visibleAppIds(state)) {
       if (state.maximizedAppId === appId) continue;
       const current = state.windowPositions[appId];
-      const normalized = clampWindowPosition(current, current, WINDOW_SIZES[appId], workArea);
+      const normalized = clampWindowPosition(
+        current,
+        current,
+        appId === 'projects' && (state.route.kind === 'projects' || state.route.kind === 'project')
+          ? { width: 1040, height: 650 }
+          : WINDOW_SIZES[appId],
+        workArea,
+      );
       if (normalized.x !== current.x || normalized.y !== current.y) {
         dispatch({ type: 'MOVE_WINDOW', appId, position: normalized });
       }
@@ -232,7 +242,8 @@ export function WindowLayer(): JSX.Element {
       {allVisibleIds.map((appId) => {
         const title = WINDOW_TITLES[appId];
         const isMaximized = state.maximizedAppId === appId;
-        const size = appId === 'work' && state.route.kind === 'work'
+        const size = (appId === 'work' && state.route.kind === 'work')
+          || (appId === 'projects' && (state.route.kind === 'projects' || state.route.kind === 'project'))
           ? { width: 1040, height: 650 }
           : WINDOW_SIZES[appId];
         return (
@@ -255,7 +266,7 @@ export function WindowLayer(): JSX.Element {
             }}
             key={appId}
           >
-            {appContent(appId, state.route.kind === 'work')}
+            {appContent(appId, state.route)}
           </WindowFrame>
         );
       })}
