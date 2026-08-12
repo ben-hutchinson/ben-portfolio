@@ -344,14 +344,14 @@ export type PortfolioAction =
 - Create: `tests/component/ProjectMedia.test.tsx`
 - Create: `tests/e2e/projects.spec.ts`
 
-- [ ] **Product Owner:** Queue PORT-009 for Pokeleximon and Safelog as unequal, evidence-led engineering case studies covering purpose, system shape, decisions, delivery/operations, technologies, and verified actions.
-- [ ] **Tester:** Add failing tests for catalogue-to-detail selection, supported project hashes, verified external-link attributes, meaningful image alternatives, and the designed missing-image fallback.
-- [ ] **Developer:** Render projects from typed data. Use buttons or hash anchors for selection and dispatch `SELECT_PROJECT`; never derive routing from display titles.
-- [ ] **Developer:** Implement `ProjectMedia` so an image error swaps to a labelled paper fallback without removing title, summary, or actions. Use module imports or `import.meta.env.BASE_URL`, never root-absolute asset paths.
-- [ ] **Developer:** Optimize selected screenshots to AVIF/WebP with useful dimensions; keep each non-hero image under 350KB and initial image transfer under 1MB.
-- [ ] **Tester:** Add e2e journeys for `#projects`, both direct project hashes, back/forward, broken-media simulation, mobile project switching, and external actions without following off-site URLs.
-- [ ] **Product Owner:** Confirm each project demonstrates platform/backend judgement rather than reading as a generic card or tool list.
-- [ ] Commit with `feat: add engineering project case studies`.
+- [x] **Product Owner:** Queue PORT-009 for Pokeleximon and Safelog as unequal, evidence-led engineering case studies covering purpose, system shape, decisions, delivery/operations, technologies, and verified actions.
+- [x] **Tester:** Add failing tests for catalogue-to-detail selection, supported project hashes, verified external-link attributes, meaningful image alternatives, and the designed missing-image fallback.
+- [x] **Developer:** Render projects from typed data. Use buttons or hash anchors for selection and dispatch `SELECT_PROJECT`; never derive routing from display titles.
+- [x] **Developer:** Implement `ProjectMedia` so an image error swaps to a labelled paper fallback without removing title, summary, or actions. Use module imports or `import.meta.env.BASE_URL`, never root-absolute asset paths.
+- [x] **Developer:** Optimize selected screenshots to AVIF/WebP with useful dimensions; keep each non-hero image under 350KB and initial image transfer under 1MB.
+- [x] **Tester:** Add e2e journeys for `#projects`, both direct project hashes, back/forward, broken-media simulation, mobile project switching, and external actions without following off-site URLs.
+- [x] **Product Owner:** Confirm each project demonstrates platform/backend judgement rather than reading as a generic card or tool list.
+- [x] Commit with `feat: add engineering project case studies`.
 
 ## Task 10: Add Contact and Optional Command Paths
 
