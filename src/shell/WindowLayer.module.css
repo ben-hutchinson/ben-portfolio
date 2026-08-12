@@ -8,8 +8,9 @@
 
 .utilities {
   position: absolute;
+  top: var(--space-3);
   right: var(--space-3);
-  bottom: var(--space-3);
+  bottom: auto;
   z-index: 100;
 }
 

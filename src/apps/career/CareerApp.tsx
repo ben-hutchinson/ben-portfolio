@@ -20,6 +20,7 @@ export function CareerApp(): JSX.Element {
 
   return (
     <section className={styles.app} data-accent={activeStage.accent} aria-label="Career timeline">
+      <h1 className={styles.mobileHeading}>Career</h1>
       <CareerStage
         stage={activeStage}
         index={activeIndex}
