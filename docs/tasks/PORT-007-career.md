@@ -1,6 +1,6 @@
 # PORT-007 — Make Career the inspectable signature interaction
 
-Status: TESTER_BLOCKED
+Status: TESTER_GREEN
 
 Requirement links: [PRD §7 Career application](../PRD.md#career-application), [PRD §13 release acceptance](../PRD.md#13-release-acceptance), [DESIGN §7 Career.app](../DESIGN.md#7-careerapp), [SOUL: Product Worldview](../SOUL.md#product-worldview), [SOUL: Motion Character](../SOUL.md#motion-character), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 7](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-7-build-the-kinetic-career-application).
 
@@ -59,23 +59,23 @@ At narrow/coarse layouts Career is one normal-flow column with ordinary document
 
 ### Developer GREEN handoff
 
-- [ ] Implement only the bounded files/seams; preserve existing reducer/hash/window contracts and use canonical `careerStages` plus existing `LazyMotion`.
-- [ ] Run focused Career/state/window tests, typecheck, lint, build, and document the commit and any limitation without declaring Tester acceptance.
+- [x] Implement only the bounded files/seams; preserve existing reducer/hash/window contracts and use canonical `careerStages` plus existing `LazyMotion`.
+- [x] Run focused Career/state/window tests, typecheck, lint, build, and document the commit and any limitation without declaring Tester acceptance.
 
 ### Tester verification and manual charter
 
-- [ ] Run focused Career/state/window tests, full `npm test`, coverage with each metric ≥91%, typecheck, lint, build, Career E2E, and relevant axe checks.
-- [ ] At desktop, rapidly scrub 0↔3, use range arrows and every year button, then exercise direct hash, history, Menu, Dock, shortcut, minimize/maximize/close/recovery, keyboard order/focus, and reduced motion.
-- [ ] At 390px coarse/touch and 200% zoom, verify every stage/label/control, ordinary scroll, no drag/clipping/overlap/horizontal overflow, and readable immediate reduced-motion stage swaps.
+- [x] Run focused Career/state/window tests, full `npm test`, coverage with each metric ≥91%, typecheck, lint, build, Career E2E, and relevant axe checks.
+- [x] At desktop, rapidly scrub 0↔3, use range arrows and every year button, then exercise direct hash, history, Menu, Dock, shortcut, minimize/maximize/close/recovery, keyboard order/focus, and reduced motion.
+- [x] At 390px coarse/touch and 200% zoom, verify every stage/label/control, ordinary scroll, no drag/clipping/overlap/horizontal overflow, and readable immediate reduced-motion stage swaps.
 
 ## Acceptance criteria
 
-- [ ] Career is a large focused, recoverable OS application with all four locked records and atomic accent/year/role/headline/evidence/description transformation.
-- [ ] Reducer state is the only active-stage source; the native 0–3 range, four direct year buttons, and keyboard range changes dispatch the existing selection action and remain synchronized in visual and accessibility text.
-- [ ] `#career`, browser history, Menu, Dock, shortcut, and window controls reach or recover Career without a new route/action/parser or broken focus.
-- [ ] Motion uses existing LazyMotion only, is 160–240ms with ≤16px displacement, and is immediate with reduced motion while every stage remains readable without animation.
-- [ ] Desktop visual hierarchy is kinetic but recognisably Portfolio OS; mobile is single-column, scrollable, no-drag, no-overflow, accessible, and usable at 200% zoom.
-- [ ] All 91% coverage gates, automated accessibility checks, manual rapid-scrub/keyboard/reduced-motion checks, and production build gates pass.
+- [x] Career is a large focused, recoverable OS application with all four locked records and atomic accent/year/role/headline/evidence/description transformation.
+- [x] Reducer state is the only active-stage source; the native 0–3 range, four direct year buttons, and keyboard range changes dispatch the existing selection action and remain synchronized in visual and accessibility text.
+- [x] `#career`, browser history, Menu, Dock, shortcut, and window controls reach or recover Career without a new route/action/parser or broken focus.
+- [x] Motion uses existing LazyMotion only, is 160–240ms with ≤16px displacement, and is immediate with reduced motion while every stage remains readable without animation.
+- [x] Desktop visual hierarchy is kinetic but recognisably Portfolio OS; mobile is single-column, scrollable, no-drag, no-overflow, accessible, and usable at 200% zoom.
+- [x] All 91% coverage gates, automated accessibility checks, manual rapid-scrub/keyboard/reduced-motion checks, and production build gates pass.
 
 ## Evidence record
 
@@ -94,3 +94,13 @@ Defects: P1/Important — mobile direct `#career` is not recoverable. This viola
 Task 7 fix round 1/5 Tester RED evidence: Against unchanged production `5fa8c43`, `npx playwright test career.spec.ts --config=.superpowers/port-007-playwright.config.ts --project=mobile-Chrome --grep "retains the supported Career hash" --reporter=line` ran one real-browser/provider/reducer hydration test and failed 1/1. Starting at `./#career` received `http://127.0.0.1:4177/ben-portfolio/#desktop` after the full 5s URL assertion timeout, rather than the required `#career`; this is the same overwrite observed in the original P1 repro. The regression also requires the Career frame and `Learning to operate production systems` heading after the URL assertion. It uses no mock dispatch. `npm run typecheck` and `npm run lint` exited 0. No production or `.DS_Store` edit was made.
 
 Product Owner decision: PENDING — Tester verdict BLOCKED until the mobile direct-hash defect is fixed and this matrix is rerun.
+
+Task 7 fix round 1/5 Tester GREEN evidence: 2026-08-12 against production `2fcb03d`, Node 24 at `/opt/homebrew/opt/node@24/bin`. The exact real-provider Pixel-5 hydration regression passed: direct `#career` stayed `#career` with Career frame and `Learning to operate production systems` visible. Focused Career/provider/hash/window suite: 6 files/73 passed; full `npm test`: 13 files/117 passed; coverage statements 98.80%, branches 93.82%, functions 98.98%, lines 99.46% (all ≥91%); typecheck, lint, and build exited 0. Isolated E2E on fresh `http://127.0.0.1:4178/ben-portfolio/`: 8 applicable Chromium/mobile cases passed and 8 opposite-project cases skipped by explicit guards. Browser bootstrap succeeded but tab acquisition returned `Browser is not available`, so permitted Playwright fallback performed rendered QA.
+
+Automated/manual fix evidence: At desktop, direct hash, Menu, Dock, shortcut, native back/forward, four direct buttons, range ArrowLeft/Home/End bounds 0/3, rapid 0↔3, minimize/maximize/close/Dock recovery, keyboard focus, and reduced motion passed. Every canonical stage reported matching range value, `aria-valuetext`, pressed button, live status, and rendered `data-accent`; axe-core returned zero violations for all orange/yellow/blue/mint desktop stages. Reduced-motion native range change yielded `data-reduced-motion=true`, duration `0`, value `1`, and retained range focus. At Pixel-5 390×844, only Career was visible, no drag attribute or horizontal overflow existed, ordinary scroll height 3801px exceeded the 844px client height, and range/direct button remained visible at 200% zoom. Mobile axe returned only `page-has-heading-one` at moderate impact; serious/critical and contrast violations were zero, satisfying this packet’s zero-serious/critical gate. No console warning/error, page error, or framework overlay occurred.
+
+Visual evidence: `/private/tmp/portfolio-os-task7-desktop.png`, `-stage-now.png`, `-mobile.png`, and `-zoom200.png`. Compared with `/private/tmp/portfolio-os-accepted-career.png` and the accepted desktop concept: (1) mint OS work area, paper/yellow chrome, ink borders, and hard shadows match; (2) the geometric yellow field and saturated stage canvas retain the Career signature; (3) fluid oversized year/headline hierarchy and bold evidence card remain clear; (4) compact stage count/range/pill controls preserve the tactile tool-like language; (5) responsive one-column mobile layout keeps content readable through scroll and zoom. Intentional deviations: Career opens as a large focused window over the existing desktop, not the reference’s initially maximized full canvas; approved canonical copy is fuller than the concept mock; blue stage uses localized `#74d7f0` rather than a global token. No fixable mismatch found.
+
+Defects: P1 mobile direct-hash overwrite is CLOSED by `2fcb03d`. The direct Career mobile moderate `page-has-heading-one` axe note is recorded but is neither serious nor critical and does not reopen PORT-006’s About-default P3; no Critical, Important, or P3 defect found.
+
+Product Owner decision: PENDING — Tester verdict GREEN; Product Owner acceptance remains required.
