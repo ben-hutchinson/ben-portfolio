@@ -1,0 +1,185 @@
+.app {
+  --career-accent: var(--color-orange);
+  position: relative;
+  display: grid;
+  min-block-size: 34rem;
+  gap: var(--space-4);
+  overflow: hidden;
+  padding: clamp(var(--space-4), 2.5vw, var(--space-6));
+  border: var(--border-width) solid var(--color-ink);
+  background: var(--career-accent);
+  isolation: isolate;
+}
+
+.app[data-accent='orange'] { --career-accent: var(--color-orange); }
+.app[data-accent='yellow'] { --career-accent: var(--color-yellow); }
+.app[data-accent='blue'] { --career-accent: #74d7f0; }
+.app[data-accent='mint'] { --career-accent: var(--color-mint); }
+
+.app::before {
+  position: absolute;
+  z-index: -1;
+  inset: -28% -12%;
+  background: var(--color-yellow);
+  clip-path: polygon(43% 0, 67% 0, 56% 100%, 30% 100%);
+  content: '';
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.stage {
+  display: grid;
+  min-width: 0;
+  min-height: 24rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(17rem, 0.65fr);
+  gap: clamp(var(--space-4), 4vw, var(--space-6));
+  align-items: end;
+}
+
+.stageLead { min-width: 0; }
+
+.kicker,
+.evidenceLabel,
+.count,
+.status {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  display: flex;
+  margin: 0 0 var(--space-3);
+  gap: var(--space-1) var(--space-3);
+  flex-wrap: wrap;
+}
+
+.year {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 8.5vw, 8rem);
+  font-weight: 950;
+  letter-spacing: -0.09em;
+  line-height: 0.72;
+  overflow-wrap: anywhere;
+}
+
+.headline {
+  max-width: 16ch;
+  margin: clamp(var(--space-4), 3vw, var(--space-6)) 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  font-weight: 950;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.evidence {
+  min-width: 0;
+  padding: clamp(var(--space-3), 2vw, var(--space-5));
+  border: var(--border-width) solid var(--color-ink);
+  background: color-mix(in srgb, var(--color-paper) 91%, transparent);
+  box-shadow: var(--shadow-hard);
+}
+
+.evidenceLabel { margin: 0; }
+
+.evidenceStatement {
+  margin: var(--space-4) 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.4vw, 3.35rem);
+  font-weight: 950;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+  overflow-wrap: anywhere;
+}
+
+.description {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.controls {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(8rem, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--color-ink);
+}
+
+.count { min-width: 4.6rem; }
+
+.range {
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--color-ink);
+  cursor: ew-resize;
+}
+
+.directControls {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: var(--space-1);
+}
+
+.directControl {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.directControl:hover,
+.directControl[aria-pressed='true'] {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.status {
+  margin: 0;
+  text-align: right;
+}
+
+@media (max-width: 800px) {
+  .stage { grid-template-columns: minmax(0, 1fr); }
+  .evidence { align-self: stretch; }
+  .controls { grid-template-columns: auto minmax(8rem, 1fr); }
+  .directControls { grid-column: 1 / -1; }
+}
+
+@media (max-width: 767px), (pointer: coarse), (pointer: none) {
+  .app {
+    min-block-size: 0;
+    padding: var(--space-4);
+  }
+
+  .stage {
+    min-height: 0;
+    gap: var(--space-5);
+  }
+
+  .year { font-size: clamp(3.3rem, 16vw, 5.4rem); }
+  .headline { font-size: clamp(1.9rem, 9vw, 3rem); }
+  .evidenceStatement { font-size: clamp(1.7rem, 8vw, 2.5rem); }
+
+  .controls { grid-template-columns: minmax(0, 1fr); }
+  .count { min-width: 0; }
+  .directControls { grid-column: auto; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .directControl { min-width: 0; padding-inline: var(--space-1); }
+  .status { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app,
+  .stage,
+  .directControl { transition: none; }
+}

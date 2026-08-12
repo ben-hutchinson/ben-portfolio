@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type JSX, type ReactNode } from 'react';
 import { AboutApp } from '../apps/about/AboutApp';
+import { CareerApp } from '../apps/career/CareerApp';
 import { FeaturedWork } from '../apps/work/FeaturedWork';
 import { usePortfolio } from '../app/PortfolioContext';
 import type { PortfolioState } from '../app/portfolioState';
@@ -22,7 +23,7 @@ const WINDOW_TITLES: Readonly<Record<AppId, string>> = {
 const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
   about: { width: 520, height: 360 },
   work: { width: 620, height: 340 },
-  career: { width: 520, height: 320 },
+  career: { width: 1080, height: 650 },
   projects: { width: 520, height: 320 },
   contact: { width: 480, height: 300 },
   command: { width: 540, height: 220 },
@@ -34,6 +35,8 @@ function appContent(appId: AppId): ReactNode {
       return <AboutApp />;
     case 'work':
       return <FeaturedWork />;
+    case 'career':
+      return <CareerApp />;
     case 'command':
       return (
         <div className={styles.appContent}>
@@ -41,7 +44,6 @@ function appContent(appId: AppId): ReactNode {
           <p>The command application is available as an optional way to explore this portfolio.</p>
         </div>
       );
-    case 'career':
     case 'projects':
     case 'contact':
       return (
