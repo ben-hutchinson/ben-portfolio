@@ -299,15 +299,15 @@ export type PortfolioAction =
 - Create: `tests/component/CareerApp.test.tsx`
 - Create: `tests/e2e/career.spec.ts`
 
-- [ ] **Product Owner:** Queue PORT-007 with DESIGN section 7 verbatim. The application must open from menu, dock, shortcut, command, and `#career`; expose 2022, 2024, 2025, and Now; and transform year, role, headline, evidence, description, and accent together.
-- [ ] **Tester:** Add failing tests for the native labelled range input, four direct stage buttons, arrow-key stage changes, synchronized accessible text, bounds, and reducer dispatch. Add a reduced-motion branch test.
-- [ ] **Developer:** Implement one controlled stage index. The range value is `0..3`; buttons dispatch the same `SELECT_CAREER_STAGE` action. Do not mirror the active stage in component-local state.
-- [ ] **Developer:** Use `LazyMotion` features already loaded by the root. Stage transitions use opacity and at most 16px translation for 160–240ms; accent changes use tokens. With reduced motion, content swaps immediately and retains focus.
-- [ ] **Developer:** Use fluid type for the dominant year and headline, a strong evidence surface, and a single-column mobile layout. Do not scroll-jack, autoplay, or require scrubbing.
-- [ ] **Tester:** Add Playwright cases for direct hash, year-button clicks, range arrow keys, maximize/minimize/close, browser back/forward, mobile scrolling, and emulated reduced motion.
-- [ ] **Tester:** Manually verify that rapid scrubbing never leaves mixed-stage content, every stage is readable without animation, and controls remain usable at 200% zoom.
-- [ ] **Product Owner:** Confirm Career feels like the signature interaction while remaining recognisably inside Portfolio OS; accept exact content and accent mapping.
-- [ ] Commit with `feat: add kinetic Career application`.
+- [x] **Product Owner:** Queue PORT-007 with DESIGN section 7 verbatim. The application must open from menu, dock, shortcut, command, and `#career`; expose 2022, 2024, 2025, and Now; and transform year, role, headline, evidence, description, and accent together.
+- [x] **Tester:** Add failing tests for the native labelled range input, four direct stage buttons, arrow-key stage changes, synchronized accessible text, bounds, and reducer dispatch. Add a reduced-motion branch test.
+- [x] **Developer:** Implement one controlled stage index. The range value is `0..3`; buttons dispatch the same `SELECT_CAREER_STAGE` action. Do not mirror the active stage in component-local state.
+- [x] **Developer:** Use `LazyMotion` features already loaded by the root. Stage transitions use opacity and at most 16px translation for 160–240ms; accent changes use tokens. With reduced motion, content swaps immediately and retains focus.
+- [x] **Developer:** Use fluid type for the dominant year and headline, a strong evidence surface, and a single-column mobile layout. Do not scroll-jack, autoplay, or require scrubbing.
+- [x] **Tester:** Add Playwright cases for direct hash, year-button clicks, range arrow keys, maximize/minimize/close, browser back/forward, mobile scrolling, and emulated reduced motion.
+- [x] **Tester:** Manually verify that rapid scrubbing never leaves mixed-stage content, every stage is readable without animation, and controls remain usable at 200% zoom.
+- [x] **Product Owner:** Confirm Career feels like the signature interaction while remaining recognisably inside Portfolio OS; accept exact content and accent mapping.
+- [x] Commit with `feat: add kinetic Career application`.
 
 ## Task 8: Build the Flagship Work Case Study
 
