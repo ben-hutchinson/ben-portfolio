@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type JSX, type ReactNode } from 'react';
 import { AboutApp } from '../apps/about/AboutApp';
 import { CareerApp } from '../apps/career/CareerApp';
+import { CommandApp } from '../apps/command/CommandApp';
+import { ContactApp } from '../apps/contact/ContactApp';
 import { ProjectDetailApp } from '../apps/projects/ProjectDetailApp';
 import { ProjectsApp } from '../apps/projects/ProjectsApp';
 import { FeaturedWork } from '../apps/work/FeaturedWork';
@@ -29,33 +31,34 @@ const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
   career: { width: 1080, height: 650 },
   projects: { width: 520, height: 320 },
   contact: { width: 480, height: 300 },
-  command: { width: 540, height: 220 },
+  command: { width: 620, height: 420 },
 };
 
-function appContent(appId: AppId, route: PortfolioState['route']): ReactNode {
+function appContent(appId: AppId, state: PortfolioState): ReactNode {
   switch (appId) {
     case 'about':
       return <AboutApp />;
     case 'work':
-      return route.kind === 'work' ? <WorkApp /> : <FeaturedWork />;
+      return state.route.kind === 'work' ? <WorkApp /> : <FeaturedWork />;
     case 'career':
       return <CareerApp />;
     case 'projects':
-      return route.kind === 'project' ? <ProjectDetailApp /> : <ProjectsApp />;
+      return state.route.kind === 'project' ? <ProjectDetailApp /> : <ProjectsApp />;
     case 'command':
-      return (
-        <div className={styles.appContent}>
-          <p className={styles.eyebrow}>Command</p>
-          <p>The command application is available as an optional way to explore this portfolio.</p>
-        </div>
-      );
+      return <CommandApp />;
     case 'contact':
-      return (
-        <div className={styles.appContent}>
-          <p>This application is ready to open. Its full content arrives in the next portfolio section.</p>
-        </div>
-      );
+      return <ContactApp />;
   }
+}
+
+function windowSize(appId: AppId, state: PortfolioState): WindowSize {
+  if ((appId === 'work' && state.route.kind === 'work')
+    || (appId === 'projects' && (state.route.kind === 'projects' || state.route.kind === 'project'))) {
+    return { width: 1040, height: 650 };
+  }
+  if (appId === 'contact' && state.route.kind === 'contact') return { width: 760, height: 600 };
+  if (appId === 'command' && state.focusedAppId !== 'command') return { width: 540, height: 220 };
+  return WINDOW_SIZES[appId];
 }
 
 function getWorkArea(element: HTMLElement | null): WindowWorkArea {
@@ -164,9 +167,7 @@ export function WindowLayer(): JSX.Element {
       const normalized = clampWindowPosition(
         current,
         current,
-        appId === 'projects' && (state.route.kind === 'projects' || state.route.kind === 'project')
-          ? { width: 1040, height: 650 }
-          : WINDOW_SIZES[appId],
+        windowSize(appId, state),
         workArea,
       );
       if (normalized.x !== current.x || normalized.y !== current.y) {
@@ -242,10 +243,7 @@ export function WindowLayer(): JSX.Element {
       {allVisibleIds.map((appId) => {
         const title = WINDOW_TITLES[appId];
         const isMaximized = state.maximizedAppId === appId;
-        const size = (appId === 'work' && state.route.kind === 'work')
-          || (appId === 'projects' && (state.route.kind === 'projects' || state.route.kind === 'project'))
-          ? { width: 1040, height: 650 }
-          : WINDOW_SIZES[appId];
+        const size = windowSize(appId, state);
         return (
           <WindowFrame
             appId={appId}
@@ -266,7 +264,7 @@ export function WindowLayer(): JSX.Element {
             }}
             key={appId}
           >
-            {appContent(appId, state.route)}
+            {appContent(appId, state)}
           </WindowFrame>
         );
       })}
