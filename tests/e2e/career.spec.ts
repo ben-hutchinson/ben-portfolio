@@ -36,7 +36,7 @@ test.describe('Career.app desktop', () => {
     await expect(page).toHaveURL(/#career$/);
 
     await page.getByRole('button', { name: 'Minimize Career' }).click();
-    await page.getByRole('button', { name: 'Career' }).click();
+    await page.locator('[data-dock-app-id="career"]').click();
     await expect(page.locator(careerFrame)).toBeVisible();
     await page.getByRole('button', { name: 'Maximize Career' }).click();
     await expect(page.getByRole('button', { name: 'Restore Career' })).toBeVisible();
@@ -56,6 +56,16 @@ test.describe('Career.app desktop', () => {
 });
 
 test.describe('Career.app mobile', () => {
+  test('retains the supported Career hash through real provider hydration', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-Chrome', 'Mobile hash hydration coverage runs in mobile Chromium.');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('./#career');
+
+    await expect(page).toHaveURL(/#career$/);
+    await expect(page.locator(careerFrame)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Learning to operate production systems' })).toBeVisible();
+  });
+
   test('keeps the Career controls readable, scrollable, zoomable, and drag-free', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'mobile-Chrome', 'Mobile Career coverage runs in mobile Chromium.');
     await page.setViewportSize({ width: 390, height: 844 });

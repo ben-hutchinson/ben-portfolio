@@ -35,8 +35,9 @@ test.describe('window system desktop', () => {
     expect(after?.x).toBeLessThanOrEqual(1440 - (after?.width ?? 0));
     expect(after?.y).toBeLessThanOrEqual(1000 - (after?.height ?? 0));
     await page.getByRole('button', { name: 'Close Work' }).click();
-    await expect(page.getByRole('button', { name: 'Work' })).toBeFocused();
-    await page.getByRole('button', { name: 'Work' }).click();
+    const workDock = page.locator('[data-dock-app-id="work"]');
+    await expect(workDock).toBeFocused();
+    await workDock.click();
     await expect(page.locator(workFrame).getByRole('heading', { name: 'Work' })).toBeFocused();
     await page.getByRole('button', { name: 'Maximize Work' }).click();
     await page.locator(workFrame).getByRole('button', { name: 'Close Work' }).focus();

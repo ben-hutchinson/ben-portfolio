@@ -1,6 +1,6 @@
 # PORT-007 — Make Career the inspectable signature interaction
 
-Status: IN_PROGRESS
+Status: TESTER_BLOCKED
 
 Requirement links: [PRD §7 Career application](../PRD.md#career-application), [PRD §13 release acceptance](../PRD.md#13-release-acceptance), [DESIGN §7 Career.app](../DESIGN.md#7-careerapp), [SOUL: Product Worldview](../SOUL.md#product-worldview), [SOUL: Motion Character](../SOUL.md#motion-character), [AGENTS §§8–13](../AGENTS.md#8-state-architecture), and [Implementation plan Task 7](../superpowers/plans/2026-08-11-portfolio-os-implementation.md#task-7-build-the-kinetic-career-application).
 
@@ -83,12 +83,14 @@ Tester RED evidence: 2026-08-12 at baseline `b792a76`, Node 24 at `/opt/homebrew
 
 Developer GREEN evidence: Not yet run.
 
-Tester verification: Not yet run.
+Tester verification: 2026-08-12 against production `5fa8c43` and Tester correction `ededab9`, Node 24 at `/opt/homebrew/opt/node@24/bin`. Focused Career/state/window command passed 5 files/70 tests. Full `npm test` passed 13 files/117 tests. Coverage passed all 91% gates: statements 98.78%, branches 93.71%, functions 98.98%, lines 99.45%. `npm run typecheck`, `npm run lint`, and `npm run build` each exited 0. Browser-plugin bootstrap completed, but tab acquisition returned `Browser is not available`; the permitted Playwright fallback used an independently owned production preview at `http://127.0.0.1:4177/ben-portfolio/`.
 
-Automated evidence: Not yet run.
+Automated evidence: Initial `npx playwright test career.spec.ts window-system.spec.ts --config=.superpowers/port-007-playwright.config.ts --project=Chromium --project=mobile-Chrome --reporter=line` produced 4 passed, 7 explicit project-guard skips, and 3 failures. The two Tester-only ambiguous selectors are now narrowly scoped to `data-dock-app-id="career"` and `data-dock-app-id="work"`, retaining the intended Dock recovery assertions; the third was the blocking production mobile direct-hash failure below. Testing stopped before the remaining visual/manual matrix and screenshot set.
 
-Manual evidence: Not yet run.
+Manual evidence: Exact Pixel-5 reproduction against the owned 4177 production preview: set 390×844, navigate to `http://127.0.0.1:4177/ben-portfolio/#career`, wait 500ms. Actual URL becomes `#desktop`; frames are About `display:flex`, Work/Command `display:none`, no Career frame exists, and the Career headline count is 0. Expected URL remains `#career` with the normal-flow Career application and controls visible. Screenshot: `/private/tmp/portfolio-os-task7-mobile-direct-hash-defect.png`.
 
-Defects: None recorded.
+Defects: P1/Important — mobile direct `#career` is not recoverable. This violates the locked direct-hash/mobile Career contract and prevents the required mobile manual, reduced-motion, zoom, and accessibility GREEN evidence. No production change was made by Tester.
 
-Product Owner decision: PENDING — READY packet issued; Tester RED is next.
+Task 7 fix round 1/5 Tester RED evidence: Against unchanged production `5fa8c43`, `npx playwright test career.spec.ts --config=.superpowers/port-007-playwright.config.ts --project=mobile-Chrome --grep "retains the supported Career hash" --reporter=line` ran one real-browser/provider/reducer hydration test and failed 1/1. Starting at `./#career` received `http://127.0.0.1:4177/ben-portfolio/#desktop` after the full 5s URL assertion timeout, rather than the required `#career`; this is the same overwrite observed in the original P1 repro. The regression also requires the Career frame and `Learning to operate production systems` heading after the URL assertion. It uses no mock dispatch. `npm run typecheck` and `npm run lint` exited 0. No production or `.DS_Store` edit was made.
+
+Product Owner decision: PENDING — Tester verdict BLOCKED until the mobile direct-hash defect is fixed and this matrix is rerun.
