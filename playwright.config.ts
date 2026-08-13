@@ -1,13 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const previewPort = Number(process.env.PLAYWRIGHT_PORT ?? 4173);
+const previewBaseURL = `http://127.0.0.1:${previewPort}/ben-portfolio/`;
+
 export default defineConfig({
   testDir: './tests/e2e',
   use: {
-    baseURL: 'http://127.0.0.1:4173/ben-portfolio/',
+    baseURL: previewBaseURL,
   },
   webServer: {
-    command: 'npm run preview -- --host 127.0.0.1',
-    url: 'http://127.0.0.1:4173/ben-portfolio/',
+    command: `npm run preview -- --host 127.0.0.1 --port ${previewPort} --strictPort`,
+    url: previewBaseURL,
     reuseExistingServer: !process.env.CI,
   },
   projects: [

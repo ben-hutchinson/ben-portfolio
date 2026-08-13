@@ -96,3 +96,29 @@ No Tester-owned test, visual baseline, or release-report change was made in this
 | `git diff --check` | PASS |
 
 No Tester-owned test, visual baseline, release report, task packet, plan, ledger, or `.DS_Store` change was staged or modified by this fix.
+
+## Fix round 3 — release-matrix heading and zoom stability
+
+### Diagnosis and implementation
+
+- The wide Career heading-order test filters elements by `offsetParent`. The prior screen-reader-only Career h1 remained in that order after the Career window h2, causing an h2-to-h1 drop. The MenuBar now always contains the identity h1 in semantic/offset-parent order; it is visually clipped on wide non-Desktop routes, while Career's route h1 is `display: none` on wide layouts. On mobile non-Desktop routes the Menu h1 is `display: none` and Career's h1 is visible, preserving the one-visible-Career-h1 contract.
+- Instrumenting the exact zoom predicate in headless Chromium showed `usesProfessionalWrapping: true` and no document overflow. Every reachability check failed because the Career default `x: 180` offset doubles under `body.style.zoom = '2'`, placing the controls at x=600–1564 in a 1440px viewport. Reduced the default Career inset to `x: 72`; at 200% the window remains deliberately inset while all controls stay inside the viewport.
+- Updated Playwright preview configuration to take `PLAYWRIGHT_PORT`, pass Vite `--strictPort`, and use the matching base URL. This supports genuinely fresh local production checks and prevents Vite from silently selecting a stale alternate port.
+
+### Fresh strict-port verification
+
+| Command | Result |
+| --- | --- |
+| `PLAYWRIGHT_PORT=4312 CI=1 npx playwright test tests/e2e/accessibility.spec.ts --project=Chromium --grep "ordered headings"` | PASS: 1 test |
+| `PLAYWRIGHT_PORT=4313 CI=1 npx playwright test tests/e2e/career.spec.ts --project=Chromium --grep "keeps the Now stage readable"` | PASS: 1 test |
+| `PLAYWRIGHT_PORT=4314 CI=1 npx playwright test tests/e2e/career.spec.ts --project=mobile-Chrome --grep "sole visible Career h1"` | PASS: 1 test |
+| `PLAYWRIGHT_PORT=4315 CI=1 npx playwright test tests/e2e/recruiter-scan.spec.ts --project=Chromium` | PASS: 1 passed, 1 intended skip |
+| `PLAYWRIGHT_PORT=4316 CI=1 npx playwright test tests/e2e/recruiter-scan.spec.ts --project=mobile-Chrome` | PASS: 1 passed, 1 intended skip |
+| `npm run build` | PASS |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS |
+| `npm test` | PASS: 21 files, 147 tests |
+| `npm run check:bundle` | PASS: 96,867 gzip JS bytes; 118,519 initial image bytes; 3 deployable images below 350KB |
+| `git diff --check` | PASS |
+
+No Tester-owned test, visual baseline, release report, task packet, plan, ledger, or `.DS_Store` change was staged or modified by this fix.

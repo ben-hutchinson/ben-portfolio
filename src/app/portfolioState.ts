@@ -28,7 +28,7 @@ export interface PortfolioState {
 export const DEFAULT_WINDOW_POSITIONS: Readonly<Record<AppId, Point>> = {
   about: { x: 220, y: 300 },
   work: { x: 650, y: 36 },
-  career: { x: 180, y: 104 },
+  career: { x: 72, y: 104 },
   projects: { x: 240, y: 120 },
   contact: { x: 360, y: 152 },
   command: { x: 760, y: 500 },
