@@ -1,5 +1,5 @@
-.page { min-height: 100vh; padding: clamp(var(--space-3), 3vw, var(--space-6)); background: var(--color-charcoal); }
-.frame { display: flex; width: min(100%, 92rem); min-height: calc(100vh - var(--space-6) - var(--space-6)); margin: 0 auto; overflow: hidden; border: var(--border-heavy) solid var(--color-ink); border-radius: var(--radius-frame); background: var(--color-mint); box-shadow: 9px 9px 0 var(--color-ink); flex-direction: column; }
+.page { min-height: 100vh; padding: clamp(var(--space-2), 1.5vw, var(--space-4)); background: var(--color-charcoal); }
+.frame { display: flex; width: min(100%, 98rem); min-height: calc(100vh - 2 * clamp(var(--space-2), 1.5vw, var(--space-4))); margin: 0 auto; overflow: hidden; border: var(--border-heavy) solid var(--color-ink); border-radius: var(--radius-frame); background: var(--color-mint); box-shadow: 9px 9px 0 var(--color-ink); flex-direction: column; }
 .header { flex: 0 0 auto; }
 .main { position: relative; display: flex; flex: 1 1 auto; min-height: 42rem; overflow: hidden; }
 .footer { flex: 0 0 auto; }

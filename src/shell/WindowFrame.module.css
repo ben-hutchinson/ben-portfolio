@@ -29,8 +29,9 @@
   min-height: 44px;
   align-items: stretch;
   justify-content: space-between;
-  border-bottom: var(--border-heavy) solid var(--color-ink);
+  border-bottom: 0;
   background: var(--color-yellow);
+  box-shadow: inset 0 calc(-1 * var(--border-heavy)) 0 var(--color-ink);
   touch-action: none;
   user-select: none;
 }

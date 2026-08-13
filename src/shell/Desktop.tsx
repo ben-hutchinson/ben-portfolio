@@ -10,7 +10,6 @@ export function Desktop() {
 
   return (
     <div className={styles.desktop}>
-      <p className={styles.backgroundStatement} aria-hidden="true">BUILD CLEAR PATHS</p>
       {showShortcuts ? (
         <div className={styles.shortcuts} aria-label="Desktop shortcuts">
           {SHORTCUT_APP_IDS.map((appId) => <DesktopShortcut appId={appId} key={appId} />)}

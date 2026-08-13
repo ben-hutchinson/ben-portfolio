@@ -1,6 +1,7 @@
 import { usePortfolio } from '../app/PortfolioContext';
 import type { AppId } from '../data/models';
 import { externalLinks } from '../data/externalLinks';
+import { UtilityIcon } from './UtilityIcon';
 import styles from './Dock.module.css';
 
 const apps: readonly { readonly label: string; readonly appId: AppId; readonly route?: 'work' | 'career' | 'projects' | 'contact' }[] = [
@@ -40,11 +41,11 @@ export function Dock() {
             </button>
           );
         })}
-        <a className={styles.cvLink} href={cvUrl} download="ben-hutchinson-cv.pdf">Download CV</a>
       </div>
       <div className={styles.utilityLinks}>
-        <a href={github.href} target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href={linkedIn.href} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href={github.href} target="_blank" rel="noopener noreferrer"><UtilityIcon kind="github" />GitHub</a>
+        <a href={linkedIn.href} target="_blank" rel="noopener noreferrer"><UtilityIcon kind="linkedin" />LinkedIn</a>
+        <a href={cvUrl} download="ben-hutchinson-cv.pdf"><UtilityIcon kind="cv" />Download CV</a>
       </div>
     </nav>
   );

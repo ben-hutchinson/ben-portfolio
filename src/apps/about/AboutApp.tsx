@@ -7,7 +7,7 @@ export function AboutApp() {
       <p className={styles.identityLine}>{profile.role} · {profile.location}</p>
       <h2 className={styles.name}>{profile.name}</h2>
       <p className={styles.positioning}>{profile.positioning}</p>
-      <p className={styles.supporting}>{profile.availability} {profile.focus}</p>
+      <p className={styles.supporting}>{profile.focus}</p>
     </article>
   );
 }
