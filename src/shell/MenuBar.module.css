@@ -40,8 +40,13 @@
 @media (max-width: 760px) {
   .menuBar { grid-template-columns: 1fr auto; padding: var(--space-3); }
   .navigation { grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; justify-content: flex-start; }
+  .navLink { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
   .status { font-size: 0.62rem; }
   .availability { display: none; }
+}
+
+@media (pointer: coarse), (pointer: none) {
+  .navLink { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
 }
 
 @media (max-width: 420px) {

@@ -10,9 +10,9 @@
   text-rendering: optimizeLegibility;
 }
 
-html { min-width: 320px; background: var(--color-charcoal); }
+html { background: var(--color-charcoal); }
 
-body { min-width: 320px; min-height: 100vh; margin: 0; background: var(--color-charcoal); }
+body { min-height: 100vh; margin: 0; background: var(--color-charcoal); }
 
 button, a { font: inherit; }
 

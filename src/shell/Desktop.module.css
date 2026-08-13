@@ -4,6 +4,7 @@
   width: 100%;
   min-width: 0;
   min-height: 100%;
+  overflow-x: clip;
   padding: var(--space-3);
 }
 

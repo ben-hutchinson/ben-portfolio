@@ -12,6 +12,7 @@ interface ErrorBoundaryState {
 }
 
 const github = externalLinks.find((link) => link.label === 'GitHub');
+const email = externalLinks.find((link) => link.label === 'Email');
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   public state: ErrorBoundaryState = { hasError: false };
@@ -37,7 +38,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <h1 id="recovery-title">{profile.name}</h1>
         <p>Something interrupted the portfolio. These direct paths are still available.</p>
         <nav className={styles.actions} aria-label="Portfolio recovery links">
-          <a href="#contact">Contact</a>
+          {email ? <a href={email.href}>Contact</a> : null}
           <a href={cvUrl} download="ben-hutchinson-cv.pdf">Download CV</a>
           {github ? <a href={github.href} target="_blank" rel="noopener noreferrer">GitHub</a> : null}
         </nav>
