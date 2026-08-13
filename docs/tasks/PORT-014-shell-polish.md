@@ -1,6 +1,6 @@
 # PORT-014 — Polish shell identity, utilities, viewport, and shared chrome
 
-Status: READY — 2026-08-13
+Status: ACCEPTED — 2026-08-13
 
 Requirement links: `docs/superpowers/specs/2026-08-13-portfolio-os-polish-design.md` §§2–4, 6, 10–12; `docs/AGENTS.md` §§2–6, 8–9; approved implementation brief Task 1 / PORT-014.
 
@@ -48,17 +48,17 @@ User outcome: A recruiter sees a quieter, more distinctive Portfolio OS shell wi
 
 ## Acceptance criteria
 
-- [ ] There is no top navigation with accessible name `Primary navigation`; the Desktop, Work, Career, and Projects menu controls are absent.
-- [ ] `Mid-level platform engineer` and `Open to platform and backend engineering opportunities` do not render in the menu bar.
-- [ ] The menu bar visibly retains the Kernel mark, `Ben Hutchinson`, `Manchester, UK`, skip-link behavior, and the correct semantic desktop `h1`.
-- [ ] The visible mark has `data-testid="portfolio-os-mark"`; its favicon is the same approved Kernel geometry using `#132218`, `#d9f7c5`, and `#ff6542`.
-- [ ] GitHub, LinkedIn, and Download CV appear as one icon-and-label dock utility group. Each visible link retains its readable accessible name, contains a decorative inline SVG, and preserves its existing external-link security behavior; Download CV has `download="ben-hutchinson-cv.pdf"`.
-- [ ] Application dock controls retain `data-dock-app-id` and visible text labels; CV is not presented as an ordinary application button.
-- [ ] `BUILD CLEAR PATHS` and the decorative wallpaper overlay are absent, with the flagship Work window still the desktop focal point.
-- [ ] At desktop sizes, the framed shell has a visibly reduced but positive left outer gutter and a larger usable frame. At 320 CSS pixels, the page has no horizontal overflow and the frame/dock retain safe edge spacing.
-- [ ] Every shared framed application titlebar renders one uninterrupted Ink lower rule beneath its drag/title region and beneath close, minimize, and maximize controls. Controls remain operable with 44-pixel hit areas, pointer/control APIs are unchanged, and visible focus remains intact.
-- [ ] Direct hashes, route headings, browser-history behavior, keyboard navigation, mobile single-application behavior, reduced-motion behavior, accessibility gates, GitHub Pages static build support, and existing important no-drag/no-command paths remain unchanged.
-- [ ] No icon, routing, state-management, server, or other dependency is added.
+- [x] There is no top navigation with accessible name `Primary navigation`; the Desktop, Work, Career, and Projects menu controls are absent.
+- [x] `Mid-level platform engineer` and `Open to platform and backend engineering opportunities` do not render in the menu bar.
+- [x] The menu bar visibly retains the Kernel mark, `Ben Hutchinson`, `Manchester, UK`, skip-link behavior, and the correct semantic desktop `h1`.
+- [x] The visible mark has `data-testid="portfolio-os-mark"`; its favicon is the same approved Kernel geometry using `#132218`, `#d9f7c5`, and `#ff6542`.
+- [x] GitHub, LinkedIn, and Download CV appear as one icon-and-label dock utility group. Each visible link retains its readable accessible name, contains a decorative inline SVG, and preserves its existing external-link security behavior; Download CV has `download="ben-hutchinson-cv.pdf"`.
+- [x] Application dock controls retain `data-dock-app-id` and visible text labels; CV is not presented as an ordinary application button.
+- [x] `BUILD CLEAR PATHS` and the decorative wallpaper overlay are absent, with the flagship Work window still the desktop focal point.
+- [x] At desktop sizes, the framed shell has a visibly reduced but positive left outer gutter and a larger usable frame. At 320 CSS pixels, the page has no horizontal overflow and the frame/dock retain safe edge spacing.
+- [x] Every shared framed application titlebar renders one uninterrupted Ink lower rule beneath its drag/title region and beneath close, minimize, and maximize controls. Controls remain operable with 44-pixel hit areas, pointer/control APIs are unchanged, and visible focus remains intact.
+- [x] Direct hashes, route headings, browser-history behavior, keyboard navigation, mobile single-application behavior, reduced-motion behavior, accessibility gates, GitHub Pages static build support, and existing important no-drag/no-command paths remain unchanged.
+- [x] No icon, routing, state-management, server, or other dependency is added.
 
 ## Evidence contract
 
@@ -89,4 +89,4 @@ User outcome: A recruiter sees a quieter, more distinctive Portfolio OS shell wi
 - Manually record viewport, input method, observed result, and screenshot/measurement evidence for 1440×1000, 1280×800, 390×844, 320×568, keyboard-only operation, 200% zoom, reduced motion, and every direct hash. Confirm the mark/favicon under `/ben-portfolio/`, utility-link attributes, heading order, direct hashes/history, mobile behavior, gutter/no-overflow geometry, titlebar continuity, and focus visibility.
 - Log each defect with severity, reproduction, expected behavior, actual behavior, affected acceptance criterion, owner, and retest result in the Tester report.
 
-Product Owner decision: PENDING — await Tester GREEN evidence and Product Owner comparison against this packet.
+Product Owner decision: **ACCEPTED at `a98894a` on 2026-08-13.** Production commits `8f68eaa` and `568a053` satisfy the approved shell identity, utility group, viewport, overlay-removal, and shared-chrome scope. Tester evidence at `1384fbd`, corrected at `a98894a`, records passing focused unit, typecheck, lint, build, bundle, 91%-threshold coverage, responsive/accessibility browser, direct-hash/history, keyboard, reduced-motion, 200%-zoom, and manual viewport checks. The Product Owner independently reran the exact focused Chromium suite at `a98894a`: 10 passed, 1 intentional project-guard skip, 0 failed. The earlier stale 767px menu-link assertion is resolved against the retained dock Work control; no production defect remains.

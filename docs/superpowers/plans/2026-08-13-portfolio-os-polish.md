@@ -88,11 +88,11 @@
 - Preserves: bottom-dock `data-dock-app-id` controls and visible text labels for ordinary applications.
 - Preserves: `WindowFrame` pointer/control APIs; only shared chrome styling changes.
 
-- [ ] **Step 1: Product Owner records the ready packet**
+- [x] **Step 1: Product Owner records the ready packet**
 
 Write `PORT-014` acceptance criteria covering: no top navigation, role, availability, or wallpaper statement; visible Kernel mark and matching favicon; location retained; GitHub/LinkedIn/CV as icon-and-label utility links; reduced outer gutter; uninterrupted titlebar rule; direct hashes, headings, mobile, and keyboard unchanged. Explicitly exclude Command behavior, Work/Career copy, and Project layout.
 
-- [ ] **Step 2: Tester writes focused RED acceptance tests**
+- [x] **Step 2: Tester writes focused RED acceptance tests**
 
 Add component assertions equivalent to:
 
@@ -110,7 +110,7 @@ expect(screen.queryByText('BUILD CLEAR PATHS')).not.toBeInTheDocument();
 
 Extend the release audit to parse `public/favicon.svg` and assert the Ink `#132218`, pale-green `#d9f7c5`, and signal-orange `#ff6542` geometry. Add browser geometry assertions that the frame's left gutter is smaller than the accepted baseline but remains positive, the page has no horizontal overflow at 320 CSS pixels, and the titlebar lower edge spans beneath the maximize control.
 
-- [ ] **Step 3: Tester proves the new tests fail for the expected reasons**
+- [x] **Step 3: Tester proves the new tests fail for the expected reasons**
 
 Run:
 
@@ -121,7 +121,7 @@ CI=1 PLAYWRIGHT_PORT=4221 npx playwright test tests/e2e/responsive.spec.ts tests
 
 Expected: RED only for the still-present navigation/copy/overlay, old favicon, ungrouped CV utility, old gutter geometry, or interrupted titlebar rule. Existing unrelated assertions remain green.
 
-- [ ] **Step 4: Developer implements dependency-free SVG identity and utilities**
+- [x] **Step 4: Developer implements dependency-free SVG identity and utilities**
 
 Implement the stable component signatures:
 
@@ -160,7 +160,7 @@ export function UtilityIcon({ kind }: { readonly kind: UtilityIconKind }): JSX.E
 }
 ```
 
-- [ ] **Step 5: Developer simplifies shell composition and corrects shared styling**
+- [x] **Step 5: Developer simplifies shell composition and corrects shared styling**
 
 Remove `menuItems`, route-selection helpers, role, and availability rendering from `MenuBar`; keep skip-link logic, semantic desktop `h1`, Ben's name, BrandMark, and location. Move CV beside GitHub/LinkedIn in `Dock.utilityLinks`, render each `UtilityIcon`, and remove the old CV application styling.
 
@@ -182,7 +182,7 @@ Remove `backgroundStatement` markup/styles. Make the shared titlebar rule indepe
 
 Keep the controls above the rule without masking it and retain 44-pixel hit areas.
 
-- [ ] **Step 6: Developer runs focused checks and commits production files only**
+- [x] **Step 6: Developer runs focused checks and commits production files only**
 
 Run:
 
@@ -201,13 +201,15 @@ git add public/favicon.svg src/shell/BrandMark.tsx src/shell/UtilityIcon.tsx src
 git commit -m "feat: polish Portfolio OS shell"
 ```
 
-- [ ] **Step 7: Tester runs GREEN, manual geometry/a11y checks, and commits tests**
+- [x] **Step 7: Tester runs GREEN, manual geometry/a11y checks, and commits tests**
 
 Run the focused commands from Step 3 plus typecheck, lint, build, bundle, and coverage. Manually inspect 1440×1000, 1280×800, 390×844, 320×568, keyboard focus, 200% zoom, and all direct hashes. Record exact measurements/screenshots in `docs/testing/portfolio-polish-report.md` and commit only Tester files with `test: verify PORT-014 shell polish`.
 
-- [ ] **Step 8: Product Owner accepts PORT-014**
+- [x] **Step 8: Product Owner accepts PORT-014**
 
 Compare the exact head and evidence to PORT-014 and the design spec. Accept only when every item is visible and the top-bar simplification does not break heading order or navigation.
+
+**Task 1 Product Owner acceptance: ACCEPTED at `a98894a` on 2026-08-13.** Production candidate `568a053`, Tester GREEN evidence `1384fbd`, and the corrected exact-head breakpoint evidence at `a98894a` satisfy PORT-014. The focused Chromium suite passes 10 tests with one intentional project-guard skip and no failures; no production defect or open bounded change request remains.
 
 ---
 
