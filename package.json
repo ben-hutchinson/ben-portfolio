@@ -14,7 +14,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:a11y": "playwright test --grep @a11y",
-    "test:e2e:visual": "playwright test --grep @visual"
+    "test:e2e:visual": "playwright test --grep @visual",
+    "check:bundle": "node scripts/check-bundle.mjs"
   },
   "dependencies": {
     "motion": "^12.43.0",

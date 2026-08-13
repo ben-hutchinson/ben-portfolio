@@ -3,5 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   base: '/ben-portfolio/',
+  build: {
+    manifest: true,
+  },
   plugins: [react()],
 });

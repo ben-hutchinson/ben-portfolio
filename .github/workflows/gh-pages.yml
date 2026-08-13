@@ -6,33 +6,26 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  quality:
+    uses: ./.github/workflows/quality.yml
+
+  upload:
+    needs: quality
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Download verified site
+        uses: actions/download-artifact@v4
         with:
-          node-version: 20
-          cache: npm
-
-      - name: Install
-        run: npm ci
-
-      - name: Build
-        run: npm run build
+          name: portfolio-dist
+          path: ./dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -40,8 +33,11 @@ jobs:
           path: ./dist
 
   deploy:
-    needs: build
+    needs: upload
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
