@@ -5,6 +5,28 @@ const workTitlebar = '[data-titlebar="work"]';
 const resetLayout = '[data-window-control="reset-layout"]';
 
 test.describe('window system desktop', () => {
+  test('draws the titlebar lower rule underneath the maximize control', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'PORT-014 titlebar geometry runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('./#desktop');
+
+    const rule = await page.locator(workTitlebar).evaluate((titlebar) => {
+      const maximize = titlebar.querySelector<HTMLElement>('[data-window-control="maximize"]');
+      const titlebarStyle = getComputedStyle(titlebar);
+      const titlebarBounds = titlebar.getBoundingClientRect();
+      const maximizeBounds = maximize?.getBoundingClientRect();
+      return {
+        hasInsetInkRule: titlebarStyle.boxShadow.includes('rgb(19, 34, 24)'),
+        hasNoBorderRule: titlebarStyle.borderBottomWidth === '0px',
+        reachesMaximize: maximizeBounds !== undefined && maximizeBounds.bottom <= titlebarBounds.bottom,
+      };
+    });
+
+    expect(rule.hasInsetInkRule).toBe(true);
+    expect(rule.hasNoBorderRule).toBe(true);
+    expect(rule.reachesMaximize).toBe(true);
+  });
+
   test('returns to the same wide Work geometry after a narrow viewport round trip', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Desktop breakpoint coverage runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });

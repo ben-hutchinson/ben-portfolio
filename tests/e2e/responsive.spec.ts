@@ -1,6 +1,20 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('PORT-011 responsive shell', () => {
+  test('uses a positive, reduced desktop gutter and does not overflow at 320 CSS pixels', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'PORT-014 shell geometry runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('./#desktop');
+
+    const shell = page.locator('#root > div > div');
+    const desktopGutter = (await shell.boundingBox())?.x;
+    expect(desktopGutter).toBeGreaterThan(0);
+    expect(desktopGutter).toBeLessThan(30);
+
+    await page.setViewportSize({ width: 320, height: 568 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+
   test('shows one drag-free, naturally scrolling application below 768px without horizontal clipping', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Narrow responsive coverage runs in Chromium.');
     await page.setViewportSize({ width: 320, height: 568 });

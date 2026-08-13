@@ -26,7 +26,7 @@ test.describe('PORT-011 accessible shell', () => {
     await expect(page.getByRole('main')).toBeFocused();
 
     await expect(page.getByRole('banner')).toHaveCount(1);
-    await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toHaveCount(1);
+    await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toHaveCount(0);
     await expect(page.getByRole('navigation', { name: 'Portfolio applications' })).toHaveCount(1);
     await expect(page.getByRole('main')).toHaveCount(1);
     await expect(page.getByRole('contentinfo')).toHaveCount(1);

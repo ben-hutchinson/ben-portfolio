@@ -88,3 +88,36 @@ describe('PORT-013 release audit', () => {
     expect(readme).not.toMatch(/retro character-select|Framer Motion|assets\/characters/i);
   });
 });
+
+describe('PORT-014 release audit', () => {
+  it('ships the approved Kernel favicon geometry and palette', async () => {
+    const favicon = await readFile(path.join(repositoryRoot, 'public/favicon.svg'), 'utf8');
+    const elements = [...favicon.matchAll(/<(rect|path)\s+([^>]+?)(?:\s*\/?\s*>)/g)].map(([, name, attributes]) => ({
+      name,
+      attributes: Object.fromEntries([...attributes.matchAll(/([\w-]+)="([^"]*)"/g)].map(([, key, value]) => [key, value])),
+    }));
+
+    expect(favicon).toContain('viewBox="0 0 64 64"');
+    expect(elements).toEqual(expect.arrayContaining([
+      {
+        name: 'rect',
+        attributes: {
+          x: '3', y: '3', width: '58', height: '58', rx: '5', fill: '#132218',
+        },
+      },
+      {
+        name: 'path',
+        attributes: {
+          d: 'M16 15v34h20c9 0 14-4 14-10 0-5-3-8-8-9 4-2 6-5 6-8 0-5-4-7-12-7H16Zm9 8h10c3 0 4 1 4 3s-1 3-4 3H25v-6Zm0 13h12c3 0 5 1 5 3s-2 3-5 3H25v-6Z',
+          fill: '#d9f7c5',
+        },
+      },
+      {
+        name: 'rect',
+        attributes: {
+          x: '47', y: '47', width: '9', height: '9', fill: '#ff6542',
+        },
+      },
+    ]));
+  });
+});
