@@ -58,3 +58,15 @@ During the first full coverage run, eight stale assertions failed because they e
 - `tests/component/Desktop.test.tsx`: 1 stale exact-text expectation for role/availability now combined in the retained About content.
 
 Tester updated only those expectations to preserve or strengthen coverage of absent primary nav, retained dock application navigation, grouped utility order, direct hash route state, header identity, and retained About content. Retest: PASS — 18 focused component tests and the full 154-test coverage suite pass. No production defect remains.
+
+## Post-PO correction / retest
+
+The Product Owner identified one remaining stale PORT-011 name in the 767px responsive assertion: it queried the removed top-menu Work link. `tests/e2e/responsive.spec.ts` now calls the retained dock control `[data-dock-app-id="work"]`, names the local measurement `dockWork`, and labels the test as a dock-target check. The unchanged acceptance remains a minimum 44×44 CSS-pixel target; no primary-navigation assertion was changed.
+
+Retest command:
+
+```bash
+CI=1 PLAYWRIGHT_PORT=4232 npx playwright test tests/e2e/responsive.spec.ts tests/e2e/window-system.spec.ts tests/e2e/accessibility.spec.ts --project=Chromium
+```
+
+Result: **PASS — 10 passed, 1 skipped, 0 failed (2.8s).** The skip is the existing `mobile-Chrome` project guard in `window-system.spec.ts`, expected when the command is limited to the Chromium project.

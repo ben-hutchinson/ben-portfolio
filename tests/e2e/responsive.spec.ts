@@ -64,13 +64,13 @@ test.describe('PORT-011 responsive shell', () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 
-  test('keeps Menu targets practical at the 767px mobile breakpoint', async ({ page }, testInfo) => {
+  test('keeps dock targets practical at the 767px mobile breakpoint', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Mobile breakpoint coverage runs in Chromium.');
     await page.setViewportSize({ width: 767, height: 844 });
     await page.goto('./#desktop');
 
-    const menuWork = await page.getByRole('link', { name: 'Work' }).first().boundingBox();
-    expect(menuWork?.width).toBeGreaterThanOrEqual(44);
-    expect(menuWork?.height).toBeGreaterThanOrEqual(44);
+    const dockWork = await page.locator('[data-dock-app-id="work"]').boundingBox();
+    expect(dockWork?.width).toBeGreaterThanOrEqual(44);
+    expect(dockWork?.height).toBeGreaterThanOrEqual(44);
   });
 });
