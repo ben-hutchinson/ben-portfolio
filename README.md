@@ -27,10 +27,10 @@ npm run preview -- --host 127.0.0.1 --port 4173 --strictPort
 
 Open [http://127.0.0.1:4173/ben-portfolio/](http://127.0.0.1:4173/ben-portfolio/). The supported views use hash URLs, for example `#desktop`, `#work`, `#career`, `#projects`, `#projects/pokeleximon`, `#projects/safelog`, and `#contact`.
 
-For an isolated browser run, choose a free strict port consistently, for example:
+For an isolated Playwright browser run, choose a free strict port consistently; the configured test server will build the preview for that port:
 
 ```bash
-PLAYWRIGHT_PORT=4174 npm run preview -- --host 127.0.0.1 --port 4174 --strictPort
+CI=1 PLAYWRIGHT_PORT=4174 npm run test:e2e
 ```
 
 ## Quality commands
