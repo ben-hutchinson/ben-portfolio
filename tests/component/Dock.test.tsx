@@ -57,7 +57,7 @@ describe('Dock', () => {
     const user = userEvent.setup();
     renderDock();
 
-    for (const name of ['About', 'Work', 'Career', 'Projects', 'Contact', 'Command', 'Download CV', 'GitHub', 'LinkedIn']) {
+    for (const name of ['About', 'Work', 'Career', 'Projects', 'Contact', 'Command', 'GitHub', 'LinkedIn', 'Download CV']) {
       await user.tab();
       expect(screen.getByRole(name === 'Download CV' || name === 'GitHub' || name === 'LinkedIn' ? 'link' : 'button', { name })).toHaveFocus();
     }

@@ -19,15 +19,16 @@ describe('PortfolioShell', () => {
     renderShell();
 
     expect(screen.getByRole('banner')).toBeVisible();
-    expect(screen.getByRole('navigation', { name: /primary navigation/i })).toBeVisible();
+    expect(screen.queryByRole('navigation', { name: /primary navigation/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Portfolio applications' })).toBeVisible();
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
     expect(screen.getByRole('contentinfo')).toBeVisible();
     expect(screen.getByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toBeVisible();
     expect(screen.getAllByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toHaveLength(1);
     expect(screen.getByRole('region', { name: 'About' })).toBeVisible();
     expect(screen.getByRole('region', { name: 'Work' })).toBeVisible();
-    expect(screen.getByRole('link', { name: 'Work' })).toBeVisible();
-    expect(screen.getByRole('link', { name: 'Career' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Work' })).toHaveAttribute('data-dock-app-id', 'work');
+    expect(screen.getByRole('button', { name: 'Career' })).toHaveAttribute('data-dock-app-id', 'career');
   });
 
   it('keeps decorative shell visuals outside the accessibility tree and renders without motion dependencies', () => {
@@ -55,17 +56,18 @@ describe('PortfolioShell', () => {
     );
   });
 
-  it('converges menu hash navigation and dock intent on the same observable Career state', async () => {
+  it('converges direct hash navigation and dock intent on the same observable Career state', async () => {
     const user = userEvent.setup();
     const { unmount } = renderShell('#career');
 
-    expect(screen.getByRole('link', { name: 'Career' })).toHaveAttribute('aria-current', 'page');
+    expect(window.location.hash).toBe('#career');
+    expect(screen.getByRole('region', { name: 'Career' })).toBeVisible();
     unmount();
     renderShell();
 
     await user.click(screen.getByRole('button', { name: 'Career' }));
     expect(window.location.hash).toBe('#career');
-    expect(screen.getByRole('link', { name: 'Career' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('region', { name: 'Career' })).toBeVisible();
   });
 
   it('keeps shell navigation and persistent actions in a natural keyboard order', async () => {
@@ -79,10 +81,6 @@ describe('PortfolioShell', () => {
 
     for (const [role, name] of [
       ['link', 'Skip to main content'],
-      ['link', 'Desktop'],
-      ['link', 'Work'],
-      ['link', 'Career'],
-      ['link', 'Projects'],
       ['button', 'Open About'],
       ['button', 'Open Career'],
       ['button', 'Open Work'],
@@ -115,9 +113,9 @@ describe('PortfolioShell', () => {
       ['button', 'Projects'],
       ['button', 'Contact'],
       ['button', 'Command'],
-      ['link', 'Download CV'],
       ['link', 'GitHub'],
       ['link', 'LinkedIn'],
+      ['link', 'Download CV'],
     ] as const) {
       await user.tab();
       expect(screen.getByRole(role, { name })).toHaveFocus();

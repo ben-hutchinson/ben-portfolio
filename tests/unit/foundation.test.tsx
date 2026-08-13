@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from '../../src/App';
 
@@ -12,9 +12,10 @@ describe('Portfolio OS foundation', () => {
   it('removes the former primary navigation and status copy from the menu bar', () => {
     render(<App />);
 
+    const menuBar = screen.getByRole('banner');
     expect(screen.queryByRole('navigation', { name: 'Primary navigation' })).not.toBeInTheDocument();
-    expect(screen.queryByText('Mid-level platform engineer', { exact: true })).not.toBeInTheDocument();
-    expect(screen.queryByText(/open to platform and backend/i)).not.toBeInTheDocument();
+    expect(within(menuBar).queryByText('Mid-level platform engineer', { exact: true })).not.toBeInTheDocument();
+    expect(within(menuBar).queryByText(/open to platform and backend/i)).not.toBeInTheDocument();
   });
 
   it('retains the Kernel mark and location in the simplified menu bar', () => {

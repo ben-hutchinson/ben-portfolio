@@ -47,7 +47,7 @@ test.describe('PORT-011 responsive shell', () => {
     await page.goto('./#desktop');
 
     for (const target of [
-      page.getByRole('link', { name: 'Work' }).first(),
+      page.locator('[data-dock-app-id="work"]'),
       page.getByRole('button', { name: 'Close About' }),
       page.getByRole('button', { name: 'Work' }),
       page.getByRole('link', { name: 'Download CV' }),

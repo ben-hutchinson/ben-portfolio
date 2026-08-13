@@ -45,31 +45,31 @@ describe('MenuBar', () => {
     }
   });
 
-  it('exposes the labelled primary routes and identifies the active base route', () => {
+  it('removes the primary route controls while retaining the skip link', () => {
     renderMenu('#career');
 
-    const navigation = screen.getByRole('navigation', { name: /primary navigation/i });
-    expect(navigation).toHaveTextContent(/desktop/i);
-    expect(screen.getByRole('link', { name: 'Desktop' })).toHaveAttribute('href', '#desktop');
-    expect(screen.getByRole('link', { name: 'Work' })).toHaveAttribute('href', '#work');
-    expect(screen.getByRole('link', { name: 'Career' })).toHaveAttribute('href', '#career');
-    expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('href', '#projects');
-    expect(screen.getByRole('link', { name: 'Career' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.queryByRole('navigation', { name: /primary navigation/i })).not.toBeInTheDocument();
+    for (const name of ['Desktop', 'Work', 'Career', 'Projects']) {
+      expect(screen.queryByRole('link', { name })).not.toBeInTheDocument();
+    }
+    expect(screen.getByRole('link', { name: /skip to main content/i })).toHaveAttribute('href', '#main-content');
   });
 
-  it('treats a project-detail hash as the active Projects route', () => {
+  it('keeps the simplified identity chrome stable for a project-detail hash', () => {
     renderMenu('#projects/pokeleximon');
 
-    expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('link', { name: 'Work' })).not.toHaveAttribute('aria-current');
+    expect(screen.queryByRole('navigation', { name: /primary navigation/i })).not.toBeInTheDocument();
+    expect(screen.getByText('Ben Hutchinson')).toBeVisible();
+    expect(screen.getByText('Manchester, UK')).toBeVisible();
   });
 
-  it('shows the typed identity, Platform Engineer positioning, Manchester status, and availability', () => {
+  it('shows the Kernel identity and Manchester status without role or availability copy', () => {
     renderMenu();
 
     expect(screen.getByText('Ben Hutchinson')).toBeVisible();
-    expect(screen.getByText(/platform engineer/i)).toBeVisible();
+    expect(screen.getByTestId('portfolio-os-mark')).toBeInTheDocument();
     expect(screen.getByText('Manchester, UK')).toBeVisible();
-    expect(screen.getByText(/open to platform and backend engineering opportunities/i)).toBeVisible();
+    expect(screen.queryByText(/mid-level platform engineer/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/open to platform and backend engineering opportunities/i)).not.toBeInTheDocument();
   });
 });

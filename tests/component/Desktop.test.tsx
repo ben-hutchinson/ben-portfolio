@@ -60,9 +60,9 @@ describe('recruiter-first Desktop', () => {
 
     expect(profile.location).toBe('Manchester, UK');
     expect(screen.getAllByText(profile.name).length).toBeGreaterThan(0);
-    expect(screen.getByText(profile.role, { exact: true })).toBeVisible();
     expect(screen.getByText(profile.location, { exact: true })).toBeVisible();
-    expect(screen.getByText(profile.availability, { exact: true })).toBeVisible();
+    expect(screen.getByRole('region', { name: 'About' })).toHaveTextContent(profile.role);
+    expect(screen.getByRole('region', { name: 'About' })).toHaveTextContent(profile.availability);
     expect(screen.getByText(profile.positioning, { exact: true })).toBeVisible();
     expect(screen.getAllByText(flagshipWork.result, { exact: true })).toHaveLength(1);
     expect(screen.getByText(flagshipWork.result, { exact: true })).toBeVisible();
