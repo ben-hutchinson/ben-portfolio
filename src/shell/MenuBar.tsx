@@ -21,6 +21,7 @@ function focusMainContent(event: MouseEvent<HTMLAnchorElement>) {
 
 export function MenuBar() {
   const { state } = usePortfolio();
+  const showDesktopIdentityHeading = state.route.kind === 'desktop';
 
   return (
     <>
@@ -29,7 +30,11 @@ export function MenuBar() {
         <div className={styles.identity}>
           <span className={styles.mark} aria-hidden="true">BH</span>
           <div>
-            <h1 className={styles.name}>{profile.name}</h1>
+            {showDesktopIdentityHeading ? (
+              <h1 className={styles.name}>{profile.name}</h1>
+            ) : (
+              <p className={styles.name}>{profile.name}</p>
+            )}
             <p className={styles.role}>{profile.role}</p>
           </div>
         </div>

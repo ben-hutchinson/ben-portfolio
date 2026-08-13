@@ -12,9 +12,21 @@
   border: var(--border-width) solid var(--color-ink);
   background: var(--career-accent);
   isolation: isolate;
+  container-type: inline-size;
 }
 
-.mobileHeading { display: none; }
+.mobileHeading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  margin: -1px;
+  border: 0;
+  white-space: nowrap;
+}
 
 .app[data-accent='orange'] { --career-accent: var(--color-orange); }
 .app[data-accent='yellow'] { --career-accent: var(--color-yellow); }
@@ -165,6 +177,22 @@
   text-align: right;
 }
 
+@container (max-width: 42rem) {
+  .stage {
+    max-width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .year { font-size: clamp(3.3rem, 10vw, 5.4rem); }
+  .headline { font-size: clamp(1.75rem, 5vw, 2.6rem); }
+  .evidenceStatement { font-size: clamp(1.45rem, 4vw, 2rem); }
+  .evidence { align-self: stretch; }
+  .controls { grid-template-columns: minmax(0, 1fr); }
+  .count { min-width: 0; }
+  .directControls { grid-column: auto; }
+  .status { text-align: left; }
+}
+
 @media (max-width: 900px) {
   .stage {
     max-width: 100%;
@@ -188,8 +216,14 @@
   }
 
   .mobileHeading {
+    position: static;
     display: block;
+    width: auto;
+    height: auto;
+    clip: auto;
+    clip-path: none;
     margin: 0;
+    overflow: visible;
     font-family: var(--font-display);
     font-size: clamp(1.5rem, 7vw, 2.25rem);
     font-weight: 950;

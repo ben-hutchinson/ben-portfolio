@@ -70,3 +70,29 @@ The full Playwright/visual/Lighthouse/manual matrix was not run, as directed. Th
 | `git diff --check` | PASS |
 
 No Tester-owned test, visual baseline, or release-report change was made in this fix round.
+
+## Fix round 2 — Career browser regressions
+
+### Diagnosis and implementation
+
+- The desktop 200% zoom contract failed because the fixed-width Career window's usable inline size becomes narrow under page zoom while viewport media queries remain desktop-sized. The two-column stage then reduced its lead column to roughly 106 rendered pixels, making the headline extremely tall and preventing the contract from keeping the content usefully reachable.
+- Added an inline-size container to the Career app and a `max-width: 42rem` container query that switches the stage and controls to their existing one-column responsive layout based on the actual window width. This preserves the wide desktop composition while handling zoomed/narrow app windows without horizontal overflow or emergency word breaking.
+- The mobile Career route had two visible h1 elements: the global MenuBar identity and the Career route heading. MenuBar now renders the identity as h1 only for the Desktop route, which preserves the recruiter contract at `#desktop`. Career's route h1 is now screen-reader-only on wide layouts and visible on mobile, yielding exactly one visible, route-appropriate Career h1 on mobile while preserving a valid desktop heading hierarchy.
+
+### Fresh verification
+
+| Command | Result |
+| --- | --- |
+| `npm run build` | PASS |
+| `npx playwright test tests/e2e/career.spec.ts --project=Chromium --grep "keeps the Now stage readable"` | PASS |
+| `npx playwright test tests/e2e/career.spec.ts --project=mobile-Chrome --grep "sole visible Career h1"` | PASS |
+| `npx playwright test tests/e2e/accessibility.spec.ts --project=Chromium` | PASS |
+| `npx playwright test tests/e2e/recruiter-scan.spec.ts --project=Chromium` | PASS |
+| `npx playwright test tests/e2e/recruiter-scan.spec.ts --project=mobile-Chrome` | PASS |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS |
+| `npm test` | PASS: 21 files, 147 tests |
+| `npm run check:bundle` | PASS: 96,879 gzip JS bytes; 118,519 initial image bytes; 3 deployable images below 350KB |
+| `git diff --check` | PASS |
+
+No Tester-owned test, visual baseline, release report, task packet, plan, ledger, or `.DS_Store` change was staged or modified by this fix.
