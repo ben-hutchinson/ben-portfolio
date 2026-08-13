@@ -45,3 +45,28 @@ The full Playwright/visual/Lighthouse/manual matrix was not run, as directed. Th
 
 - Tester: intentional visual baseline review, full browser/manual matrix, image-transfer interpretation/evidence, mobile LCP, Lighthouse Performance, Lighthouse Accessibility, and release-report evidence.
 - Product Owner: final acceptance decision and disposition of the legacy oversized static images.
+
+## Fix round 1 — reviewer delivery blockers
+
+### Root cause and implementation
+
+- Confirmed the configured remote default is `origin/master`; Pages now pushes only from `master`, and both the artifact-upload and deploy jobs include `if: github.ref == 'refs/heads/master'`. A manual dispatch from any feature branch can run quality but cannot upload or deploy.
+- Vite deploys the whole `public` directory. Source references only `assets/ui/project-pokeleximon.webp` and `assets/ui/project-safelog.webp`; the legacy audio, background, character, and old UI PNG assets were therefore unreferenced but still deployable. Removed them while preserving the CV PDF, favicon, the two active WebPs, and all `.DS_Store` files.
+- Extended `check:bundle` without dependencies. Alongside manifest-aware initial JavaScript gzip accounting, it now reads initial HTML/JS/CSS asset text to total deduplicated initial local image references, recursively inspects all deployable image files, and fails if initial images exceed 1MB or any deployable image is at or above 350KB. No current hero contract exists, so enforcement applies the stricter limit to every deployable image.
+
+### Fresh verification
+
+| Command | Result |
+| --- | --- |
+| `git symbolic-ref --short refs/remotes/origin/HEAD` | `origin/master` |
+| `npm run typecheck` | PASS |
+| `npm run lint` | PASS |
+| `npm run build` | PASS |
+| `npm run check:bundle` | PASS: 96,857 gzip JS bytes; 118,519 initial image bytes; 3 deployable images; none at or above 350KB |
+| `npm test` | PASS: 21 files, 147 tests |
+| `npm run test:coverage` | PASS: 98.68% statements, 93.00% branches, 98.61% functions, 99.57% lines |
+| `rg` runtime-reference inspection | Only the two retained project WebPs are referenced by source. |
+| `find dist` image-size inspection | Exactly `project-safelog.webp` (85,390 bytes), `project-pokeleximon.webp` (32,772 bytes), and `favicon.svg` (357 bytes); all below 350KB. |
+| `git diff --check` | PASS |
+
+No Tester-owned test, visual baseline, or release-report change was made in this fix round.
