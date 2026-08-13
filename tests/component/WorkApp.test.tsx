@@ -31,7 +31,8 @@ describe('Work.app', () => {
     const frame = workFrame();
     expect(within(frame).getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(within(frame).getByRole('heading', { level: 1 })).toHaveTextContent(flagshipWork.title);
-    expect(within(frame).getAllByRole('heading', { level: 2 }).slice(1).map(({ textContent }) => textContent)).toEqual([
+    expect(frame.querySelector('[data-window-title]')).toHaveTextContent('Work');
+    expect(within(frame).getAllByRole('heading', { level: 2 }).map(({ textContent }) => textContent)).toEqual([
       'Problem', 'Ownership', 'Approach', 'Rollout', 'Outcome', 'Public detail',
     ]);
   });

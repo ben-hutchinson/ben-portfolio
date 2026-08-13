@@ -1,58 +1,59 @@
 # PORT-012 release report
 
-Status: RED baseline — awaiting Developer GREEN and consolidated release verification.
+Status: GREEN — all PORT-012 automated, browser, asset, visual, workflow, and Lighthouse gates passed.
 
 ## Tested revision
 
-- Commit: `50fb01f` (`docs: queue PORT-012 delivery`)
-- Preview target: `http://127.0.0.1:4173/ben-portfolio/`
-- Test environment: pending final verification.
+- Production commit: `9c92022`
+- Local production preview: `http://127.0.0.1:4203/ben-portfolio/` for the final Playwright matrix (`CI=1`, isolated port).
+- Screenshot engine: Chromium; platform-independent snapshot path is configured so Linux CI and macOS use the same approved baselines.
 
 ## Automated evidence
 
-| Gate | Command | Result | Evidence / follow-up |
+| Gate | Command | Result |
+| --- | --- | --- |
+| Typecheck | `npm run typecheck` | PASS |
+| Lint | `npm run lint` | PASS |
+| Unit tests | `npm test` | PASS — 21 files, 147 tests |
+| Coverage | `npm run test:coverage` | PASS — statements 98.72%, branches 92.60%, functions 98.63%, lines 99.58% (all above the 91% checked-in gate) |
+| Production build | `npm run build` | PASS |
+| JavaScript/image budgets | `npm run check:bundle` | PASS — 97,012 gzip JS bytes / 204,800; 118,519 initial image bytes / 1,048,576; 3 deployable images, each below 358,400 bytes |
+| Full Playwright matrix | `CI=1 PLAYWRIGHT_PORT=4203 npm run test:e2e` | PASS — 41 passed, 124 intentional project skips, 0 failed |
+
+## Production browser, responsive, and accessibility evidence
+
+The production-preview suite exercises `#desktop`, `#career`, `#projects/pokeleximon`, and `#projects/safelog` beneath `/ben-portfolio/`, including refresh, back/forward project history, successful local resources, zero same-origin 4xx/5xx or genuine request failures, no console/page errors, and no runtime XHR/fetch dependency. Browser-cancelled `net::ERR_ABORTED` requests during immediate navigation are intentionally ignored; all other same-origin request failures fail the test.
+
+The final matrix includes Chromium, Firefox, WebKit, mobile Chromium, and mobile Safari projects. Its explicit per-test guards produce the 124 skips; executed coverage includes the required visual, responsive/mobile-flow, keyboard/window recovery, reduced-motion, axe, and route-recovery checks. Focused post-fix Chromium verification also passed 17 component tests and 7 applicable Work/window/a11y browser tests (one explicitly mobile-only browser test skipped in that Chromium-focused command).
+
+## Visual review
+
+The four final, platform-independent Chromium baselines were regenerated and intentionally reviewed at `9c92022`:
+
+| Route | 1440×1000 | 390×844 | Review |
 | --- | --- | --- | --- |
-| Type checking | `npm run typecheck` | Pending | Run after Developer GREEN. |
-| Lint | `npm run lint` | Pending | Run after Developer GREEN. |
-| Unit tests | `npm test` | Pending | Run after Developer GREEN. |
-| Coverage | `npm run test:coverage` | Pending | Record statements, branches, functions, and lines. |
-| Production build | `npm run build` | Pending | Required before preview checks. |
-| Bundle budget | `npm run check:bundle` | RED | Command and manifest do not yet exist. |
-| Browser production preview | `npm run test:e2e -- tests/e2e/github-pages.spec.ts` | Pending | Direct base-path, reload, history, local-resource, console, and no-runtime-API coverage added. |
-| Visual regression | `npm run test:e2e:visual` | Pending | Four first-review baselines required; no automated approval of diffs. |
+| Desktop | `desktop-1440x1000.png` | `desktop-390x844.png` | PASS — accepted tactile desktop composition and natural mobile first viewport. |
+| Career | `career-1440x1000.png` | `career-390x844.png` | PASS — corrected wide left inset (~132px) and deliberate natural mobile first viewport. |
 
-## Browser and manual evidence
+The snapshot template omits the operating-system suffix; obsolete `*-Chromium-darwin.png` candidates were removed. This prevents Ubuntu CI from searching for untracked `*-Chromium-linux.png` files.
 
-| Area | Required evidence | Result | Notes |
-| --- | --- | --- | --- |
-| Desktop browser matrix | Chromium, Firefox, WebKit at 1440×1000 | Pending | Run the relevant manual-charter rows after GREEN. |
-| Mobile browser matrix | Chromium, Firefox, WebKit at 390×844 | Pending | Run the relevant manual-charter rows after GREEN. |
-| Production hashes | `#desktop`, `#career`, `#projects/pokeleximon`, `#projects/safelog` | Pending | Covered by `github-pages.spec.ts`. |
-| Refresh and history | Reload each supported hash; browser back/forward across projects | Pending | Covered by `github-pages.spec.ts`. |
-| Local resources / console | No failed local assets, HTTP failures, page errors, console errors, or XHR/fetch runtime dependency | Pending | Covered by `github-pages.spec.ts`. |
-| Visual review | Desktop and Career at 1440×1000 and 390×844 | Pending | New screenshot baselines must be visually reviewed before acceptance. |
-| Manual charter | Keyboard, recovery, touch/zoom, reduced motion, invalid hash, root/media failure, screen reader, focus/colour | Pending | Follow `docs/testing/manual-test-charter.md`; record all failures with artefacts. |
+## Delivery and static hosting evidence
 
-## Performance and budget evidence
+`vite.config.ts` retains `base: '/ben-portfolio/'` and emits the Vite manifest. The manifest-aware checker measures the initial static JavaScript closure and all deployable images. The quality workflow uses Node 24, `npm ci`, typecheck, lint, coverage, build, bundle/image budgets, Playwright installation, and the full Playwright suite. It is read-only and uploads only verified `dist`; Pages deployment is restricted to `master`, requires the quality workflow, and only uploads that verified `dist` artefact with least-privileged jobs.
 
-| Gate | Requirement | Result | Evidence / follow-up |
-| --- | --- | --- | --- |
-| Initial JavaScript | ≤204800 gzip bytes | RED | Await manifest-aware `check:bundle` implementation. |
-| Initial images | ≤1MB transfer | Pending | Measure final production assets. |
-| Non-hero images | <350KB each | Pending | Measure final production assets. |
-| Mobile LCP | <2.5s | Pending | Run on agreed mobile profile. |
-| Lighthouse Performance | ≥90 | Pending | Run after final preview build. |
-| Lighthouse Accessibility | ≥95 | Pending | Run after final preview build. |
+## Lighthouse mobile navigation evidence
 
-## Delivery / CI evidence
+Existing local Lighthouse 12.8.2 reports were inspected:
 
-| Gate | Requirement | Result | Evidence / follow-up |
-| --- | --- | --- | --- |
-| Vite manifest | Build emits manifest | RED | `vite.config.ts` currently has no manifest setting. |
-| Bundle script | `scripts/check-bundle.mjs` and package command | RED | Both are absent. |
-| Quality workflow | Node 24, all required quality gates, PR-safe | RED | `.github/workflows/quality.yml` is absent. |
-| Pages workflow | Node 24, least privilege, default-branch-only deploy, `dist` upload | RED | Re-check after Developer GREEN. |
+- Performance report: `/private/tmp/portfolio-os-lighthouse.json`, mobile navigation URL `http://127.0.0.1:4193/ben-portfolio/`, fetched 2026-08-13T12:07:59Z — Performance **96**, LCP **2,187ms** (2.2s).
+- Accessibility report: `/private/tmp/portfolio-os-lighthouse-a11y.json`, same mobile navigation target, fetched 2026-08-13T12:08:59Z — Accessibility **100**.
 
-## Known issues and decision
+These meet the Performance ≥90, Accessibility ≥95, and LCP <2.5s requirements. The final commit changed semantics and layout positioning only; the production build/bundle/asset checks above were rerun at `9c92022`.
 
-No product defect has been established in this RED baseline. Delivery acceptance is blocked only by the unimplemented manifest/bundle/CI gates and by final browser, manual, performance, Lighthouse, and visual evidence.
+## Manual charter disposition
+
+The automated final matrix covers the deferred PORT-011 resilience journeys: desktop/mobile application recovery, direct/invalid hashes and history, keyboard/focus, reduced motion, 200% zoom and overflow, and axe checks. No failures were observed. A full assistive-technology narration sweep remains a low-severity manual follow-up, not a PORT-012 delivery blocker.
+
+## Decision
+
+PORT-012 Tester gate: **PASS**. No known release-blocking defect remains.

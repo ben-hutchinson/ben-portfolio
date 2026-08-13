@@ -5,6 +5,7 @@ const previewBaseURL = `http://127.0.0.1:${previewPort}/ben-portfolio/`;
 
 export default defineConfig({
   testDir: './tests/e2e',
+  snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}{ext}',
   use: {
     baseURL: previewBaseURL,
   },

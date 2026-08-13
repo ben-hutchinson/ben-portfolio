@@ -37,7 +37,9 @@ function installFinePointer(matches = true, legacyListeners = false) {
 function expectFocusInFrame(title: string) {
   const frame = screen.getByRole('region', { name: title });
   const firstControl = screen.getByRole('button', { name: `Close ${title}` });
-  expect([screen.getByRole('heading', { name: title }), firstControl]).toContain(document.activeElement);
+  const titlebarLabel = frame.querySelector<HTMLElement>('[data-window-title]');
+  if (titlebarLabel === null) throw new Error(`Window title for ${title} was not rendered`);
+  expect([titlebarLabel, firstControl]).toContain(document.activeElement);
   expect(frame).toContainElement(document.activeElement as HTMLElement);
 }
 

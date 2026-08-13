@@ -33,13 +33,14 @@ function renderFrame(overrides: Partial<ComponentProps<typeof WindowFrame>> = {}
 }
 
 describe('WindowFrame', () => {
-  it('is a labelled non-modal application section with its visible title', () => {
-    renderFrame();
+  it('is a labelled non-modal application section with a visible non-heading titlebar label', () => {
+    renderFrame({ titleIsHeading: false });
 
     const frame = screen.getByRole('region', { name: 'Work' });
     expect(frame).toHaveAttribute('data-window-id', 'work');
     expect(frame.tagName).toBe('SECTION');
-    expect(screen.getByRole('heading', { name: 'Work' })).toBeVisible();
+    expect(frame.querySelector('[data-window-title]')).toHaveTextContent('Work');
+    expect(screen.queryByRole('heading', { name: 'Work' })).toBeNull();
     expect(frame).not.toHaveAttribute('role', 'dialog');
     expect(frame).not.toHaveAttribute('aria-modal');
   });

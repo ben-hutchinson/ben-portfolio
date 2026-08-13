@@ -8,8 +8,21 @@ test.describe('Work.app', () => {
     await expect(page).toHaveURL(/#work$/);
     const frame = page.locator(workFrame);
     await expect(frame.getByRole('heading', { level: 1, name: 'Python Dependency Migration' })).toBeVisible();
-    const headings = await frame.getByRole('heading', { level: 2 }).allTextContents();
-    expect(headings.slice(1, 6)).toEqual(['Problem', 'Ownership', 'Approach', 'Rollout', 'Outcome']);
+    await expect(frame.getByRole('heading', { level: 1 })).toHaveCount(1);
+    await expect(frame.locator('[data-window-title]')).toHaveText('Work');
+    const headings = await frame.locator('h1, h2, h3, h4, h5, h6').evaluateAll((elements) => elements.map((element) => ({
+      level: Number(element.tagName.slice(1)),
+      text: element.textContent?.trim(),
+    })));
+    expect(headings).toEqual([
+      { level: 1, text: 'Python Dependency Migration' },
+      { level: 2, text: 'Problem' },
+      { level: 2, text: 'Ownership' },
+      { level: 2, text: 'Approach' },
+      { level: 2, text: 'Rollout' },
+      { level: 2, text: 'Outcome' },
+      { level: 2, text: 'Public detail' },
+    ]);
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Download CV' })).toHaveAttribute('download', 'ben-hutchinson-cv.pdf');
     if (test.info().project.name === 'Chromium') {

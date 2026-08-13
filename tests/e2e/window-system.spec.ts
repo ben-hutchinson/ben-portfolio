@@ -38,7 +38,7 @@ test.describe('window system desktop', () => {
     const workDock = page.locator('[data-dock-app-id="work"]');
     await expect(workDock).toBeFocused();
     await workDock.click();
-    await expect(page.locator(workFrame).getByRole('heading', { name: 'Work' })).toBeFocused();
+    await expect(page.locator(workFrame).locator('[data-window-title]')).toBeFocused();
     await page.getByRole('button', { name: 'Maximize Work' }).click();
     await page.locator(workFrame).getByRole('button', { name: 'Close Work' }).focus();
     await page.keyboard.press('Escape');
