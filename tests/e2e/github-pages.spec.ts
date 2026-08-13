@@ -9,33 +9,53 @@ const supportedRoutes = [
 ] as const;
 
 function recordPreviewFailures(page: Page) {
-  const failures: string[] = [];
-  const localResourcePaths = new Set<string>();
-  const isLocalResource = (url: string) => new URL(url).origin === 'http://127.0.0.1:4173';
+  const consoleAndPageFailures: string[] = [];
+  const failedRequests: { errorText: string; url: string }[] = [];
+  const errorResponses: { status: number; url: string }[] = [];
+  const requestUrls = new Set<string>();
 
   page.on('console', (message) => {
-    if (message.type() === 'error') failures.push(`console: ${message.text()}`);
+    if (message.type() === 'error') consoleAndPageFailures.push(`console: ${message.text()}`);
   });
-  page.on('pageerror', (error) => failures.push(`pageerror: ${error.message}`));
+  page.on('pageerror', (error) => consoleAndPageFailures.push(`pageerror: ${error.message}`));
   page.on('request', (request) => {
-    if (isLocalResource(request.url())) localResourcePaths.add(new URL(request.url()).pathname);
+    requestUrls.add(request.url());
   });
   page.on('requestfailed', (request) => {
-    if (isLocalResource(request.url())) failures.push(`request failed: ${request.url()}`);
+    failedRequests.push({
+      errorText: request.failure()?.errorText ?? 'unknown request failure',
+      url: request.url(),
+    });
   });
   page.on('response', (response) => {
-    if (isLocalResource(response.url()) && response.status() >= 400) {
-      failures.push(`HTTP ${response.status()}: ${response.url()}`);
-    }
+    if (response.status() >= 400) errorResponses.push({ status: response.status(), url: response.url() });
   });
-  return { failures, localResourcePaths };
+  return () => {
+    const previewOrigin = new URL(page.url()).origin;
+    const isSameOrigin = (url: string) => new URL(url).origin === previewOrigin;
+    const localResourcePaths = [...requestUrls]
+      .filter(isSameOrigin)
+      .map((url) => new URL(url).pathname);
+    return {
+      failures: [
+        ...consoleAndPageFailures,
+        ...failedRequests
+          .filter(({ errorText, url }) => isSameOrigin(url) && errorText !== 'net::ERR_ABORTED')
+          .map(({ errorText, url }) => `request failed (${errorText}): ${url}`),
+        ...errorResponses
+          .filter(({ url }) => isSameOrigin(url))
+          .map(({ status, url }) => `HTTP ${status}: ${url}`),
+      ],
+      localResourcePaths,
+    };
+  };
 }
 
 test.describe('PORT-012 GitHub Pages preview', () => {
   test('serves supported hashes below the repository base path without local failures or runtime API requests', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Production-preview contract runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });
-    const { failures, localResourcePaths } = recordPreviewFailures(page);
+    const inspectPreview = recordPreviewFailures(page);
     const runtimeRequests: string[] = [];
     page.on('request', (request) => {
       if (['fetch', 'xhr'].includes(request.resourceType())) runtimeRequests.push(request.url());
@@ -50,6 +70,7 @@ test.describe('PORT-012 GitHub Pages preview', () => {
       await expect(page.locator(`[data-window-id="${route.windowId}"]`)).toBeVisible();
     }
 
+    const { failures, localResourcePaths } = inspectPreview();
     expect(runtimeRequests).toEqual([]);
     expect([...localResourcePaths]).not.toEqual([]);
     expect([...localResourcePaths]).toEqual(expect.arrayContaining([
@@ -61,7 +82,7 @@ test.describe('PORT-012 GitHub Pages preview', () => {
 
   test('restores project routes through browser back and forward beneath the repository base path', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Production-preview history runs in Chromium.');
-    const { failures } = recordPreviewFailures(page);
+    const inspectPreview = recordPreviewFailures(page);
 
     await page.goto(`${previewBasePath}#projects/pokeleximon`);
     await expect(page.getByRole('heading', { level: 1, name: 'Pokeleximon Daily' })).toBeVisible();
@@ -74,6 +95,6 @@ test.describe('PORT-012 GitHub Pages preview', () => {
     await expect(page).toHaveURL(/\/ben-portfolio\/#projects\/safelog$/);
     await expect(page.getByRole('heading', { level: 1, name: 'Safelog' })).toBeVisible();
 
-    expect(failures).toEqual([]);
+    expect(inspectPreview().failures).toEqual([]);
   });
 });
