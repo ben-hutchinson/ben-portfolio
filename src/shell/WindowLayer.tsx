@@ -8,6 +8,7 @@ import { ProjectsApp } from '../apps/projects/ProjectsApp';
 import { FeaturedWork } from '../apps/work/FeaturedWork';
 import { WorkApp } from '../apps/work/WorkApp';
 import { usePortfolio } from '../app/PortfolioContext';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import type { PortfolioState } from '../app/portfolioState';
 import type { AppId } from '../data/models';
 import { clampWindowPosition, type WindowSize, type WindowWorkArea } from '../utils/windowGeometry';
@@ -67,14 +68,6 @@ function getWorkArea(element: HTMLElement | null): WindowWorkArea {
   return { width: rect.width, height: rect.height };
 }
 
-function getDesktopCapability(): { finePointer: boolean; wideViewport: boolean } {
-  return {
-    finePointer: typeof window.matchMedia === 'function'
-      && window.matchMedia('(pointer: fine)').matches,
-    wideViewport: window.innerWidth >= 768,
-  };
-}
-
 function visibleAppIds(state: PortfolioState): readonly AppId[] {
   return WINDOW_APP_ORDER.filter((appId) => (
     state.openAppIds.includes(appId) && !state.minimizedAppIds.includes(appId)
@@ -96,10 +89,9 @@ export function WindowLayer(): JSX.Element {
   const previousMaximizedRef = useRef<AppId | null>(state.maximizedAppId);
   const pendingFocusFallbackRef = useRef<AppId | null>(null);
   const [workArea, setWorkArea] = useState<WindowWorkArea>(() => getWorkArea(null));
-  const [capability, setCapability] = useState(getDesktopCapability);
+  const desktopCapable = useMediaQuery('(min-width: 768px) and (pointer: fine)');
   stateRef.current = state;
 
-  const desktopCapable = capability.finePointer && capability.wideViewport;
   const desktopCapableRef = useRef(desktopCapable);
   desktopCapableRef.current = desktopCapable;
   const allVisibleIds = visibleAppIds(state);
@@ -109,24 +101,6 @@ export function WindowLayer(): JSX.Element {
   const displayedIds = activeDisplayedIds.length > 0
     ? activeDisplayedIds
     : desktopCapable ? activeDisplayedIds : allVisibleIds.slice(0, 1);
-
-  useEffect(() => {
-    const media = window.matchMedia('(pointer: fine)');
-    const updateCapability = () => setCapability({
-      finePointer: media.matches,
-      wideViewport: window.innerWidth >= 768,
-    });
-
-    updateCapability();
-    if (typeof media.addEventListener === 'function') media.addEventListener('change', updateCapability);
-    else media.addListener(updateCapability);
-    window.addEventListener('resize', updateCapability);
-    return () => {
-      if (typeof media.removeEventListener === 'function') media.removeEventListener('change', updateCapability);
-      else media.removeListener(updateCapability);
-      window.removeEventListener('resize', updateCapability);
-    };
-  }, []);
 
   useLayoutEffect(() => {
     const element = layerRef.current;
@@ -148,16 +122,15 @@ export function WindowLayer(): JSX.Element {
     });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [desktopCapable]);
 
   useLayoutEffect(() => {
     const frames = layerRef.current?.querySelectorAll<HTMLElement>('[data-window-id]') ?? [];
     for (const frame of frames) {
-      const isMobileInactive = !capability.wideViewport
-        && frame.dataset.windowId !== state.focusedAppId;
-      frame.style.display = isMobileInactive ? 'none' : '';
+      const isInactiveSingleApp = !desktopCapable && frame.dataset.windowId !== state.focusedAppId;
+      frame.style.display = isInactiveSingleApp ? 'none' : '';
     }
-  }, [capability.wideViewport, state.focusedAppId, state.openAppIds, state.minimizedAppIds]);
+  }, [desktopCapable, state.focusedAppId, state.openAppIds, state.minimizedAppIds]);
 
   useEffect(() => {
     if (!desktopCapable || workArea.width <= 0 || workArea.height <= 0) return;
@@ -237,7 +210,7 @@ export function WindowLayer(): JSX.Element {
     <div
       className={styles.layer}
       data-desktop-windows={desktopCapable || undefined}
-      data-mobile-windows={!capability.wideViewport || undefined}
+      data-mobile-windows={!desktopCapable || undefined}
       ref={layerRef}
     >
       {allVisibleIds.map((appId) => {

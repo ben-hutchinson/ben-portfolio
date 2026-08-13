@@ -7,7 +7,7 @@ Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: (query: string): MediaQueryList =>
     ({
-      matches: false,
+      matches: query === '(min-width: 768px) and (pointer: fine)',
       media: query,
       onchange: null,
       addEventListener: () => undefined,

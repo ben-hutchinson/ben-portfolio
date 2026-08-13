@@ -19,7 +19,7 @@ export function Dock() {
   const cvUrl = `${import.meta.env.BASE_URL}cv/ben-hutchinson-cv.pdf`;
 
   return (
-    <div className={styles.dock} aria-label="Portfolio applications">
+    <nav className={styles.dock} aria-label="Portfolio applications">
       <div className={styles.apps}>
         {apps.map((app) => {
           const isActive = state.focusedAppId === app.appId;
@@ -46,6 +46,6 @@ export function Dock() {
         <a href={github.href} target="_blank" rel="noopener noreferrer">GitHub</a>
         <a href={linkedIn.href} target="_blank" rel="noopener noreferrer">LinkedIn</a>
       </div>
-    </div>
+    </nav>
   );
 }

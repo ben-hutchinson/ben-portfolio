@@ -72,7 +72,7 @@ describe('PortfolioShell', () => {
     const defaultMatchMedia = window.matchMedia;
     vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
       ...defaultMatchMedia(query),
-      matches: query === '(pointer: fine)',
+      matches: query === '(min-width: 768px) and (pointer: fine)',
     }));
     const user = userEvent.setup();
     renderShell();

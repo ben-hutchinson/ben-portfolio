@@ -15,9 +15,9 @@ function installViewport(width: number, finePointer: boolean) {
   Object.defineProperty(window, 'innerWidth', { configurable: true, value: width });
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
-    value: vi.fn(() => ({
-      matches: finePointer,
-      media: '(pointer: fine)',
+    value: vi.fn((query: string) => ({
+      matches: query.includes('min-width: 768px') ? width >= 768 && finePointer : finePointer,
+      media: query,
       onchange: null,
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),

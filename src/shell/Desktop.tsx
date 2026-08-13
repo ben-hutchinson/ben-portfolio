@@ -1,24 +1,12 @@
-import { useEffect, useState } from 'react';
 import { DesktopShortcut, type DesktopShortcutAppId } from './DesktopShortcut';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 import { WindowLayer } from './WindowLayer';
 import styles from './Desktop.module.css';
 
 const SHORTCUT_APP_IDS: readonly DesktopShortcutAppId[] = ['about', 'career', 'work'];
 
-function supportsDesktopShortcuts(): boolean {
-  return window.innerWidth >= 768;
-}
-
 export function Desktop() {
-  const [showShortcuts, setShowShortcuts] = useState(supportsDesktopShortcuts);
-
-  useEffect(() => {
-    const updateVisibility = () => setShowShortcuts(supportsDesktopShortcuts());
-
-    updateVisibility();
-    window.addEventListener('resize', updateVisibility);
-    return () => window.removeEventListener('resize', updateVisibility);
-  }, []);
+  const showShortcuts = useMediaQuery('(min-width: 768px) and (pointer: fine)');
 
   return (
     <div className={styles.desktop}>

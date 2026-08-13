@@ -29,7 +29,7 @@ export function MenuBar() {
         <div className={styles.identity}>
           <span className={styles.mark} aria-hidden="true">BH</span>
           <div>
-            <p className={styles.name}>{profile.name}</p>
+            <h1 className={styles.name}>{profile.name}</h1>
             <p className={styles.role}>{profile.role}</p>
           </div>
         </div>
