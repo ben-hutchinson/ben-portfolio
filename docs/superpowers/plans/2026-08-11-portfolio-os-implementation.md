@@ -404,15 +404,15 @@ export interface CommandDefinition {
 - Create: `tests/e2e/responsive.spec.ts`
 - Create: `docs/testing/manual-test-charter.md`
 
-- [ ] **Product Owner:** Queue PORT-011 using PRD sections 9–10 and DESIGN sections 9, 11, and 13. Require one active application below 768px, natural scrolling, 44×44px practical targets, keyboard parity, reduced-motion parity, useful error recovery, and no colour-only information.
-- [ ] **Tester:** Write failing e2e checks for skip link, heading/landmark order, menu/dock accessible names, focus visibility, Career range labels, no serious/critical axe violations, one-app mobile mode, natural scroll, and 200% zoom.
-- [ ] **Developer:** Centralize media-query behaviour, return deterministic server/test defaults, and clean up listeners. Use the result to disable drag and overlap on narrow/coarse-pointer layouts without deleting content.
-- [ ] **Developer:** Add an error boundary whose designed fallback retains Ben's identity and direct Contact/CV/GitHub paths. Invalid hashes return to Desktop with a non-blocking message; optional media errors remain local.
-- [ ] **Developer:** Audit controls so keyboard focus is visible against mint, paper, orange, yellow, and blue. Keep non-modal windows free of dialog semantics and focus traps.
-- [ ] **Tester:** Create the manual charter with a matrix for 1440×1000, 1024×768, 768×1024, 390×844, and 320×568; mouse, touch emulation, and keyboard; normal/reduced motion; Chromium, Firefox, and WebKit.
-- [ ] **Tester:** Perform keyboard-only primary journeys, window recovery, rapid Career input, 200% zoom, missing image, invalid hash, back/forward, and screen-reader spot checks; record exact pass/fail evidence in PORT-011.
-- [ ] **Product Owner:** Review failures by user impact, return all blocker/major issues to the Developer, and accept only after Tester re-verification.
-- [ ] Commit with `feat: harden responsive and accessible behaviour`.
+- [x] **Product Owner:** Queue PORT-011 using PRD sections 9–10 and DESIGN sections 9, 11, and 13. Require one active application below 768px, natural scrolling, 44×44px practical targets, keyboard parity, reduced-motion parity, useful error recovery, and no colour-only information.
+- [x] **Tester:** Write failing e2e checks for skip link, heading/landmark order, menu/dock accessible names, focus visibility, Career range labels, no serious/critical axe violations, one-app mobile mode, natural scroll, and 200% zoom.
+- [x] **Developer:** Centralize media-query behaviour, return deterministic server/test defaults, and clean up listeners. Use the result to disable drag and overlap on narrow/coarse-pointer layouts without deleting content.
+- [x] **Developer:** Add an error boundary whose designed fallback retains Ben's identity and direct Contact/CV/GitHub paths. Invalid hashes return to Desktop with a non-blocking message; optional media errors remain local.
+- [x] **Developer:** Audit controls so keyboard focus is visible against mint, paper, orange, yellow, and blue. Keep non-modal windows free of dialog semantics and focus traps.
+- [x] **Tester:** Create the manual charter with a matrix for 1440×1000, 1024×768, 768×1024, 390×844, and 320×568; mouse, touch emulation, and keyboard; normal/reduced motion; Chromium, Firefox, and WebKit.
+- [x] **Tester:** Perform keyboard-only primary journeys, window recovery, rapid Career input, 200% zoom, missing image, invalid hash, back/forward, and screen-reader spot checks; record exact pass/fail evidence in PORT-011.
+- [x] **Product Owner:** Review failures by user impact, return all blocker/major issues to the Developer, and accept only after Tester re-verification.
+- [x] Commit with `feat: harden responsive and accessible behaviour`.
 
 ## Task 12: Enforce Performance, CI, and GitHub Pages Delivery
 
