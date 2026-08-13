@@ -1,15 +1,18 @@
 import type { JSX } from 'react';
 import { externalLinks } from '../../data/externalLinks';
 import { profile } from '../../data/profile';
+import { usePortfolio } from '../../app/PortfolioContext';
 import styles from './ContactApp.module.css';
 
 export function ContactApp(): JSX.Element {
+  const { state } = usePortfolio();
   const cvUrl = `${import.meta.env.BASE_URL}cv/ben-hutchinson-cv.pdf`;
+  const RouteHeading = state.route.kind === 'contact' ? 'h1' : 'h2';
   return (
     <article className={styles.contact} aria-labelledby="contact-title">
       <header className={styles.header}>
         <p>Direct line / Manchester</p>
-        <h1 id="contact-title">Contact Ben</h1>
+        <RouteHeading id="contact-title">Contact Ben</RouteHeading>
         <p>{profile.availability}</p>
       </header>
       <dl className={styles.details}>

@@ -74,9 +74,25 @@ function visibleAppIds(state: PortfolioState): readonly AppId[] {
   ));
 }
 
+function routeAppId(state: PortfolioState): AppId | null {
+  switch (state.route.kind) {
+    case 'work':
+      return 'work';
+    case 'career':
+      return 'career';
+    case 'projects':
+    case 'project':
+      return 'projects';
+    case 'contact':
+      return 'contact';
+    case 'desktop':
+      return null;
+  }
+}
+
 function focusFrameHeading(appId: AppId): void {
   const frame = document.querySelector<HTMLElement>(`[data-window-id="${appId}"]`);
-  const heading = frame?.querySelector<HTMLElement>('h2');
+  const heading = frame?.querySelector<HTMLElement>('[data-window-title]');
   const firstControl = frame?.querySelector<HTMLElement>('[data-window-control]');
   (heading ?? firstControl)?.focus();
 }
@@ -95,6 +111,10 @@ export function WindowLayer(): JSX.Element {
   const desktopCapableRef = useRef(desktopCapable);
   desktopCapableRef.current = desktopCapable;
   const allVisibleIds = visibleAppIds(state);
+  const activeRouteAppId = routeAppId(state);
+  const renderedAppIds = activeRouteAppId === null
+    ? allVisibleIds
+    : [activeRouteAppId, ...allVisibleIds.filter((appId) => appId !== activeRouteAppId)];
   const activeDisplayedIds = desktopCapable
     ? allVisibleIds
     : allVisibleIds.filter((appId) => appId === state.focusedAppId).slice(0, 1);
@@ -213,7 +233,7 @@ export function WindowLayer(): JSX.Element {
       data-mobile-windows={!desktopCapable || undefined}
       ref={layerRef}
     >
-      {allVisibleIds.map((appId) => {
+      {renderedAppIds.map((appId) => {
         const title = WINDOW_TITLES[appId];
         const isMaximized = state.maximizedAppId === appId;
         const size = windowSize(appId, state);
@@ -221,6 +241,7 @@ export function WindowLayer(): JSX.Element {
           <WindowFrame
             appId={appId}
             title={title}
+            titleIsHeading={activeRouteAppId !== appId}
             position={state.windowPositions[appId]}
             size={size}
             workArea={workArea}

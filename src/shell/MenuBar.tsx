@@ -21,15 +21,20 @@ function focusMainContent(event: MouseEvent<HTMLAnchorElement>) {
 
 export function MenuBar() {
   const { state } = usePortfolio();
+  const showDesktopIdentityHeading = state.route.kind === 'desktop';
 
   return (
     <>
       <a className={styles.skipLink} href="#main-content" onClick={focusMainContent}>Skip to main content</a>
-      <div className={styles.menuBar} data-route={state.route.kind}>
+      <div className={styles.menuBar}>
         <div className={styles.identity}>
           <span className={styles.mark} aria-hidden="true">BH</span>
           <div>
-            <h1 className={styles.name}>{profile.name}</h1>
+            {showDesktopIdentityHeading ? (
+              <h1 className={styles.name}>{profile.name}</h1>
+            ) : (
+              <p className={styles.name}>{profile.name}</p>
+            )}
             <p className={styles.role}>{profile.role}</p>
           </div>
         </div>

@@ -8,6 +8,7 @@ import styles from './WindowFrame.module.css';
 export interface WindowFrameProps {
   readonly appId: AppId;
   readonly title: string;
+  readonly titleIsHeading?: boolean;
   readonly children: ReactNode;
   readonly position: Point;
   readonly size: WindowSize;
@@ -26,6 +27,7 @@ export interface WindowFrameProps {
 export function WindowFrame({
   appId,
   title,
+  titleIsHeading = true,
   children,
   position,
   size,
@@ -81,7 +83,9 @@ export function WindowFrame({
         data-titlebar={appId}
         onPointerDown={drag.onTitleBarPointerDown}
       >
-        <h2 className={styles.title} id={titleId} tabIndex={-1}>{title}</h2>
+        {titleIsHeading
+          ? <h2 className={styles.title} id={titleId} data-window-title tabIndex={-1}>{title}</h2>
+          : <div className={styles.title} id={titleId} data-window-title tabIndex={-1}>{title}</div>}
         <div className={styles.controls}>
           <button
             className={styles.control}

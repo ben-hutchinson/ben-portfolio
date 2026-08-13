@@ -5,13 +5,14 @@ import { projects } from '../../data/projects';
 import styles from './ProjectsApp.module.css';
 
 export function ProjectsApp(): JSX.Element {
-  const { dispatch } = usePortfolio();
+  const { state, dispatch } = usePortfolio();
+  const RouteHeading = state.route.kind === 'projects' ? 'h1' : 'h2';
 
   return (
     <article className={styles.catalogue} aria-labelledby="projects-title">
       <header className={styles.header}>
         <p className={styles.eyebrow}>Personal systems / 02</p>
-        <h1 id="projects-title">Engineering projects</h1>
+        <RouteHeading id="projects-title">Engineering projects</RouteHeading>
         <p>Working software, shaped around delivery, operations, and the people using it.</p>
       </header>
       <div className={styles.entries}>

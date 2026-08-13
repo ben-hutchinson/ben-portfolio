@@ -17,10 +17,12 @@ export function CareerApp(): JSX.Element {
   const activeStage = careerStages[activeIndex];
   const directLabel = CAREER_DIRECT_LABELS[activeIndex] ?? CAREER_DIRECT_LABELS[0];
   const stageLabel = `${directLabel} — ${activeStage.role}`;
+  const RouteHeading = state.route.kind === 'career' ? 'h1' : 'h2';
 
   return (
     <section className={styles.app} data-accent={activeStage.accent} aria-label="Career timeline">
-      <h1 className={styles.mobileHeading}>Career</h1>
+      <RouteHeading className={styles.mobileHeading}>Career</RouteHeading>
+      <h2 className={styles.sectionHeading}>Career timeline</h2>
       <CareerStage
         stage={activeStage}
         index={activeIndex}

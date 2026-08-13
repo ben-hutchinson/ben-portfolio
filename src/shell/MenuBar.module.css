@@ -28,18 +28,6 @@
 .mark { display: grid; flex: 0 0 auto; width: 2.5rem; aspect-ratio: 1; place-items: center; border: var(--border-width) solid var(--color-ink); border-radius: var(--radius-control); background: var(--color-yellow); font-weight: 900; }
 .name, .role { margin: 0; }
 .name { font-family: var(--font-display); font-size: 1rem; font-weight: 900; letter-spacing: -0.03em; }
-.menuBar:not([data-route='desktop']) .name {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  clip-path: inset(50%);
-  margin: -1px;
-  border: 0;
-  white-space: nowrap;
-}
 .role { color: var(--color-muted); font-size: 0.72rem; line-height: 1.25; }
 .navigation { gap: var(--space-1); justify-content: center; }
 .navLink { padding: var(--space-2) var(--space-3); border-bottom: var(--border-heavy) solid transparent; font-size: 0.78rem; font-weight: 700; text-decoration: none; }
@@ -55,7 +43,6 @@
   .navLink { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
   .status { font-size: 0.62rem; }
   .availability { display: none; }
-  .menuBar:not([data-route='desktop']) .name { display: none; }
 }
 
 @media (pointer: coarse), (pointer: none) {
