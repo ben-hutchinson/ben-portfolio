@@ -1,6 +1,6 @@
 # PORT-013 — Final release audit and acceptance
 
-Status: READY
+Status: ACCEPTED — 2026-08-13
 
 Requirement links: PRD §§6, 8–13; DESIGN §§14–15; SOUL §§Recruiter Contract, Interaction Standard, and Decision Rule; `docs/AGENTS.md` §§2, 4–6, 12, 15–18; implementation plan Task 13.
 
@@ -14,7 +14,7 @@ User outcome: The final Portfolio OS release is a clean, accurately documented, 
 - Update `README.md` so a new contributor can install, run, test, build, preview, understand the current architecture, and understand GitHub Pages deployment at the exact `/ben-portfolio/` base path.
 - Re-run final clean-install, static-budget, browser, accessibility, visual, and manual evidence at the final commit; update `docs/testing/release-report.md` with only current-commit results.
 - Perform final Product Owner acceptance against every PRD success criterion, the four PRD §8 journeys, all DESIGN §15 visual checks, SOUL’s recruiter/clarity standards, and the no-invented-claims invariant.
-- Complete the PORT-012 carried manual follow-up: a full assistive-technology narration sweep, not only automated axe/semantic checks.
+- Complete the PORT-012 carried manual follow-up: a full assistive-technology narration sweep, not only automated axe/semantic checks. **Disposition: WAIVED BY USER on 2026-08-13; this is an explicit direct-user scope decision, not a passing narration result.**
 
 ## Prior disposition and protected assets
 
@@ -122,42 +122,42 @@ Accept only when the Tester passes the final candidate commit and every item bel
 
 ### PRD §6 success criteria
 
-- [ ] A first-time visitor identifies Ben as a mid-level platform engineer within ten seconds.
-- [ ] The 50+ repositories/four-minute build result is visible without opening an application.
-- [ ] Career, Work, Projects, CV, and Contact are each reachable with one clear action.
-- [ ] The desktop is tactile and distinctive.
-- [ ] Career.app feels integrated with the Portfolio OS.
-- [ ] Every important task is keyboard-operable and independent of dragging.
-- [ ] The full professional story is available on mobile.
-- [ ] The site is fast and stable on GitHub Pages.
-- [ ] Reduced motion and optional asset failure preserve the experience.
+- [x] A first-time visitor identifies Ben as a mid-level platform engineer within ten seconds.
+- [x] The 50+ repositories/four-minute build result is visible without opening an application.
+- [x] Career, Work, Projects, CV, and Contact are each reachable with one clear action.
+- [x] The desktop is tactile and distinctive.
+- [x] Career.app feels integrated with the Portfolio OS.
+- [x] Every important task is keyboard-operable and independent of dragging.
+- [x] The full professional story is available on mobile.
+- [x] The site is fast and stable on GitHub Pages.
+- [x] Reduced motion and optional asset failure preserve the experience.
 
 ### DESIGN §15 visual acceptance
 
-- [ ] First view unmistakably reads as a designed operating system.
-- [ ] The interface does not copy a specific commercial OS.
-- [ ] Mint, paper, ink, orange, and yellow dominate the shell.
-- [ ] Hard shadows and crisp borders provide tactility.
-- [ ] Body copy remains comfortably readable at production scale.
-- [ ] Default windows are composed, not randomly scattered.
-- [ ] Career is bolder but remains part of the same product.
-- [ ] The flagship metric is visible on Desktop and in Career or Work.
-- [ ] Mobile preserves the application metaphor without overlap chaos.
-- [ ] No legacy pixel-game or command-centre styling/path remains.
+- [x] First view unmistakably reads as a designed operating system.
+- [x] The interface does not copy a specific commercial OS.
+- [x] Mint, paper, ink, orange, and yellow dominate the shell.
+- [x] Hard shadows and crisp borders provide tactility.
+- [x] Body copy remains comfortably readable at production scale.
+- [x] Default windows are composed, not randomly scattered.
+- [x] Career is bolder but remains part of the same product.
+- [x] The flagship metric is visible on Desktop and in Career or Work.
+- [x] Mobile preserves the application metaphor without overlap chaos.
+- [x] No legacy pixel-game or command-centre styling/path remains.
 
 ### Final release conditions
 
-- [ ] Every listed clean-install command and quality gate passes at the same final commit.
-- [ ] All seven direct hashes, refresh, and history behaviour pass beneath `/ben-portfolio/` with no local resource/console/page errors or runtime content API.
-- [ ] The README reflects the locked stack, current architecture, quality commands, production preview, and static Pages deployment.
-- [ ] The full manual charter and assistive-technology narration sweep pass and are recorded.
-- [ ] No blocker or major defect remains, no professional claim is invented, and any accepted minor risk is explicit.
-- [ ] This packet and `docs/testing/release-report.md` both say `ACCEPTED` for the same tested commit.
+- [x] Every listed clean-install command and quality gate passes at the final candidate (`59ee4da`); the full non-AT browser/visual matrix ran at `acaeca3`, whose only later product delta is a README clarification.
+- [x] All seven direct hashes, refresh, and history behaviour pass beneath `/ben-portfolio/` with no local resource/console/page errors or runtime content API.
+- [x] The README reflects the locked stack, current architecture, quality commands, production preview, and static Pages deployment.
+- [x] The manual-charter scenarios are recorded in the Tester matrix. The required assistive-technology narration sweep is **WAIVED BY USER**, not passed.
+- [x] No blocker or major defect remains, no professional claim is invented, and the accepted minor risk is explicit.
+- [x] The Tester report is a GREEN / ACCEPTED CANDIDATE for `59ee4da`; this packet records the final Product Owner `ACCEPTED` decision. The report wording is retained per the direct user instruction not to edit it further.
 
-Automated evidence: Not yet run for PORT-013.
+Automated evidence: `a8cd5fd` (`test: verify PORT-013 release`) records clean `npm ci`, typecheck, lint, coverage (98.72% statements, 92.60% branches, 98.63% functions, 99.58% lines), build, bundle/image, Playwright (41 passed, 124 intentional guarded skips, 0 failed), and visual gates. The deployable product candidate is `59ee4da`; its only change after the full matrix commit `acaeca3` is a README-only correction.
 
-Manual evidence: Not yet run for PORT-013.
+Manual evidence: The final production matrix records recruiter, hiring-manager, explorer, direct-hash, keyboard, recovery, reduced-motion, image-fallback, 200% zoom, responsive, visual, and axe coverage. The real VoiceOver/NVDA-equivalent narration sweep was not run: **WAIVED BY USER on 2026-08-13**.
 
-Defects: None recorded. Create bounded defects only with severity, reproduction, expected behaviour, actual behaviour, affected requirement, owner, evidence, and retest result.
+Defects: No blocker or major defect remains. Accepted minor risk: the waived assistive-technology narration sweep remains an unexecuted follow-up for any future release. This waiver is a direct-user scope decision, not evidence of assistive-technology narration compliance.
 
-Product Owner decision: READY for Tester RED, Developer audit/documentation GREEN, final Tester verification, and Product Owner release acceptance.
+Product Owner decision: **ACCEPTED.** The final tester report at `a8cd5fd` passes all non-assistive-technology release gates for the `59ee4da` candidate, including the PRD §8 journeys, PRD §6 outcomes, DESIGN §15 visual acceptance, SOUL recruiter/clarity contract, static Pages delivery, and no-invented-claims invariant. The user explicitly waived only the carried narration sweep; no further product, test, or report edits are authorized or required for this acceptance.

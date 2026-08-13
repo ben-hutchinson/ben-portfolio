@@ -452,15 +452,17 @@ Task 12 Product Owner acceptance: ACCEPTED at `d25ec9f`. The final production-pr
 - Modify: `README.md`
 - Modify: `docs/testing/release-report.md`
 
-- [ ] **Product Owner:** Queue PORT-013 requiring zero reachable legacy intro, character-select, mission, audio, space, or command-centre product paths and a current README for setup, quality commands, architecture, and GitHub Pages deployment.
-- [ ] **Developer:** Use `rg` and `npm run build` to prove the Task 1 legacy removal stayed complete. Remove any later-introduced dead dependency, asset, export, CSS rule, or data entry without touching the CV or verified project media.
-- [ ] **Tester:** Run `rg -n "character-select|mission-runner|IntroScreen|LoadingScreen|AudioManager|starfield|command centre" src package.json` and require no product-code matches. Documentation history may retain references explicitly labelled historical.
-- [ ] **Developer:** Update README commands and architecture to match the locked stack and current implementation; include the `/ben-portfolio/` preview URL.
-- [ ] **Tester:** From a clean install, run `npm ci`, `npm run typecheck`, `npm run lint`, `npm run test:coverage`, `npm run build`, `npm run check:bundle`, and `npm run test:e2e`. Require every command to pass and each coverage metric to be at least 91%.
-- [ ] **Tester:** Re-run the full manual charter on the production preview and update the release report with the final commit hash and evidence. Do not reuse results from an earlier commit.
-- [ ] **Product Owner:** Perform the recruiter scan, hiring-manager journey, explorer journey, and every direct-link journey from PRD section 8. Check all nine success criteria and all DESIGN section 15 visual checks.
-- [ ] **Product Owner:** Mark PORT-013 accepted only if there are no blocker/major defects, no invented claims, and no required gate failure. Record minor accepted risks explicitly.
-- [ ] Commit with `feat: complete Portfolio OS redesign`.
+- [x] **Product Owner:** Queue PORT-013 requiring zero reachable legacy intro, character-select, mission, audio, space, or command-centre product paths and a current README for setup, quality commands, architecture, and GitHub Pages deployment.
+- [x] **Developer:** Use `rg` and `npm run build` to prove the Task 1 legacy removal stayed complete. Remove any later-introduced dead dependency, asset, export, CSS rule, or data entry without touching the CV or verified project media.
+- [x] **Tester:** Run `rg -n "character-select|mission-runner|IntroScreen|LoadingScreen|AudioManager|starfield|command centre" src package.json` and require no product-code matches. Documentation history may retain references explicitly labelled historical.
+- [x] **Developer:** Update README commands and architecture to match the locked stack and current implementation; include the `/ben-portfolio/` preview URL.
+- [x] **Tester:** From a clean install, run `npm ci`, `npm run typecheck`, `npm run lint`, `npm run test:coverage`, `npm run build`, `npm run check:bundle`, and `npm run test:e2e`. Require every command to pass and each coverage metric to be at least 91%.
+- [x] **Tester:** Re-run the final production manual-charter matrix and update the release report with the candidate evidence. The real narration sweep is **WAIVED BY USER**, not passed.
+- [x] **Product Owner:** Perform the recruiter scan, hiring-manager journey, explorer journey, and every direct-link journey from PRD section 8. Check all nine success criteria and all DESIGN section 15 visual checks.
+- [x] **Product Owner:** Mark PORT-013 accepted only if there are no blocker/major defects, no invented claims, and no required gate failure. Record minor accepted risks explicitly; the narration waiver is a direct-user scope decision.
+- [x] Final release verification committed at `a8cd5fd` (`test: verify PORT-013 release`); the planned feature-commit subject was not applicable to this audit/documentation-only closeout.
+
+**Task 13 Product Owner acceptance: ACCEPTED on 2026-08-13.** All non-assistive-technology gates are green for candidate `59ee4da`, with final Tester evidence committed at `a8cd5fd`. The full narration-tree sweep is explicitly **WAIVED BY USER**, not recorded as a pass; it remains the sole accepted minor follow-up for a future release.
 
 ## Final Verification Commands
 
@@ -483,7 +485,7 @@ Expected outcome:
 - The built entry JavaScript is no more than 204800 gzip bytes.
 - All local resources load under `/ben-portfolio/`.
 - Chromium, Firefox, WebKit, mobile Chrome, mobile Safari, accessibility, direct-hash, responsive, and visual projects pass.
-- The final Product Owner task packet and release report say `ACCEPTED` for the same tested commit.
+- The final Product Owner task packet records `ACCEPTED` for candidate `59ee4da`; the committed Tester report at `a8cd5fd` records `GREEN / ACCEPTED CANDIDATE` and the explicit user waiver.
 
 ## Plan Self-Review Checklist
 
