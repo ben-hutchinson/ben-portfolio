@@ -10,7 +10,6 @@ const apps: readonly { readonly label: string; readonly appId: AppId; readonly r
   { label: 'Career', appId: 'career', route: 'career' },
   { label: 'Projects', appId: 'projects', route: 'projects' },
   { label: 'Contact', appId: 'contact', route: 'contact' },
-  { label: 'Command', appId: 'command' },
 ];
 
 const linkedIn = externalLinks[1];

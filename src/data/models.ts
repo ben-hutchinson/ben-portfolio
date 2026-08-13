@@ -1,4 +1,4 @@
-export type AppId = 'about' | 'work' | 'career' | 'projects' | 'contact' | 'command';
+export type AppId = 'about' | 'work' | 'career' | 'projects' | 'contact';
 
 export type CareerStageId = 'graduate' | 'observability' | 'associate' | 'skao';
 

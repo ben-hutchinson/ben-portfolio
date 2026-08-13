@@ -1,4 +1,5 @@
 import { DesktopShortcut, type DesktopShortcutAppId } from './DesktopShortcut';
+import { MicroTerminal } from '../apps/command/MicroTerminal';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 import { WindowLayer } from './WindowLayer';
 import styles from './Desktop.module.css';
@@ -16,6 +17,7 @@ export function Desktop() {
         </div>
       ) : null}
       <WindowLayer />
+      <MicroTerminal />
     </div>
   );
 }

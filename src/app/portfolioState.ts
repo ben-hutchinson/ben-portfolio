@@ -31,17 +31,16 @@ export const DEFAULT_WINDOW_POSITIONS: Readonly<Record<AppId, Point>> = {
   career: { x: 72, y: 104 },
   projects: { x: 240, y: 120 },
   contact: { x: 360, y: 152 },
-  command: { x: 760, y: 500 },
 };
 
 export function createInitialPortfolioState(): PortfolioState {
   return {
     route: { kind: 'desktop' },
-    openAppIds: ['about', 'work', 'command'],
+    openAppIds: ['about', 'work'],
     focusedAppId: 'about',
     minimizedAppIds: [],
     maximizedAppId: null,
-    windowOrder: ['work', 'command', 'about'],
+    windowOrder: ['work', 'about'],
     windowPositions: DEFAULT_WINDOW_POSITIONS,
     activeCareerStageId: 'graduate',
     activeProjectId: null,

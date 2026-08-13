@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type JSX, type ReactNode } from 'react';
 import { AboutApp } from '../apps/about/AboutApp';
 import { CareerApp } from '../apps/career/CareerApp';
-import { CommandApp } from '../apps/command/CommandApp';
 import { ContactApp } from '../apps/contact/ContactApp';
 import { ProjectDetailApp } from '../apps/projects/ProjectDetailApp';
 import { ProjectsApp } from '../apps/projects/ProjectsApp';
@@ -15,7 +14,7 @@ import { clampWindowPosition, type WindowSize, type WindowWorkArea } from '../ut
 import { WindowFrame } from './WindowFrame';
 import styles from './WindowLayer.module.css';
 
-export const WINDOW_APP_ORDER = ['about', 'work', 'career', 'projects', 'contact', 'command'] as const;
+export const WINDOW_APP_ORDER = ['about', 'work', 'career', 'projects', 'contact'] as const;
 
 const WINDOW_TITLES: Readonly<Record<AppId, string>> = {
   about: 'About',
@@ -23,7 +22,6 @@ const WINDOW_TITLES: Readonly<Record<AppId, string>> = {
   career: 'Career',
   projects: 'Projects',
   contact: 'Contact',
-  command: 'Command',
 };
 
 const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
@@ -32,7 +30,6 @@ const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
   career: { width: 1080, height: 650 },
   projects: { width: 520, height: 320 },
   contact: { width: 480, height: 300 },
-  command: { width: 620, height: 420 },
 };
 
 function appContent(appId: AppId, state: PortfolioState): ReactNode {
@@ -45,8 +42,6 @@ function appContent(appId: AppId, state: PortfolioState): ReactNode {
       return <CareerApp />;
     case 'projects':
       return state.route.kind === 'project' ? <ProjectDetailApp /> : <ProjectsApp />;
-    case 'command':
-      return <CommandApp />;
     case 'contact':
       return <ContactApp />;
   }
@@ -58,7 +53,6 @@ function windowSize(appId: AppId, state: PortfolioState): WindowSize {
     return { width: 1040, height: 650 };
   }
   if (appId === 'contact' && state.route.kind === 'contact') return { width: 760, height: 600 };
-  if (appId === 'command' && state.focusedAppId !== 'command') return { width: 540, height: 220 };
   return WINDOW_SIZES[appId];
 }
 

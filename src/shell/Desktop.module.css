@@ -63,6 +63,7 @@
   .desktop {
     min-height: 0;
     padding: var(--space-3);
+    flex-direction: column;
   }
 
   .shortcuts { display: none; }

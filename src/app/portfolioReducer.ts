@@ -51,7 +51,6 @@ function appRoute(appId: AppId): PortfolioRoute | null {
     case 'contact':
       return { kind: 'contact' };
     case 'about':
-    case 'command':
       return null;
   }
 }
