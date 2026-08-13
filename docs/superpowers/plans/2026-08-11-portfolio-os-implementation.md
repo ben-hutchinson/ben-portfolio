@@ -428,15 +428,17 @@ export interface CommandDefinition {
 - Create: `tests/e2e/visual.spec.ts`
 - Create: `docs/testing/release-report.md`
 
-- [ ] **Product Owner:** Queue PORT-012 with delivery gates: static `dist`, `/ben-portfolio/` asset resolution, no runtime API dependency, initial JavaScript at or below 200KB gzip, initial images at or below 1MB, non-hero images below 350KB, LCP below 2.5s on the agreed mobile profile, Lighthouse Performance at least 90, and Accessibility at least 95.
-- [ ] **Tester:** Add a production-preview test that opens `/ben-portfolio/#desktop`, `/ben-portfolio/#career`, and both project hashes, asserts no failed local assets or console errors, and verifies refresh plus browser history.
-- [ ] **Developer:** Keep `base: '/ben-portfolio/'`, enable a build manifest, and add `scripts/check-bundle.mjs` to read the manifest, identify initial entry chunks, gzip them with Node's built-in `zlib`, and fail above 204800 bytes. Add `npm run check:bundle` after `npm run build`.
-- [ ] **Developer:** Update GitHub Actions to Node 24, run `npm ci`, typecheck, lint, unit coverage, build, bundle check, and Playwright before Pages upload. Deploy only from the default branch; pull requests run quality without deploying.
-- [ ] **Developer:** Keep GitHub Pages actions least-privileged and upload only `dist`. Do not add server rewrites; hashes are the route fallback.
-- [ ] **Tester:** Add visual snapshots at 1440×1000 and 390×844 for Desktop and Career. Review intentional diffs instead of automatically updating baselines.
-- [ ] **Tester:** Run the production matrix and produce `docs/testing/release-report.md` containing command outputs, all four coverage percentages, browser/project results, manual charter results, asset/bundle budgets, Lighthouse results, known low-severity issues, and the tested commit hash.
-- [ ] **Product Owner:** Compare the release report with every PRD success criterion and DESIGN visual checklist item. Return gaps as bounded defects; mark PORT-012 accepted only when required gates pass.
-- [ ] Commit with `ci: verify and deploy static Portfolio OS`.
+- [x] **Product Owner:** Queue PORT-012 with delivery gates: static `dist`, `/ben-portfolio/` asset resolution, no runtime API dependency, initial JavaScript at or below 200KB gzip, initial images at or below 1MB, non-hero images below 350KB, LCP below 2.5s on the agreed mobile profile, Lighthouse Performance at least 90, and Accessibility at least 95.
+- [x] **Tester:** Add a production-preview test that opens `/ben-portfolio/#desktop`, `/ben-portfolio/#career`, and both project hashes, asserts no failed local assets or console errors, and verifies refresh plus browser history.
+- [x] **Developer:** Keep `base: '/ben-portfolio/'`, enable a build manifest, and add `scripts/check-bundle.mjs` to read the manifest, identify initial entry chunks, gzip them with Node's built-in `zlib`, and fail above 204800 bytes. Add `npm run check:bundle` after `npm run build`.
+- [x] **Developer:** Update GitHub Actions to Node 24, run `npm ci`, typecheck, lint, unit coverage, build, bundle check, and Playwright before Pages upload. Deploy only from the default branch; pull requests run quality without deploying.
+- [x] **Developer:** Keep GitHub Pages actions least-privileged and upload only `dist`. Do not add server rewrites; hashes are the route fallback.
+- [x] **Tester:** Add visual snapshots at 1440×1000 and 390×844 for Desktop and Career. Review intentional diffs instead of automatically updating baselines.
+- [x] **Tester:** Run the production matrix and produce `docs/testing/release-report.md` containing command outputs, all four coverage percentages, browser/project results, manual charter results, asset/bundle budgets, Lighthouse results, known low-severity issues, and the tested commit hash.
+- [x] **Product Owner:** Compare the release report with every PRD success criterion and DESIGN visual checklist item. Return gaps as bounded defects; mark PORT-012 accepted only when required gates pass.
+- [x] Commit with `ci: verify and deploy static Portfolio OS`.
+
+Task 12 Product Owner acceptance: ACCEPTED at `d25ec9f`. The final production-preview matrix, visual review, static budgets, Lighthouse (96 Performance, 100 Accessibility, 2,187ms LCP), Node 24 workflow, and default-branch-only Pages configuration satisfy PRD §§6, 10–11, and 13 plus DESIGN §§14–15. Legacy deployable assets were removed as the active image-budget exception; PORT-013 retains the broader legacy/README audit and the non-blocking assistive-technology narration sweep.
 
 ## Task 13: Audit Legacy Removal and Conduct Final Acceptance
 

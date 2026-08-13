@@ -97,6 +97,34 @@ No Tester-owned test, visual baseline, or release-report change was made in this
 
 No Tester-owned test, visual baseline, release report, task packet, plan, ledger, or `.DS_Store` change was staged or modified by this fix.
 
+## Fix round 4 — preserve route heading semantics
+
+### Diagnosis and implementation
+
+- On every non-Desktop hash, the persistent Menu identity heading could coexist with a route h1. Retained desktop windows also allowed headings from a prior route to remain in the accessibility tree, producing duplicate h1s and `h1 → h2 → h1` drops after hash navigation.
+- MenuBar now uses the profile name as an h1 only on `#desktop`; it is ordinary text on every route that has application content. Career, Projects, and Contact promote their content title to h1 only when they own the active route and use h2 when retained in the background. Project detail already owns its route h1.
+- WindowLayer explicitly maps each supported route to its owning application. The owning route window renders first in source order and has a focusable, labelled titlebar div rather than an h2; other desktop window titlebars remain h2. This produces an assistive-technology order of route h1 followed by h2 sections without changing the titlebar's visual or keyboard order.
+- Career retains a screen-reader route title on wide layouts, adds a supporting hidden h2 before its stage h3, and makes the route title visible on mobile. The existing Career stage heading remains h3 for the focused browser contract.
+
+### Fresh verification
+
+| Command | Result |
+| --- | --- |
+| Headless Chromium direct and sequential route inspection: `#desktop`, `#work`, `#career`, `#projects`, `#projects/pokeleximon`, `#projects/safelog`, `#contact` | PASS: each visible heading sequence starts at h1 and has no level jump greater than one. |
+| `PLAYWRIGHT_PORT=4341 CI=1 npx playwright test tests/e2e/accessibility.spec.ts --project=Chromium` | PASS: 3 tests. |
+| `PLAYWRIGHT_PORT=4342 CI=1 npx playwright test tests/e2e/career.spec.ts --project=Chromium --grep "keeps the Now stage readable"` | PASS: 1 test. |
+| `PLAYWRIGHT_PORT=4343 CI=1 npx playwright test tests/e2e/career.spec.ts --project=mobile-Chrome --grep "sole visible Career h1"` | PASS: 1 test. |
+| `PLAYWRIGHT_PORT=4344 CI=1 npx playwright test tests/e2e/recruiter-scan.spec.ts --project=Chromium` | PASS: 1 passed, 1 intended skip. |
+| `PLAYWRIGHT_PORT=4345 CI=1 npx playwright test tests/e2e/recruiter-scan.spec.ts --project=mobile-Chrome` | PASS: 1 passed, 1 intended skip. |
+| `npm run typecheck` | PASS. |
+| `npm run lint` | PASS. |
+| `npm run build` | PASS. |
+| `npm run check:bundle` | PASS: 97,012 gzip JS bytes; 118,519 initial image bytes; 3 deployable images below 350KB. |
+| `npm test` | Expected current result: 19 files / 145 tests pass; 2 Tester-owned assertions are stale because they require the active direct-route titlebar to remain an h2. Tester confirmed those assertions will be amended. |
+| `git diff --check` | PASS. |
+
+No visual baselines, Tester-owned tests, release report, task packet, plan, ledger, or `.DS_Store` files are included in the production commit.
+
 ## Fix round 3 — release-matrix heading and zoom stability
 
 ### Diagnosis and implementation
