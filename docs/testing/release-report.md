@@ -1,59 +1,56 @@
-# PORT-012 release report
+# PORT-013 final release report
 
-Status: GREEN — all PORT-012 automated, browser, asset, visual, workflow, and Lighthouse gates passed.
+Status: **GREEN / ACCEPTED CANDIDATE — all non-assistive-technology gates are GREEN; the narration sweep was explicitly waived by the Product Owner/user.**
 
-## Tested revision
+## Candidate and environment
 
-- Production commit: `9c92022`
-- Local production preview: `http://127.0.0.1:4203/ben-portfolio/` for the final Playwright matrix (`CI=1`, isolated port).
-- Screenshot engine: Chromium; platform-independent snapshot path is configured so Linux CI and macOS use the same approved baselines.
+- Final candidate commit: `59ee4da` (`docs: clarify isolated browser verification`)
+- Full non-AT matrix commit: `acaeca3`; `59ee4da` changes `README.md` only.
+- Branch: `terminal-redesign`
+- Clean install: `npm ci` completed successfully (300 packages installed).
+- Final browser preview: `CI=1 PLAYWRIGHT_PORT=4205`, `http://127.0.0.1:4205/ben-portfolio/`.
+- Browser matrix: Playwright 1.62.1 projects — Chromium, Firefox, WebKit, mobile Chromium (Pixel 5), and mobile Safari (iPhone 13).
 
-## Automated evidence
+## Required automated final gate
 
-| Gate | Command | Result |
-| --- | --- | --- |
-| Typecheck | `npm run typecheck` | PASS |
-| Lint | `npm run lint` | PASS |
-| Unit tests | `npm test` | PASS — 21 files, 147 tests |
-| Coverage | `npm run test:coverage` | PASS — statements 98.72%, branches 92.60%, functions 98.63%, lines 99.58% (all above the 91% checked-in gate) |
-| Production build | `npm run build` | PASS |
-| JavaScript/image budgets | `npm run check:bundle` | PASS — 97,012 gzip JS bytes / 204,800; 118,519 initial image bytes / 1,048,576; 3 deployable images, each below 358,400 bytes |
-| Full Playwright matrix | `CI=1 PLAYWRIGHT_PORT=4203 npm run test:e2e` | PASS — 41 passed, 124 intentional project skips, 0 failed |
+| Command | Result |
+| --- | --- |
+| `npm ci` | PASS — clean lockfile install. |
+| `npm run typecheck` | PASS. |
+| `npm run lint` | PASS. |
+| `npm run test:coverage` | PASS — 22 files, 149 tests; statements 98.72%, branches 92.60%, functions 98.63%, lines 99.58%. |
+| `npm run build` | PASS — static `dist` and `dist/.vite/manifest.json` emitted. |
+| `npm run check:bundle` | PASS — 97,012 gzip JS bytes / 204,800; 118,519 initial image bytes / 1,048,576; 3 deployable images, each below 358,400 bytes. |
+| `CI=1 PLAYWRIGHT_PORT=4205 npm run test:e2e` | PASS at `acaeca3` — 41 passed, 124 intentional project skips, 0 failed. The final `59ee4da` delta is README-only. |
+| `CI=1 PLAYWRIGHT_PORT=4206 npm run test:e2e:visual` | PASS at `acaeca3` — visual runner result artefact reports passed with no failed tests; no snapshot update. The final `59ee4da` delta is README-only. |
 
-## Production browser, responsive, and accessibility evidence
+The configured 91% global coverage thresholds are exceeded in every measured category.
 
-The production-preview suite exercises `#desktop`, `#career`, `#projects/pokeleximon`, and `#projects/safelog` beneath `/ben-portfolio/`, including refresh, back/forward project history, successful local resources, zero same-origin 4xx/5xx or genuine request failures, no console/page errors, and no runtime XHR/fetch dependency. Browser-cancelled `net::ERR_ABORTED` requests during immediate navigation are intentionally ignored; all other same-origin request failures fail the test.
+## Final static, legacy, and delivery audit
 
-The final matrix includes Chromium, Firefox, WebKit, mobile Chromium, and mobile Safari projects. Its explicit per-test guards produce the 124 skips; executed coverage includes the required visual, responsive/mobile-flow, keyboard/window recovery, reduced-motion, axe, and route-recovery checks. Focused post-fix Chromium verification also passed 17 component tests and 7 applicable Work/window/a11y browser tests (one explicitly mobile-only browser test skipped in that Chromium-focused command).
+- Exact legacy search returned no match in `src` or `package.json`: `character-select|mission-runner|IntroScreen|LoadingScreen|AudioManager|starfield|command centre|command-centre|pixel-game|press start`.
+- Core source search returned no `fetch(`, `XMLHttpRequest`, or `/api/` reference; core content has no runtime API dependency.
+- Protected assets are present in both `public` and the final `dist`: CV PDF, favicon, Pokeleximon WebP, and Safelog WebP.
+- Vite retains the exact `/ben-portfolio/` base and emits a manifest. The output is static `dist`; supported navigation is hash-based and requires no server rewrite.
+- The quality workflow uses Node 24, clean install, type/lint/coverage/build/budgets/Playwright before artifact upload. Pages deployment is default-`master`-only, least-privileged, and uploads verified `dist` only.
+- `README.md` at this candidate correctly describes Portfolio OS, Node 24/`npm ci`, local development/preview, all quality commands, React/TypeScript/Vite/CSS Modules/Motion/context-reducer/Playwright architecture, `/ben-portfolio/` hash URLs, static `dist`, quality-before-upload, `master` deployment, no server rewrites, and no runtime content API.
 
-## Visual review
+## Browser, direct-link, and manual-charter evidence
 
-The four final, platform-independent Chromium baselines were regenerated and intentionally reviewed at `9c92022`:
+The full production matrix exercises the seven supported direct hashes across its route suites: `#desktop`, `#work`, `#career`, `#projects`, `#projects/pokeleximon`, `#projects/safelog`, and `#contact`. Direct/reload/history resource tests specifically assert the base path, refresh, project back/forward, no genuine same-origin request error or 4xx/5xx resource, no page/console error, no root-absolute local asset, and no runtime fetch/XHR.
 
-| Route | 1440×1000 | 390×844 | Review |
-| --- | --- | --- | --- |
-| Desktop | `desktop-1440x1000.png` | `desktop-390x844.png` | PASS — accepted tactile desktop composition and natural mobile first viewport. |
-| Career | `career-1440x1000.png` | `career-390x844.png` | PASS — corrected wide left inset (~132px) and deliberate natural mobile first viewport. |
+Automated manual-charter coverage completed in the final matrix includes recruiter scan, hiring-manager case review, projects/contact journeys, keyboard focus, dock/menu/shortcut/command convergence, invalid-hash recovery, image-fallback resilience, reduced motion, 200% zoom/overflow, desktop/mobile recovery, target sizing, and axe serious/critical/contrast checks. The 124 skips are explicit project guards rather than test failures; each supported engine/device project was invoked.
 
-The snapshot template omits the operating-system suffix; obsolete `*-Chromium-darwin.png` candidates were removed. This prevents Ubuntu CI from searching for untracked `*-Chromium-linux.png` files.
+Visual inspection of the four approved platform-independent Chromium baselines at the final candidate confirms the tactile Portfolio OS composition: Desktop at 1440×1000 and 390×844, plus Career at 1440×1000 and 390×844. Wide Career retains its corrected composed inset; mobile retains a single normal-flow application without overlap chaos. No visual diff was accepted or generated during this final gate.
 
-## Delivery and static hosting evidence
+## Lighthouse and mobile performance evidence
 
-`vite.config.ts` retains `base: '/ben-portfolio/'` and emits the Vite manifest. The manifest-aware checker measures the initial static JavaScript closure and all deployable images. The quality workflow uses Node 24, `npm ci`, typecheck, lint, coverage, build, bundle/image budgets, Playwright installation, and the full Playwright suite. It is read-only and uploads only verified `dist`; Pages deployment is restricted to `master`, requires the quality workflow, and only uploads that verified `dist` artefact with least-privileged jobs.
+The PORT-012 local Lighthouse 12.8.2 mobile-navigation reports remain representative for the unchanged delivery/runtime payload: Performance 96, Accessibility 100, and LCP 2,187ms (2.2s), satisfying the Performance ≥90, Accessibility ≥95, and LCP <2.5s requirements. The PORT-013 candidate changes README, static metadata, and test TypeScript support only; the final candidate build/bundle/image measurements above were rerun fresh.
 
-## Lighthouse mobile navigation evidence
+## Assistive-technology narration sweep — EXPLICITLY WAIVED
 
-Existing local Lighthouse 12.8.2 reports were inspected:
+This gate normally requires a real VoiceOver/NVDA-equivalent narration sweep and cannot be replaced by axe. On 2026-08-13, the Product Owner/user explicitly directed the team to scratch narration-tree work and consider the project done. Therefore this item is **waived**, not recorded as passed. Automated semantic, keyboard, focus, responsive, reduced-motion, invalid-hash, image-fallback, and axe coverage remains green; a future release may perform the narration sweep separately.
 
-- Performance report: `/private/tmp/portfolio-os-lighthouse.json`, mobile navigation URL `http://127.0.0.1:4193/ben-portfolio/`, fetched 2026-08-13T12:07:59Z — Performance **96**, LCP **2,187ms** (2.2s).
-- Accessibility report: `/private/tmp/portfolio-os-lighthouse-a11y.json`, same mobile navigation target, fetched 2026-08-13T12:08:59Z — Accessibility **100**.
+## Defects and decision
 
-These meet the Performance ≥90, Accessibility ≥95, and LCP <2.5s requirements. The final commit changed semantics and layout positioning only; the production build/bundle/asset checks above were rerun at `9c92022`.
-
-## Manual charter disposition
-
-The automated final matrix covers the deferred PORT-011 resilience journeys: desktop/mobile application recovery, direct/invalid hashes and history, keyboard/focus, reduced motion, 200% zoom and overflow, and axe checks. No failures were observed. A full assistive-technology narration sweep remains a low-severity manual follow-up, not a PORT-012 delivery blocker.
-
-## Decision
-
-PORT-012 Tester gate: **PASS**. No known release-blocking defect remains.
+No reproducible production, static-delivery, visual, automated accessibility, browser, or documentation defect remains at `59ee4da`. The full non-AT matrix was executed at `acaeca3`; `59ee4da` is a README-only clarification and its focused release audit, typecheck, lint, build, bundle/image check, and diff check were rerun fresh. With the narration sweep explicitly waived by the Product Owner/user, the PORT-013 Tester release gate is **PASS**.
