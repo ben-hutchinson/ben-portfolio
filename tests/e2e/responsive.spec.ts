@@ -12,6 +12,7 @@ test.describe('PORT-011 responsive shell', () => {
     expect(desktopGutter).toBeLessThan(30);
 
     await page.setViewportSize({ width: 320, height: 568 });
+    await expect(page.getByTestId('micro-terminal')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 
@@ -19,6 +20,8 @@ test.describe('PORT-011 responsive shell', () => {
     test.skip(testInfo.project.name !== 'Chromium', 'Narrow responsive coverage runs in Chromium.');
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto('./#desktop');
+
+    await expect(page.getByTestId('micro-terminal')).toBeVisible();
 
     const displayedWindowIds = await page.locator('[data-window-id]').evaluateAll((frames) => frames
       .filter((frame) => getComputedStyle(frame).display !== 'none')
@@ -39,6 +42,21 @@ test.describe('PORT-011 responsive shell', () => {
       return window.scrollY > 0 && document.documentElement.scrollWidth <= window.innerWidth;
     });
     expect(scrollsNaturallyWithoutClipping).toBe(true);
+  });
+
+  test('shows the compact terminal only in Desktop flow at 390 CSS pixels', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Mobile-sized terminal coverage runs in Chromium.');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('./#desktop');
+
+    const terminal = page.getByTestId('micro-terminal');
+    await expect(terminal).toBeVisible();
+    await expect(terminal.getByRole('textbox', { name: 'Portfolio command' })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+    await page.goto('./#career');
+    await expect(page).toHaveURL(/#career$/);
+    await expect(terminal).toHaveCount(0);
   });
 
   test('keeps primary narrow-layout targets at least 44 by 44 CSS pixels and usable at 200% zoom', async ({ page }, testInfo) => {

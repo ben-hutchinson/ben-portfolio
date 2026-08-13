@@ -46,19 +46,20 @@ describe('createInitialPortfolioState', () => {
 
     expect(initial).toEqual({
       route: { kind: 'desktop' },
-      openAppIds: ['about', 'work', 'command'],
+      openAppIds: ['about', 'work'],
       focusedAppId: 'about',
       minimizedAppIds: [],
       maximizedAppId: null,
-      windowOrder: ['work', 'command', 'about'],
+      windowOrder: ['work', 'about'],
       windowPositions: DEFAULT_WINDOW_POSITIONS,
       activeCareerStageId: 'graduate',
       activeProjectId: null,
     });
     expect(reset).toEqual(initial);
     expect(initial.windowPositions.work.y).toBeLessThan(initial.windowPositions.about.y);
-    expect(initial.windowPositions.command.x).toBeGreaterThan(initial.windowPositions.about.x);
-    expect(initial.windowPositions.command.y).toBeGreaterThan(initial.windowPositions.about.y);
+    expect(Object.keys(initial.windowPositions)).toEqual(['about', 'work', 'career', 'projects', 'contact']);
+    expect([...initial.openAppIds] as readonly string[]).not.toContain('command');
+    expect([...initial.windowOrder] as readonly string[]).not.toContain('command');
     expectWindowInvariants(initial);
   });
 });
@@ -179,7 +180,7 @@ describe('portfolioReducer no-ops', () => {
 
   it('does not duplicate, reopen, refocus, maximize, move, minimize, or close without a state change', () => {
     const initial = createInitialPortfolioState();
-    const maximized = portfolioReducer(initial, { type: 'MAXIMIZE_WINDOW', appId: 'command' });
+    const maximized = portfolioReducer(initial, { type: 'MAXIMIZE_WINDOW', appId: 'work' });
     const moved = portfolioReducer(initial, {
       type: 'MOVE_WINDOW',
       appId: 'work',
@@ -190,7 +191,7 @@ describe('portfolioReducer no-ops', () => {
 
     expect(portfolioReducer(initial, { type: 'OPEN_APP', appId: 'about' })).toBe(initial);
     expect(portfolioReducer(initial, { type: 'FOCUS_WINDOW', appId: 'about' })).toBe(initial);
-    expect(portfolioReducer(maximized, { type: 'MAXIMIZE_WINDOW', appId: 'command' })).toBe(maximized);
+    expect(portfolioReducer(maximized, { type: 'MAXIMIZE_WINDOW', appId: 'work' })).toBe(maximized);
     expect(moved).toBe(initial);
     expect(portfolioReducer(minimized, { type: 'MINIMIZE_WINDOW', appId: 'work' })).toBe(minimized);
     expect(portfolioReducer(closed, { type: 'CLOSE_WINDOW', appId: 'work' })).toBe(closed);
@@ -204,20 +205,20 @@ describe('portfolioReducer no-ops', () => {
 });
 
 describe('portfolioReducer edge transitions', () => {
-  it('preserves about and command routes while opening, focusing, maximizing, minimizing, and closing them', () => {
+  it('keeps terminal-free window state while opening, focusing, maximizing, minimizing, and closing applications', () => {
     const work = portfolioReducer(createInitialPortfolioState(), { type: 'NAVIGATE', route: { kind: 'work' } });
     const openedAbout = portfolioReducer(work, { type: 'OPEN_APP', appId: 'about' });
-    const maximizedCommand = portfolioReducer(openedAbout, { type: 'MAXIMIZE_WINDOW', appId: 'command' });
-    const minimizedAbout = portfolioReducer(maximizedCommand, { type: 'MINIMIZE_WINDOW', appId: 'about' });
-    const closedCommand = portfolioReducer(minimizedAbout, { type: 'CLOSE_WINDOW', appId: 'command' });
+    const maximizedContact = portfolioReducer(openedAbout, { type: 'MAXIMIZE_WINDOW', appId: 'contact' });
+    const minimizedAbout = portfolioReducer(maximizedContact, { type: 'MINIMIZE_WINDOW', appId: 'about' });
+    const closedContact = portfolioReducer(minimizedAbout, { type: 'CLOSE_WINDOW', appId: 'contact' });
 
     expect(openedAbout.route).toEqual({ kind: 'work' });
-    expect(maximizedCommand.route).toEqual({ kind: 'work' });
-    expect(minimizedAbout.route).toEqual({ kind: 'work' });
-    expect(closedCommand.route).toEqual({ kind: 'work' });
-    expect(maximizedCommand.maximizedAppId).toBe('command');
-    expect(closedCommand.maximizedAppId).toBeNull();
-    expectWindowInvariants(closedCommand);
+    expect(maximizedContact.route).toEqual({ kind: 'contact' });
+    expect(minimizedAbout.route).toEqual({ kind: 'contact' });
+    expect(closedContact.route).toEqual({ kind: 'desktop' });
+    expect(maximizedContact.maximizedAppId).toBe('contact');
+    expect(closedContact.maximizedAppId).toBeNull();
+    expectWindowInvariants(closedContact);
   });
 
   it('minimizes a nonfocused app without changing the focused topmost app and clears a maximized target', () => {

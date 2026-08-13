@@ -68,7 +68,8 @@ test.describe('window system desktop', () => {
 
     await page.locator(resetLayout).click();
     expect(await page.locator('[data-window-id]').evaluateAll((frames) => frames.map((frame) => frame.getAttribute('data-window-id'))))
-      .toEqual(['about', 'work', 'command']);
+      .toEqual(['about', 'work']);
+    await expect(page.getByTestId('micro-terminal')).toBeVisible();
     await expect(page.getByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toHaveCount(1);
     expect(before).not.toBeNull();
   });
@@ -93,10 +94,21 @@ test.describe('window system mobile', () => {
     const after = await page.locator(workFrame).boundingBox();
     expect(after?.x).toBe(before?.x);
     expect(after?.y).toBe(before?.y);
-    await page.getByRole('button', { name: 'Command' }).click();
-    await expect(page.locator('[data-window-id="command"]')).toBeVisible();
+    await expect(page.getByTestId('micro-terminal')).toBeVisible();
     await expect(page.locator(resetLayout)).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect(before).not.toBeNull();
+  });
+
+  test('normalizes an obsolete command hash to Desktop and leaves the Micro terminal keyboard-focusable', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Direct hash recovery runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('./#command');
+
+    await expect(page).toHaveURL(/#desktop$/);
+    const input = page.getByTestId('micro-terminal').getByRole('textbox', { name: 'Portfolio command' });
+    await expect(input).toBeVisible();
+    await input.focus();
+    await expect(input).toBeFocused();
   });
 });

@@ -4,12 +4,13 @@ import type { AppId, CareerStage, CareerStageId, ProjectId } from '../../src/dat
 import { profile } from '../../src/data/profile';
 import { projects } from '../../src/data/projects';
 import { flagshipWork } from '../../src/data/work';
+import { WINDOW_APP_ORDER } from '../../src/shell/WindowLayer';
 import { describe, expect, it } from 'vitest';
 
 const canonicalMigrationSentence =
   'Migrated 50+ repositories and reduced average build time by four minutes.';
 
-const supportedAppIds: readonly AppId[] = ['about', 'work', 'career', 'projects', 'contact', 'command'];
+const supportedAppIds: readonly AppId[] = ['about', 'work', 'career', 'projects', 'contact'];
 const expectedCareerIds: readonly CareerStageId[] = ['graduate', 'observability', 'associate', 'skao'];
 const expectedProjectIds: readonly ProjectId[] = ['pokeleximon', 'safelog'];
 const allowedCareerAccents = ['orange', 'yellow', 'blue', 'mint'];
@@ -38,7 +39,8 @@ function collectHrefs(value: unknown): string[] {
 
 describe('canonical portfolio content', () => {
   it('exports the locked app, career, and project ID contracts', () => {
-    expect(supportedAppIds).toEqual(['about', 'work', 'career', 'projects', 'contact', 'command']);
+    expect(supportedAppIds).toEqual(['about', 'work', 'career', 'projects', 'contact']);
+    expect(WINDOW_APP_ORDER).toEqual(['about', 'work', 'career', 'projects', 'contact']);
     expect(expectedCareerIds).toEqual(['graduate', 'observability', 'associate', 'skao']);
     expect(expectedProjectIds).toEqual(['pokeleximon', 'safelog']);
   });

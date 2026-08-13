@@ -64,4 +64,16 @@ describe('Portfolio OS foundation', () => {
       }),
     ).toBeVisible();
   });
+
+  it('mounts the compact terminal on Desktop without retaining Command-window UI', () => {
+    render(<App />);
+
+    const terminal = screen.getByTestId('micro-terminal');
+    expect(terminal).toHaveAttribute('data-micro-terminal');
+    expect(terminal).toHaveTextContent('portfolio command');
+    expect(within(terminal).getByRole('textbox', { name: 'Portfolio command' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Command', exact: true })).not.toBeInTheDocument();
+    expect(screen.queryByText('Optional shortcut')).not.toBeInTheDocument();
+    expect(screen.queryByText('Command palette')).not.toBeInTheDocument();
+  });
 });
