@@ -37,7 +37,6 @@ export interface WorkCaseStudy {
   technicalApproach: string;
   rollout: string;
   result: string;
-  technologies: readonly string[];
   publicDetail: string;
   links: readonly ExternalLink[];
 }

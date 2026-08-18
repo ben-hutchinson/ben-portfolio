@@ -11,7 +11,6 @@ export function FeaturedWork() {
       <h3 className={styles.title}>{flagshipWork.title}</h3>
       <p className={styles.result}>{flagshipWork.result}</p>
       <div className={styles.footer}>
-        <p className={styles.technologies}>{flagshipWork.technologies.join(' · ')}</p>
         <button
           className={styles.workAction}
           type="button"

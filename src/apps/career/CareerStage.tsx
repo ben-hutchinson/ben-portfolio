@@ -11,20 +11,20 @@ interface CareerStageProps {
 
 const CAREER_STAGE_COUNT = 4;
 const CAREER_MOTION_DURATION_MS = 200;
-const CAREER_MOTION_OFFSET_PX = 12;
+const CAREER_MOTION_OFFSET_PX = 0;
 
 export function CareerStage({ stage, index, reducedMotion }: CareerStageProps): JSX.Element {
   const durationMs = reducedMotion ? 0 : CAREER_MOTION_DURATION_MS;
-  const offset = reducedMotion ? 0 : CAREER_MOTION_OFFSET_PX;
 
   return (
     <m.article
       className={styles.stage}
       data-testid="career-stage"
       data-reduced-motion={reducedMotion}
+      data-motion-offset-px={CAREER_MOTION_OFFSET_PX}
       data-motion-duration-ms={durationMs}
-      initial={{ opacity: reducedMotion ? 1 : 0.01, y: offset }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: reducedMotion ? 1 : 0.01 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: durationMs / 1000, ease: [0.2, 0.8, 0.2, 1] }}
     >
       <div className={styles.stageLead}>

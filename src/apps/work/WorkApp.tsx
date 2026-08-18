@@ -10,9 +10,6 @@ export function WorkApp(): JSX.Element {
         <p className={styles.context}>{flagshipWork.context}</p>
         <h1 className={styles.title} id="work-title">{flagshipWork.title}</h1>
         <p className={styles.result}>{flagshipWork.result}</p>
-        <ul className={styles.technologies} aria-label="Technologies">
-          {flagshipWork.technologies.map((technology) => <li key={technology}>{technology}</li>)}
-        </ul>
       </header>
 
       <div className={styles.sections}>

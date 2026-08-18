@@ -23,12 +23,14 @@ export function CareerApp(): JSX.Element {
     <section className={styles.app} data-accent={activeStage.accent} aria-label="Career timeline">
       <RouteHeading className={styles.mobileHeading}>Career</RouteHeading>
       <h2 className={styles.sectionHeading}>Career timeline</h2>
-      <CareerStage
-        stage={activeStage}
-        index={activeIndex}
-        reducedMotion={reducedMotion}
-        key={activeStage.id}
-      />
+      <div className={styles.stageViewport}>
+        <CareerStage
+          stage={activeStage}
+          index={activeIndex}
+          reducedMotion={reducedMotion}
+          key={activeStage.id}
+        />
+      </div>
       <CareerControls
         activeIndex={activeIndex}
         stageLabel={stageLabel}
