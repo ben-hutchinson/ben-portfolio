@@ -23,8 +23,8 @@ describe('PortfolioShell', () => {
     expect(screen.getByRole('navigation', { name: 'Portfolio applications' })).toBeVisible();
     expect(screen.getByRole('main')).toHaveAttribute('id', 'main-content');
     expect(screen.getByRole('contentinfo')).toBeVisible();
-    expect(screen.getByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toBeVisible();
-    expect(screen.getAllByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toHaveLength(1);
+    expect(screen.getByText('Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes')).toBeVisible();
+    expect(screen.getAllByText('Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes')).toHaveLength(1);
     expect(screen.getByRole('region', { name: 'About' })).toBeVisible();
     expect(screen.getByRole('region', { name: 'Work' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Work' })).toHaveAttribute('data-dock-app-id', 'work');

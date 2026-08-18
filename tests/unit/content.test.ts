@@ -8,7 +8,7 @@ import { WINDOW_APP_ORDER } from '../../src/shell/WindowLayer';
 import { describe, expect, it } from 'vitest';
 
 const canonicalMigrationSentence =
-  'Migrated 50+ repositories and reduced average build time by four minutes.';
+  'Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes';
 
 const supportedAppIds: readonly AppId[] = ['about', 'work', 'career', 'projects', 'contact'];
 const expectedCareerIds: readonly CareerStageId[] = ['graduate', 'observability', 'associate', 'skao'];

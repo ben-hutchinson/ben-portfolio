@@ -124,3 +124,72 @@ The one parser correction changes only blank input from a vague suggestion match
 ## Defects and concerns
 
 No production defect remains. The stale component assertions above were repaired and retested as Tester-owned coverage maintenance. The only intentional automated skip is the existing `mobile-Chrome` project guard when PORT-015 acceptance runs under the required Chromium-only project.
+
+---
+
+# PORT-016 Tester GREEN report
+
+Status: **PASS — ready for Product Owner acceptance.**
+
+## Candidate and environment
+
+- Production candidate: `a2d8534` (`feat: refine Work and Career evidence`); production review is approved with no findings.
+- Branch: `terminal-redesign`; date: 2026-08-18.
+- Node `v26.7.0`; npm `11.19.0`; Vitest `4.1.10`; Playwright `1.62.1`; Chromium project.
+- Manual production preview: `npm run preview -- --host 127.0.0.1 --port 4262 --strictPort`, served from `http://127.0.0.1:4262/ben-portfolio/` with HTTP 200.
+- Screenshots: `/private/tmp/port016-green-1440x1000.png`, `/private/tmp/port016-green-1280x800.png`, `/private/tmp/port016-green-390x844.png`, and `/private/tmp/port016-green-200pct.png`.
+- Existing `.DS_Store` and untracked `.playwright-cli/` entries were not modified or staged.
+
+## Tester coverage maintenance
+
+The exact-head production copy migration invalidated three specified assertions: the canonical-data exact-once literal in `tests/unit/content.test.ts`, the Desktop-visible Work-result assertion in `tests/unit/foundation.test.tsx`, and the Work-result count in `tests/e2e/window-system.spec.ts`. Each now uses exactly:
+
+```text
+Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes
+```
+
+Their original data-source, visibility, and count semantics are unchanged. Exact-head coverage then found the two corresponding legacy visibility/count checks in `tests/component/PortfolioShell.test.tsx`; Product Owner authorization was obtained before updating those same two literals. Component retest and full coverage passed afterwards. No assertions were weakened.
+
+The earlier Tester RED scratch report had accidentally been tracked. This GREEN commit removes only `.superpowers/sdd/2026-08-13-portfolio-os-polish/task-3-tester-red.md` from Git tracking while preserving the local ignored file; no other SDD material is staged.
+
+## Automated verification
+
+| Command | Result |
+| --- | --- |
+| `npm test -- tests/unit/content.test.ts tests/unit/foundation.test.tsx` | PASS — 2 files, 19 tests, 0 failed (1.91s). |
+| `CI=1 PLAYWRIGHT_PORT=4260 npx playwright test tests/e2e/work.spec.ts tests/e2e/career.spec.ts tests/e2e/accessibility.spec.ts --project=Chromium` | PASS — 11 passed, 4 intentional mobile-project skips, 0 failed (4.4s). |
+| `CI=1 PLAYWRIGHT_PORT=4261 npx playwright test tests/e2e/window-system.spec.ts tests/e2e/responsive.spec.ts tests/e2e/contact-command.spec.ts --project=Chromium` | PASS — 13 passed, 1 intentional `mobile-Chrome` project-guard skip, 0 failed (2.8s). |
+| `CI=1 PLAYWRIGHT_PORT=4263 npx playwright test tests/e2e/work.spec.ts tests/e2e/career.spec.ts tests/e2e/accessibility.spec.ts --project=Chromium` | PASS — post-build retest: 11 passed, 4 intentional mobile-project skips, 0 failed (4.2s). |
+| `CI=1 PLAYWRIGHT_PORT=4264 npx playwright test tests/e2e/accessibility.spec.ts --project=Chromium` | PASS — 3 passed, 0 failed (2.2s); axe reports no serious, critical, or contrast violation. |
+| `npm run test:coverage` | PASS — 22 files, 158 tests; statements 98.88%, branches 92.04%, functions 99.28%, lines 99.57%. Every configured 91% threshold is met. |
+| `npm run typecheck` | PASS — `tsc -b`, exit 0. |
+| `npm run lint` | PASS — zero warnings/errors, exit 0. |
+| `npm run build` | PASS — static Vite build, exit 0. |
+| `npm run check:bundle` | PASS — 97,418 gzip JS bytes / 204,800; 118,529 initial image bytes / 1,048,576. |
+
+## Manual Career matrix
+
+Manual measurement waits for the selected direct-stage button's `aria-pressed="true"` state, then scrolls the whole active stage into view before reading the existing native range's parent control rail. This avoids changing the outer page scroll while measuring the fixed rail.
+
+| Scenario | Stage rail y values (graduate, observability, associate, SKAO) | Delta | Readability, internal scrolling, overflow, motion | Result |
+| --- | --- | --- | --- | --- |
+| 1440×1000 | 694.141, 694.141, 694.141, 694.141 | 0px | Every heading readable; no page overflow. Internal viewport is 356px high; Associate/SKAO need up to 10px/21px internal scroll. Offset `0`, normal duration `200ms`. | PASS |
+| 1280×800 | 586.547, 586.547, 586.547, 586.547 | 0px | Every heading readable; no page overflow; all stage content fits the 357px internal viewport. Offset `0`, normal duration `200ms`. | PASS |
+| 390×844 | 581.953, 581.594, 581.594, 581.594 | 0.359px | Every heading readable; no page overflow. The 562px internal viewport scrolls by 82px, 51px, 37px, and 150px respectively. Offset `0`, normal duration `200ms`. | PASS |
+| 200% zoom (1440×1000) | 627.969, 627.969, 627.969, 627.969 | 0px | Every heading readable; no page overflow. The 294px internal viewport scrolls by 210.5px, 186.5px, 199px, and 282px. Offset `0`, normal duration `200ms`. | PASS |
+
+All rail deltas are within the one-CSS-pixel acceptance limit. Reduced-motion verification returns `data-reduced-motion="true"`, `data-motion-offset-px="0"`, and `data-motion-duration-ms="0"`; normal-stage metadata is zero offset with a 200ms duration. No vertical stage motion was observed.
+
+Keyboard-only verification: the native labelled Career range moved from `0` to `1` with ArrowRight (next) and back to `0` with ArrowLeft (previous); direct `Now` selection reported `aria-pressed="true"`. The preserved interface has no separate previous/next buttons, so these native range keys are its prior/next operation. Direct `#career`, dock Career navigation, Back to `#desktop`, and Forward to `#career` all passed.
+
+## PORT-014/PORT-015 regression confirmation
+
+- Shared Chromium regression suite passed 13/13 with one intentional mobile-project guard skip.
+- Desktop has a visible MicroTerminal; Career has none. No Command dock control or framed Command window is present.
+- Focused accessibility checks retain named landmarks, labelled Career range/direct controls, keyboard focus, invalid-hash recovery, and axe compliance.
+
+## Defects and retest
+
+No open product defect.
+
+During manual checking, an initial 390×844 script independently scrolled each stage headline before reading rail geometry and produced a spurious 30.641px delta. Investigation showed this altered outer page scroll rather than the rail's layout. Reproduction with the acceptance test's whole-stage scrolling method measured a 0.359px delta, and the fresh post-build focused Chromium suite passed. This was a Tester measurement-procedure issue, not a production defect; no production change was made.

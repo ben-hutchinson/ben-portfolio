@@ -60,7 +60,7 @@ describe('Portfolio OS foundation', () => {
     render(<App />);
 
     expect(
-      screen.getByText('Migrated 50+ repositories and reduced average build time by four minutes.', {
+      screen.getByText('Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes', {
         exact: true,
       }),
     ).toBeVisible();

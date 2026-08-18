@@ -70,7 +70,7 @@ test.describe('window system desktop', () => {
     expect(await page.locator('[data-window-id]').evaluateAll((frames) => frames.map((frame) => frame.getAttribute('data-window-id'))))
       .toEqual(['about', 'work']);
     await expect(page.getByTestId('micro-terminal')).toBeVisible();
-    await expect(page.getByText('Migrated 50+ repositories and reduced average build time by four minutes.')).toHaveCount(1);
+    await expect(page.getByText('Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes')).toHaveCount(1);
     expect(before).not.toBeNull();
   });
 });
