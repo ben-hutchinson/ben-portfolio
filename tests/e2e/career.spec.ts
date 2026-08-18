@@ -88,7 +88,7 @@ test.describe('Career.app desktop', () => {
     for (const scenario of careerGeometryScenarios) {
       await page.setViewportSize(scenario.viewport);
       await page.goto('./#career');
-      if (scenario.zoom !== undefined) {
+      if ('zoom' in scenario) {
         await page.evaluate((zoom) => { document.body.style.zoom = String(zoom); }, scenario.zoom);
       }
 
