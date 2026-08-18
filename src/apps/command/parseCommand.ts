@@ -18,7 +18,7 @@ function editDistance(left: string, right: string): number {
 
 export function parseCommand(input: string): CommandResult {
   const normalized = input.trim().toLowerCase();
-  if (normalized === '') return { kind: 'message', output: 'Choose a visible suggestion or type help.' };
+  if (normalized === '') return { kind: 'message', output: 'Type help for supported commands.' };
   if (/[;&|`$<>]/.test(normalized)) {
     return { kind: 'message', output: `Unknown command “${input.trim()}”. Type help for supported commands.` };
   }
