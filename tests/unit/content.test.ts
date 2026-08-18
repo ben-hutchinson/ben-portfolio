@@ -107,6 +107,18 @@ describe('canonical portfolio content', () => {
     expect(sentenceOccurrences).toHaveLength(1);
   });
 
+  it('keeps the flagship Work evidence in the approved first-person wording without Work technology data', () => {
+    expect(flagshipWork.result).toBe(
+      'Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes',
+    );
+    expect(flagshipWork.ownership).toBe('I proposed the uv/ruff migration.');
+    expect(flagshipWork.technicalApproach).toBe(
+      'I designed the base-Makefile implementation and rollout.',
+    );
+    expect(flagshipWork).not.toHaveProperty('technologies');
+    expect(projects.every((project) => project.tags.length > 0)).toBe(true);
+  });
+
   it('does not turn the verified result into annualised or extrapolated savings', () => {
     const canonicalText = collectStrings([profile, careerStages, flagshipWork, projects, externalLinks]).join(' ');
 

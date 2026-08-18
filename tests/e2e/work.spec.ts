@@ -23,6 +23,19 @@ test.describe('Work.app', () => {
       { level: 2, text: 'Outcome' },
       { level: 2, text: 'Public detail' },
     ]);
+    await expect(frame.getByText(
+      'Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes',
+      { exact: true },
+    )).toBeVisible();
+    await expect(frame.getByText('I proposed the uv/ruff migration.', { exact: true })).toBeVisible();
+    await expect(frame.getByText(
+      'I designed the base-Makefile implementation and rollout.',
+      { exact: true },
+    )).toBeVisible();
+    await expect(frame.getByRole('list', { name: /technologies/i })).toHaveCount(0);
+    await expect(frame.getByText('Python', { exact: true })).toHaveCount(0);
+    await expect(frame.getByText('uv', { exact: true })).toHaveCount(0);
+    await expect(frame.getByText('ruff', { exact: true })).toHaveCount(0);
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Download CV' })).toHaveAttribute('download', 'ben-hutchinson-cv.pdf');
     if (test.info().project.name === 'Chromium') {

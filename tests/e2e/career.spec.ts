@@ -3,6 +3,19 @@ import axe from 'axe-core';
 
 const years = ['2022', '2024', '2025', 'Now'] as const;
 const careerFrame = '[data-window-id="career"]';
+const stageJourneys = [
+  { control: '2022', heading: 'Learning to operate production systems' },
+  { control: '2024', heading: 'Turning evidence into better reliability' },
+  { control: '2025', heading: 'Owning delivery across changing stacks' },
+  { control: 'Now', heading: 'Building paved roads for engineering teams' },
+] as const;
+
+const careerGeometryScenarios = [
+  { name: '1440x1000', viewport: { width: 1440, height: 1000 } },
+  { name: '1280x800', viewport: { width: 1280, height: 800 } },
+  { name: '390x844', viewport: { width: 390, height: 844 } },
+  { name: '200% zoom', viewport: { width: 1440, height: 1000 }, zoom: 2 },
+] as const;
 
 test.describe('Career.app desktop', () => {
   test('opens through every existing route, supports history, and keeps controls synchronized', async ({ page }, testInfo) => {
@@ -26,9 +39,9 @@ test.describe('Career.app desktop', () => {
     await expect(range).toHaveValue('3');
     await expect(page.getByRole('heading', { name: 'Building paved roads for engineering teams' })).toBeVisible();
 
-    await page.getByRole('link', { name: 'Desktop' }).click();
+    await page.goto('./#desktop');
     await expect(page).toHaveURL(/#desktop$/);
-    await page.getByRole('link', { name: 'Career' }).click();
+    await page.locator('[data-dock-app-id="career"]').click();
     await expect(page).toHaveURL(/#career$/);
     await page.goBack();
     await expect(page).toHaveURL(/#desktop$/);
@@ -51,7 +64,65 @@ test.describe('Career.app desktop', () => {
     await page.goto('./#career');
     await page.getByRole('button', { name: 'Now' }).click();
     await expect(page.getByTestId('career-stage')).toHaveAttribute('data-reduced-motion', 'true');
+    await expect(page.getByTestId('career-stage')).toHaveAttribute('data-motion-offset-px', '0');
+    await expect(page.getByTestId('career-stage')).toHaveAttribute('data-motion-duration-ms', '0');
     await expect(page.getByRole('heading', { name: 'Building paved roads for engineering teams' })).toBeVisible();
+  });
+
+  test('publishes opacity-only, zero-offset motion metadata for every Career stage', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Career motion coverage runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('./#career');
+
+    for (const stage of stageJourneys) {
+      await page.getByRole('button', { name: stage.control }).click();
+      await expect(page.getByRole('button', { name: stage.control })).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.getByTestId('career-stage')).toHaveAttribute('data-motion-offset-px', '0');
+      await expect(page.getByTestId('career-stage')).toHaveAttribute('data-motion-duration-ms', '200');
+    }
+  });
+
+  test('keeps the Career control rail fixed while every stage remains readable at each required viewport and zoom', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Career geometry coverage runs in Chromium.');
+
+    for (const scenario of careerGeometryScenarios) {
+      await page.setViewportSize(scenario.viewport);
+      await page.goto('./#career');
+      if (scenario.zoom !== undefined) {
+        await page.evaluate((zoom) => { document.body.style.zoom = String(zoom); }, scenario.zoom);
+      }
+
+      const controls = page.getByRole('slider', { name: 'Career stage' }).locator('..');
+      const railYs: number[] = [];
+      for (const stage of stageJourneys) {
+        await page.getByRole('button', { name: stage.control }).click();
+        await expect(page.getByRole('button', { name: stage.control })).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.getByRole('heading', { name: stage.heading })).toBeVisible();
+        await page.getByTestId('career-stage').scrollIntoViewIfNeeded();
+
+        const railBox = await controls.boundingBox();
+        if (railBox === null) throw new Error(`Career controls were not measurable at ${scenario.name}.`);
+        railYs.push(railBox.y);
+
+        const activeStageIsReadableWithoutPageOverflow = await page.evaluate(() => {
+          const stage = document.querySelector<HTMLElement>('[data-testid="career-stage"]');
+          if (stage === null) return false;
+          const bounds = stage.getBoundingClientRect();
+          return stage.textContent?.trim().length !== 0
+            && bounds.width > 0
+            && bounds.left >= 0
+            && bounds.right <= document.documentElement.clientWidth
+            && document.documentElement.scrollWidth <= document.documentElement.clientWidth;
+        });
+        expect(activeStageIsReadableWithoutPageOverflow).toBe(true);
+      }
+
+      const baselineRailY = railYs[0];
+      if (baselineRailY === undefined) throw new Error(`No Career rail measurements for ${scenario.name}.`);
+      for (const railY of railYs) {
+        expect(Math.abs(railY - baselineRailY), `${scenario.name}: rail y changed across stages`).toBeLessThanOrEqual(1);
+      }
+    }
   });
 
   test('keeps Reset layout clear of the focused Career scrub controls', async ({ page }, testInfo) => {

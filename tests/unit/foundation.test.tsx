@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from '../../src/App';
+import { WorkApp } from '../../src/apps/work/WorkApp';
 
 describe('Portfolio OS foundation', () => {
   it('keeps Ben Hutchinson visible as the initial semantic heading', () => {
@@ -63,6 +64,16 @@ describe('Portfolio OS foundation', () => {
         exact: true,
       }),
     ).toBeVisible();
+  });
+
+  it('does not render a technology list or named Work technologies in the case study', () => {
+    render(<WorkApp />);
+
+    expect(screen.queryByRole('list', { name: /technologies used/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('list', { name: /technologies/i })).not.toBeInTheDocument();
+    expect(screen.queryByText('Python', { exact: true })).not.toBeInTheDocument();
+    expect(screen.queryByText('uv', { exact: true })).not.toBeInTheDocument();
+    expect(screen.queryByText('ruff', { exact: true })).not.toBeInTheDocument();
   });
 
   it('mounts the compact terminal on Desktop without retaining Command-window UI', () => {
