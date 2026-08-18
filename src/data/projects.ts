@@ -9,10 +9,7 @@ export const projects = [
       'Pokeleximon is a full-stack daily puzzle app for Pokemon fans, with crosswords, cryptic clues, and Connections-style games. Built with React, TypeScript, Vite, FastAPI, PostgreSQL, Redis, and Docker, it includes custom puzzle-generation pipelines, publishing workflows, admin tooling, and player analytics.',
     image: 'assets/ui/project-pokeleximon.webp',
     tags: ['React', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
-    links: [
-      { label: 'Live', href: 'https://pokeleximon.com/daily' },
-      { label: 'Overview', href: 'https://pokeleximon.com/daily' },
-    ],
+    links: [{ label: 'Overview', href: 'https://github.com/ben-hutchinson/pokeleximon' }],
   },
   {
     id: 'safelog',

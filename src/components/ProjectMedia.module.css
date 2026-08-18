@@ -1,5 +1,7 @@
 .frame {
   min-width: 0;
+  align-self: start;
+  height: auto;
   overflow: hidden;
   border: var(--border-heavy) solid var(--color-ink);
   background: var(--color-charcoal);
@@ -9,9 +11,8 @@
 .image {
   display: block;
   width: 100%;
-  aspect-ratio: 2.15 / 1;
-  object-fit: cover;
-  object-position: top center;
+  height: auto;
+  object-fit: contain;
 }
 
 .fallback {
