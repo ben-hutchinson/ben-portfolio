@@ -1,6 +1,6 @@
 # PORT-016 — Refine flagship Work evidence and stabilize Career controls
 
-Status: READY
+Status: ACCEPTED — 2026-08-18
 
 Requirement links: `docs/superpowers/specs/2026-08-13-portfolio-os-polish-design.md` §§3, 7–8, 10–12; `docs/AGENTS.md` §§3, 5–6, 8–9, 13–16; approved implementation brief Task 3 / PORT-016; SDD ledger ruling in `.superpowers/sdd/2026-08-13-portfolio-os-polish/progress.md`.
 
@@ -46,15 +46,15 @@ User outcome: A recruiter sees the flagship engineering impact in exact, first-p
 
 ## Acceptance criteria
 
-- [ ] `flagshipWork.result` is exactly `Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes`.
-- [ ] `flagshipWork.ownership` is exactly `I proposed the uv/ruff migration.` and `flagshipWork.technicalApproach` is exactly `I designed the base-Makefile implementation and rollout.` The wording retains explicit first-person ownership, the base-Makefile detail, the 50+ repository count, and the four-minute average build-time reduction without annualizing or extrapolating it.
-- [ ] `WorkCaseStudy` and `flagshipWork` have no `technologies` field; Work renders no technology list or pills, including `uv`, `ruff`, and `Python`. `Project.tags` and project technology lists remain intact.
-- [ ] The Career controls occupy one stable horizontal rail. Career controls must remain within 1 CSS pixel of the same y coordinate across all four stages at 1440×1000, 1280×800, 390×844, and 200% zoom; mobile natural flow may grow but not stage-dependent rail movement.
-- [ ] Long Career evidence scrolls inside the stage viewport where needed, with readable active content and no clipping or page-level horizontal overflow. Mobile may grow naturally, but selection must not cause keyed or stage-dependent vertical rail movement.
-- [ ] Every Career stage change uses zero vertical motion offset (`data-motion-offset-px="0"` or equivalent) and opacity-only transition of no more than 200ms. Reduced motion changes the same content and semantics without spatial animation and with a zero-duration transition.
-- [ ] Existing Career `CareerControls` props, `SELECT_CAREER_STAGE` behavior, stage/range/previous/next keyboard operation, direct-stage controls, active/current announcement, direct hashes/history, touch access, and visible focus remain functional.
-- [ ] PORT-014/PORT-015 behavior remains unchanged: the accepted shell, dock utilities, routes, five-app state without Command, Desktop-only Micro terminal, parser safety, external actions, static GitHub Pages base path, and important no-drag/no-command content paths continue to work.
-- [ ] No dependency is added.
+- [x] `flagshipWork.result` is exactly `Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes`.
+- [x] `flagshipWork.ownership` is exactly `I proposed the uv/ruff migration.` and `flagshipWork.technicalApproach` is exactly `I designed the base-Makefile implementation and rollout.` The wording retains explicit first-person ownership, the base-Makefile detail, the 50+ repository count, and the four-minute average build-time reduction without annualizing or extrapolating it.
+- [x] `WorkCaseStudy` and `flagshipWork` have no `technologies` field; Work renders no technology list or pills, including `uv`, `ruff`, and `Python`. `Project.tags` and project technology lists remain intact.
+- [x] The Career controls occupy one stable horizontal rail. Career controls must remain within 1 CSS pixel of the same y coordinate across all four stages at 1440×1000, 1280×800, 390×844, and 200% zoom; mobile natural flow may grow but not stage-dependent rail movement.
+- [x] Long Career evidence scrolls inside the stage viewport where needed, with readable active content and no clipping or page-level horizontal overflow. Mobile may grow naturally, but selection must not cause keyed or stage-dependent vertical rail movement.
+- [x] Every Career stage change uses zero vertical motion offset (`data-motion-offset-px="0"` or equivalent) and opacity-only transition of no more than 200ms. Reduced motion changes the same content and semantics without spatial animation and with a zero-duration transition.
+- [x] Existing Career `CareerControls` props, `SELECT_CAREER_STAGE` behavior, stage/range/previous/next keyboard operation, direct-stage controls, active/current announcement, direct hashes/history, touch access, and visible focus remain functional.
+- [x] PORT-014/PORT-015 behavior remains unchanged: the accepted shell, dock utilities, routes, five-app state without Command, Desktop-only Micro terminal, parser safety, external actions, static GitHub Pages base path, and important no-drag/no-command content paths continue to work.
+- [x] No dependency is added.
 
 ## Evidence contract
 
@@ -84,3 +84,5 @@ User outcome: A recruiter sees the flagship engineering impact in exact, first-p
 - Re-run the focused unit and Chromium commands, current typecheck, lint, build, bundle, coverage, and relevant axe checks at the tested commit. Coverage remains at the configured 91% thresholds.
 - Record viewport/zoom, selected stage, rail y coordinate, input method, content-scroll/readability result, horizontal-overflow measurement, motion/reduced-motion result, and screenshot or measurement evidence for 1440×1000, 1280×800, 390×844, and 200% zoom. Include keyboard-only range/direct-stage/previous/next operation, direct `#career` and history, and regression confirmation for PORT-014/PORT-015 behavior.
 - Log every defect with severity, reproduction, expected behavior, actual behavior, affected criterion, owner, and retest result. Product Owner acceptance requires current Tester GREEN evidence and no open defect against this packet.
+
+Product Owner decision: **ACCEPTED at `2bb9d04` on 2026-08-18.** Production commit `a2d8534` and Tester commit `2bb9d04` satisfy every PORT-016 acceptance criterion. Exact-head verification records 19/19 focused units; 11 focused Chromium passes with four intentional mobile-project guards; 13 shared PORT-014/PORT-015 Chromium passes with one intentional guard; 158/158 coverage tests at 98.88% statements, 92.04% branches, 99.28% functions, and 99.57% lines; and passing typecheck, lint, build, and bundle checks. Tester evidence records Career rail deltas of 0px at 1440×1000, 0px at 1280×800, 0.359px at 390×844, and 0px at 200% zoom, all within the 1-CSS-pixel ruling, with readable internally scrolling evidence, no page-level horizontal overflow, zero vertical motion, reduced-motion equivalence, preserved keyboard/hash/history semantics, and no PORT-014/PORT-015 regression. Production review is approved with no findings and no product defect remains.

@@ -374,11 +374,11 @@ Reject any implementation that behaves as a large window, shows instructional cl
 - Preserves: `CareerControls` props and reducer `SELECT_CAREER_STAGE` behavior.
 - Changes: `CareerStage` motion metadata to zero vertical offset; opacity may animate for 200ms unless reduced motion is active.
 
-- [ ] **Step 1: Product Owner records the ready packet**
+- [x] **Step 1: Product Owner records the ready packet**
 
 Require the exact canonical result, first-person ownership/base-Makefile sentences, absence of Work technology pills, fixed-y Career controls across all four stages, internal content scrolling where required, opacity-only transition, reduced-motion equivalence, and existing Career semantics.
 
-- [ ] **Step 2: Tester writes exact-copy and geometry RED tests**
+- [x] **Step 2: Tester writes exact-copy and geometry RED tests**
 
 Add unit assertions:
 
@@ -391,7 +391,7 @@ expect(screen.queryByRole('list', { name: /technologies used/i })).not.toBeInThe
 
 In Playwright, record `controls.boundingBox()?.y` for graduate, observability, associate, and SKAO after each selection and require every value to be within 1 CSS pixel of the first. Assert `data-motion-offset-px="0"` or equivalent metadata, run the same journey at 1440×1000, 1280×800, 390×844, and 200% zoom, and verify the active stage remains readable without page-level horizontal overflow.
 
-- [ ] **Step 3: Tester proves RED against old copy/tags/jumping geometry**
+- [x] **Step 3: Tester proves RED against old copy/tags/jumping geometry**
 
 Run:
 
@@ -402,7 +402,7 @@ CI=1 PLAYWRIGHT_PORT=4223 npx playwright test tests/e2e/work.spec.ts tests/e2e/c
 
 Expected: RED for exact copy, visible Work tags, nonzero `y` motion, or control-rail movement.
 
-- [ ] **Step 4: Developer updates Work data and removes tag presentation**
+- [x] **Step 4: Developer updates Work data and removes tag presentation**
 
 Set:
 
@@ -414,7 +414,7 @@ result: 'Migrated 50+ repositories to uv and ruff, reducing average build time b
 
 Remove the Work pills from `WorkApp` and the technology line from `FeaturedWork`. Remove `technologies` from `WorkCaseStudy` and `flagshipWork`, then delete the now-unused `.technologies` rules in both Work CSS Modules. Keep the unrelated `Project.tags` model and Projects technology lists unchanged.
 
-- [ ] **Step 5: Developer fixes Career layout and transition**
+- [x] **Step 5: Developer fixes Career layout and transition**
 
 Give the Career app stable rows:
 
@@ -437,17 +437,19 @@ transition={{ duration: reducedMotion ? 0 : 0.2, ease: [0.2, 0.8, 0.2, 1] }}
 
 Do not hard-code a stage-specific height. On mobile, allow the stage viewport to grow naturally while keeping controls in a consistent flow position and removing any keyed vertical jump.
 
-- [ ] **Step 6: Developer runs focused checks and commits production files only**
+- [x] **Step 6: Developer runs focused checks and commits production files only**
 
 Run typecheck, lint, focused unit, focused Chromium, build, and bundle. Commit production and PO packet files with `feat: refine Work and Career evidence`.
 
-- [ ] **Step 7: Tester runs GREEN, geometry/motion/a11y checks, and commits tests**
+- [x] **Step 7: Tester runs GREEN, geometry/motion/a11y checks, and commits tests**
 
 Run focused tests, coverage, axe, reduced-motion, keyboard/range/direct-stage controls, 200% zoom, and visual inspection at the four target viewports. Append evidence and commit with `test: verify PORT-016 Work and Career polish`.
 
-- [ ] **Step 8: Product Owner accepts PORT-016**
+- [x] **Step 8: Product Owner accepts PORT-016**
 
 Acceptance requires exact user-supplied copy, no visible Work pills, and stable control geometry without clipping content.
+
+**Task 3 Product Owner acceptance: ACCEPTED at `2bb9d04` on 2026-08-18.** Production commit `a2d8534` and Tester commit `2bb9d04` implement and verify the exact flagship copy, removal of Work technology pills/data, stable Career control geometry, internally scrollable readable evidence, opacity-only motion, and reduced-motion equivalence. Fresh exact-head evidence: 19/19 focused units; 11 focused Chromium passes with four intentional mobile-project guards; 13 shared PORT-014/PORT-015 Chromium passes with one intentional guard; and 158/158 coverage tests at 98.88/92.04/99.28/99.57. Typecheck, lint, build, and bundle checks pass. Recorded rail deltas are 0px at 1440×1000, 0px at 1280×800, 0.359px at 390×844, and 0px at 200% zoom, all within the 1-CSS-pixel ruling. Production review is approved with no findings; no bounded change request remains.
 
 ---
 
