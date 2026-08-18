@@ -70,3 +70,57 @@ CI=1 PLAYWRIGHT_PORT=4232 npx playwright test tests/e2e/responsive.spec.ts tests
 ```
 
 Result: **PASS — 10 passed, 1 skipped, 0 failed (2.8s).** The skip is the existing `mobile-Chrome` project guard in `window-system.spec.ts`, expected when the command is limited to the Chromium project.
+
+---
+
+# PORT-015 Tester GREEN report
+
+Status: **PASS — ready for Product Owner acceptance.**
+
+## Candidate and environment
+
+- Candidate: `459caf6 fix: align micro terminal help copy`; Tester verification changes are recorded in the accompanying Tester commit.
+- Branch: `terminal-redesign`; date: 2026-08-18.
+- Node `v26.7.0`; Vitest `4.1.10`; Playwright `1.62.1`; Chromium project.
+- Manual preview: `npm run preview -- --host 127.0.0.1 --port 4250 --strictPort`, at `http://127.0.0.1:4250/ben-portfolio/`. Automated browser checks used fresh ports 4251, 4254, and 4255.
+- Browser validation used the connected Chrome browser for DOM, keyboard, interaction, console, and geometry checks. Responsive screenshots were captured separately with Playwright to `/private/tmp` only.
+- Existing `.DS_Store` and `.playwright-cli/` worktree entries were not modified or staged.
+
+## Automated verification
+
+| Command | Result |
+| --- | --- |
+| `npm test -- tests/unit/portfolioReducer.test.ts tests/unit/content.test.ts tests/unit/foundation.test.tsx tests/unit/parseCommand.test.ts` | PASS — 4 files, 67 tests, 0 failed. |
+| `npm test -- tests/component/Dock.test.tsx tests/component/Desktop.test.tsx tests/component/MicroTerminal.test.tsx tests/component/PortfolioShell.test.tsx tests/component/WindowLayer.test.tsx` | PASS — 5 files, 27 tests, 0 failed. |
+| `CI=1 PLAYWRIGHT_PORT=4254 npx playwright test tests/e2e/contact-command.spec.ts tests/e2e/window-system.spec.ts tests/e2e/responsive.spec.ts --project=Chromium` | PASS — 13 passed, 1 expected `mobile-Chrome` project-guard skip, 0 failed. |
+| `CI=1 PLAYWRIGHT_PORT=4255 npx playwright test tests/e2e/accessibility.spec.ts --project=Chromium` | PASS — 3 passed, 0 failed; axe reported no serious, critical, or contrast violations at desktop and 390×844. |
+| `CI=1 PLAYWRIGHT_PORT=4251 npx playwright test tests/e2e/career.spec.ts --project=Chromium --grep "reduced motion\|200% zoom"` | PASS — 2 passed, 0 failed. |
+| `npm run typecheck` | PASS — `tsc -b`, exit 0. |
+| `npm run lint` | PASS — zero warnings/errors. |
+| `npm run build` | PASS — static Vite build completed, exit 0. |
+| `npm run check:bundle` | PASS — 97,477 gzip JS bytes / 204,800 budget; 118,529 initial image bytes / 1,048,576 budget. |
+| `npm run test:coverage` | PASS — 22 files, 156 tests; statements 98.88%, branches 92.08%, functions 99.29%, lines 99.57%. All configured 91% thresholds are met. |
+
+## Test-suite maintenance
+
+The first full-coverage run exposed 11 stale expectations for the removed framed Command application. They were test debt, not a production defect: Dock (3: sixth Command application button, command activation, command keyboard stop); Desktop (1: command default window state); PortfolioShell (1: command frame/suggestion/history keyboard stops); WindowLayer (3: Command in source order, reset recovery, and default position); CommandApp (3: all framed-app/history expectations).
+
+Tester replaced that obsolete component coverage with `MicroTerminal.test.tsx`, preserving or strengthening the surface contract: Desktop-only rendering, `data-micro-terminal` and `data-testid`, programmatic input label, submit control, no Command dock/window or explanatory/suggestion/history UI, latest-result replacement, `clear`, inert script-shaped input, parser action navigation, `reset`, and base-safe CV download. The affected-component retest passed 27/27; the subsequent full coverage run passed 156/156.
+
+The one parser correction changes only blank input from a vague suggestion match to the approved exact result: `Type help for supported commands.` All allow-list, malicious-character, edit-distance, project, action, CV, clear, and reset coverage remains intact.
+
+## Manual and security matrix
+
+| Viewport / input | Route and checks | Result |
+| --- | --- | --- |
+| 1440×1000 / mouse + keyboard | `#desktop`; permanent terminal visible, `data-micro-terminal` present, accessible textbox and Run command control available, no Command dock button/window, terminal below focused application content and above dock. Terminal bounds 949×776.94, 448×109.09; dock begins at y=906.03; no horizontal overflow. | PASS. Screenshot: `/private/tmp/port015-green-1440-desktop.png`. |
+| Desktop / keyboard only | Fresh-tab Tab order reaches `#portfolio-command` after Reset layout; keyboard-only `help` submission returns the bounded guide result. | PASS. |
+| Desktop / command safety | `carear` yields `Did you mean “career”?`; `<script>alert(1)</script>` remains literal unknown-command text with no JavaScript dialog; `clear` removes the terminal status; `cv` provides `/ben-portfolio/cv/ben-hutchinson-cv.pdf` with `download="ben-hutchinson-cv.pdf"`; `reset` retains the terminal; `career` navigates to `#career` and unmounts it. | PASS. |
+| Desktop / ordinary navigation and hash recovery | Visible Dock buttons independently opened Work, Career, Projects, and Contact. `#command` normalized to `#desktop`; the terminal textbox was visible and received focus. Browser console had zero warning/error entries; direct Desktop had no overflow. | PASS. |
+| 390×844 / narrow Desktop | Terminal visible in normal Desktop flow, no horizontal overflow; absent on Career, Work, Projects, and Contact. | PASS. Screenshot: `/private/tmp/port015-green-390-playwright.png`. |
+| 320×568 / narrow Desktop | Terminal visible in normal Desktop flow with no horizontal overflow. | PASS. Screenshot: `/private/tmp/port015-green-320-playwright.png`. |
+| Reduced motion / 200% zoom | Chromium regression checks exercised reduced-motion Career behavior and 200%-zoom usability; responsive acceptance suite also checks no overflow at 320/390 and usable narrow targets. | PASS — 2 reduced-motion/zoom tests and 13 PORT-015 Chromium acceptance tests passed. |
+
+## Defects and concerns
+
+No production defect remains. The stale component assertions above were repaired and retested as Tester-owned coverage maintenance. The only intentional automated skip is the existing `mobile-Chrome` project guard when PORT-015 acceptance runs under the required Chromium-only project.

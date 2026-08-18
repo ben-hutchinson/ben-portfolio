@@ -20,11 +20,11 @@ afterEach(() => {
 });
 
 describe('Dock', () => {
-  it('keeps the six application buttons and CV control in the stable dock order', () => {
+  it('keeps the five application buttons and CV control in the stable dock order', () => {
     renderDock();
 
     const controls = screen.getAllByRole('button').map((control) => control.textContent?.trim());
-    expect(controls).toEqual(['About', 'Work', 'Career', 'Projects', 'Contact', 'Command']);
+    expect(controls).toEqual(['About', 'Work', 'Career', 'Projects', 'Contact']);
     expect(screen.getByRole('link', { name: /download cv/i })).toBeVisible();
   });
 
@@ -47,8 +47,6 @@ describe('Dock', () => {
       expect(window.location.hash).toBe(hash);
     }
 
-    await user.click(screen.getByRole('button', { name: 'Command' }));
-    expect(screen.getByRole('button', { name: 'Command' })).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByRole('status', { name: /shell state/i })).toHaveTextContent('contact');
     expect(window.location.hash).toBe('#contact');
   });
@@ -57,7 +55,7 @@ describe('Dock', () => {
     const user = userEvent.setup();
     renderDock();
 
-    for (const name of ['About', 'Work', 'Career', 'Projects', 'Contact', 'Command', 'GitHub', 'LinkedIn', 'Download CV']) {
+    for (const name of ['About', 'Work', 'Career', 'Projects', 'Contact', 'GitHub', 'LinkedIn', 'Download CV']) {
       await user.tab();
       expect(screen.getByRole(name === 'Download CV' || name === 'GitHub' || name === 'LinkedIn' ? 'link' : 'button', { name })).toHaveFocus();
     }

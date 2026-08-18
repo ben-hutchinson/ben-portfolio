@@ -45,7 +45,7 @@ function readState() {
     openAppIds: string[];
     focusedAppId: string | null;
     windowOrder: string[];
-    windowPositions: Record<'about' | 'work' | 'command', { x: number; y: number }>;
+    windowPositions: Record<'about' | 'work' | 'career' | 'projects' | 'contact', { x: number; y: number }>;
   };
 }
 
@@ -75,22 +75,19 @@ describe('recruiter-first Desktop', () => {
     renderDesktop();
 
     const initial = readState();
-    expect(initial.openAppIds).toEqual(['about', 'work', 'command']);
+    expect(initial.openAppIds).toEqual(['about', 'work']);
     expect(initial.focusedAppId).toBe('about');
     expect(initial.windowOrder[initial.windowOrder.length - 1]).toBe('about');
     expect(initial.windowPositions.work.y).toBeLessThan(initial.windowPositions.about.y);
-    expect(initial.windowPositions.command.x).toBeGreaterThan(initial.windowPositions.about.x);
-    expect(initial.windowPositions.command.y).toBeGreaterThan(initial.windowPositions.about.y);
+    expect(Object.keys(initial.windowPositions)).toEqual(['about', 'work', 'career', 'projects', 'contact']);
 
     const about = document.querySelector<HTMLElement>('[data-window-id="about"]');
     const work = document.querySelector<HTMLElement>('[data-window-id="work"]');
-    const command = document.querySelector<HTMLElement>('[data-window-id="command"]');
     expect(Number(about?.style.zIndex)).toBeGreaterThan(Number(work?.style.zIndex));
-    expect(Number(about?.style.zIndex)).toBeGreaterThan(Number(command?.style.zIndex));
 
     await user.click(screen.getByRole('region', { name: 'Work' }));
     await user.click(screen.getByRole('button', { name: 'Reset layout' }));
-    expect(readState()).toMatchObject({ focusedAppId: 'about', openAppIds: ['about', 'work', 'command'] });
+    expect(readState()).toMatchObject({ focusedAppId: 'about', openAppIds: ['about', 'work'] });
     const reset = readState();
     expect(reset.windowOrder[reset.windowOrder.length - 1]).toBe('about');
   });

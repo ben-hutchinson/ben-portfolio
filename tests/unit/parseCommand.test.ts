@@ -21,7 +21,7 @@ describe('parseCommand', () => {
   });
 
   it('helps recover from empty, missing project, unknown project and misspelled commands', () => {
-    expect(parseCommand('')).toMatchObject({ kind: 'message', output: expect.stringMatching(/suggestion/i) });
+    expect(parseCommand('')).toEqual({ kind: 'message', output: 'Type help for supported commands.' });
     expect(parseCommand('project')).toMatchObject({ kind: 'message', output: expect.stringMatching(/pokeleximon.*safelog/i) });
     expect(parseCommand('project other')).toMatchObject({ kind: 'message', output: expect.stringMatching(/unknown project/i) });
     expect(parseCommand('carear')).toMatchObject({ kind: 'message', output: expect.stringMatching(/career/i) });

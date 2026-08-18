@@ -50,10 +50,10 @@ function StateProbe() {
 
 function desktopPositions() {
   const state = JSON.parse(screen.getByRole('status', { name: 'portfolio state' }).textContent ?? '{}') as {
-    windowPositions: Record<'about' | 'work' | 'command', { x: number; y: number }>;
+    windowPositions: Record<'about' | 'work' | 'career' | 'projects' | 'contact', { x: number; y: number }>;
   };
-  const { about, work, command } = state.windowPositions;
-  return { about, work, command };
+  const { about, work, career, projects, contact } = state.windowPositions;
+  return { about, work, career, projects, contact };
 }
 
 function renderLayer() {
@@ -91,17 +91,17 @@ describe('WindowLayer', () => {
     installFinePointer();
     renderLayer();
 
-    expect(WINDOW_APP_ORDER).toEqual(['about', 'work', 'career', 'projects', 'contact', 'command']);
+    expect(WINDOW_APP_ORDER).toEqual(['about', 'work', 'career', 'projects', 'contact']);
     expect([...document.querySelectorAll('[data-window-id]')].map((node) => node.getAttribute('data-window-id')))
-      .toEqual(['about', 'work', 'command']);
+      .toEqual(['about', 'work']);
     const about = document.querySelector('[data-window-id="about"]') as HTMLElement;
-    const command = document.querySelector('[data-window-id="command"]') as HTMLElement;
-    expect(Number(about.style.zIndex)).toBeGreaterThan(Number(command.style.zIndex));
+    const work = document.querySelector('[data-window-id="work"]') as HTMLElement;
+    expect(Number(about.style.zIndex)).toBeGreaterThan(Number(work.style.zIndex));
 
     await userEvent.setup().click(screen.getByRole('region', { name: 'About' }));
     expect([...document.querySelectorAll('[data-window-id]')].map((node) => node.getAttribute('data-window-id')))
-      .toEqual(['about', 'work', 'command']);
-    expect(Number(about.style.zIndex)).toBeGreaterThan(Number(command.style.zIndex));
+      .toEqual(['about', 'work']);
+    expect(Number(about.style.zIndex)).toBeGreaterThan(Number(work.style.zIndex));
   });
 
   it('renders the canonical flagship result exactly once and retains reset recovery when frames disappear', async () => {
@@ -111,13 +111,13 @@ describe('WindowLayer', () => {
 
     expect(screen.getAllByText(flagshipWork.result)).toHaveLength(1);
     expect(screen.getByRole('button', { name: 'Reset layout' })).toHaveAttribute('data-window-control', 'reset-layout');
-    for (const app of ['about', 'work', 'command'] as const) {
-      await user.click(screen.getByRole('button', { name: `Close ${app === 'about' ? 'About' : app === 'work' ? 'Work' : 'Command'}` }));
+    for (const app of ['About', 'Work'] as const) {
+      await user.click(screen.getByRole('button', { name: `Close ${app}` }));
     }
     expect(document.querySelectorAll('[data-window-id]')).toHaveLength(0);
     await user.click(screen.getByRole('button', { name: 'Reset layout' }));
     expect([...document.querySelectorAll('[data-window-id]')].map((node) => node.getAttribute('data-window-id')))
-      .toEqual(['about', 'work', 'command']);
+      .toEqual(['about', 'work']);
     expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"focusedAppId":"about"');
   });
 
@@ -202,8 +202,6 @@ describe('WindowLayer', () => {
 
     const expectedDesktopPositions = desktopPositions();
     expect(expectedDesktopPositions.work.y).toBeLessThan(expectedDesktopPositions.about.y);
-    expect(expectedDesktopPositions.command.x).toBeGreaterThan(expectedDesktopPositions.about.x);
-    expect(expectedDesktopPositions.command.y).toBeGreaterThan(expectedDesktopPositions.about.y);
     expect(desktopPositions()).toEqual(expectedDesktopPositions);
 
     (media.query as unknown as { matches: boolean }).matches = false;
