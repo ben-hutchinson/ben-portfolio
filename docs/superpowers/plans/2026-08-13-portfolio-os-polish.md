@@ -242,11 +242,11 @@ Compare the exact head and evidence to PORT-014 and the design spec. Accept only
 - Produces: `AppId = 'about' | 'work' | 'career' | 'projects' | 'contact'`.
 - Produces: `data-micro-terminal` root, `#portfolio-command` input, and `role="status"` bounded output.
 
-- [ ] **Step 1: Product Owner records the ready packet**
+- [x] **Step 1: Product Owner records the ready packet**
 
 Require: permanent bottom-right Micro terminal on desktop; compact Desktop-only mobile presentation; no Command dock item or framed window; no visible explanation/suggestions/history; Enter submission; latest bounded output; allow-listed parser; `cv` download retained; `#command` safely recovers to Desktop; no critical navigation dependency.
 
-- [ ] **Step 2: Tester replaces obsolete Command-window tests with RED Micro-terminal tests**
+- [x] **Step 2: Tester replaces obsolete Command-window tests with RED Micro-terminal tests**
 
 Add assertions equivalent to:
 
@@ -261,7 +261,7 @@ expect(screen.queryByText('Command palette')).not.toBeInTheDocument();
 
 Browser tests must submit `carear`, verify the bounded status contains `Did you mean “career”?`, submit `<script>alert(1)</script>`, verify inert text and no dialog/script execution, submit `career`, and verify `#career`. At 390×844, verify the terminal exists on `#desktop` but not `#career`. At `#command`, verify the application recovers to `#desktop` and the input can receive focus.
 
-- [ ] **Step 3: Tester proves RED against the old framed Command app**
+- [x] **Step 3: Tester proves RED against the old framed Command app**
 
 Run:
 
@@ -272,7 +272,7 @@ CI=1 PLAYWRIGHT_PORT=4222 npx playwright test tests/e2e/contact-command.spec.ts 
 
 Expected: RED for the missing Micro terminal and obsolete Command state/window assumptions; parser tests remain green.
 
-- [ ] **Step 4: Developer implements the bounded command surface**
+- [x] **Step 4: Developer implements the bounded command surface**
 
 Use a single latest result, not a growing history:
 
@@ -321,13 +321,13 @@ export function MicroTerminal(): JSX.Element {
 
 Anchor the desktop surface above the dock with a narrow max width and high-enough shell z-index, but below focused/maximized application content. At mobile/coarse-pointer breakpoints, use normal full-width flow at the end of Desktop and hide it whenever the route is not Desktop.
 
-- [ ] **Step 5: Developer removes Command from window-managed state**
+- [x] **Step 5: Developer removes Command from window-managed state**
 
 Remove `command` from `AppId`, `DEFAULT_WINDOW_POSITIONS`, initial open/order arrays, `WINDOW_APP_ORDER`, titles, sizes, `appContent`, Dock apps, and reducer switch exhaustiveness. Delete `CommandApp` files after `rg "CommandApp|appId: 'command'|data-window-id=\"command\"" src tests` confirms every production reference is accounted for. Preserve parser/registry files unchanged except copy that must reflect the compact surface.
 
 Because `#command` is not a declared route, keep `parseHash`'s known-route contract and verify it normalizes the unknown hash to `#desktop`; on initial Desktop mount, the terminal is present and focusable.
 
-- [ ] **Step 6: Developer runs focused checks and commits production files only**
+- [x] **Step 6: Developer runs focused checks and commits production files only**
 
 Run typecheck, lint, the focused unit tests, build, and bundle. Commit:
 
@@ -336,13 +336,15 @@ git add src/apps/command/MicroTerminal.tsx src/apps/command/MicroTerminal.module
 git commit -m "feat: add permanent micro terminal"
 ```
 
-- [ ] **Step 7: Tester runs GREEN, security/mobile/manual checks, and commits tests**
+- [x] **Step 7: Tester runs GREEN, security/mobile/manual checks, and commits tests**
 
 Run the focused suite, full coverage, axe, 320/390 mobile, desktop keyboard-only, direct `#command`, invalid characters, `cv`, `clear`, `reset`, and visible-navigation-without-command checks. Append exact evidence and commit Tester files with `test: verify PORT-015 micro terminal`.
 
-- [ ] **Step 8: Product Owner accepts PORT-015**
+- [x] **Step 8: Product Owner accepts PORT-015**
 
 Reject any implementation that behaves as a large window, shows instructional clutter, appears over non-Desktop mobile content, or keeps a duplicate Command dock action.
+
+**Task 2 Product Owner acceptance: ACCEPTED at `6b1e0ce` on 2026-08-18.** Production commits `c18649a` and `459caf6` and Tester commits `88d26bb` and `6b1e0ce` implement and verify the permanent optional Micro terminal. Fresh exact-head evidence: 67/67 focused units, 27/27 components, 13 Chromium passes with one intentional mobile-project guard skip, 3/3 axe checks, 2/2 reduced-motion/200%-zoom checks, and 156/156 coverage tests at 98.88/92.08/99.29/99.57. Typecheck, lint, build, bundle, security, mobile, keyboard, visible navigation, CV, clear/reset, and `#command` recovery all pass. No production defect or bounded change request remains.
 
 ---
 

@@ -1,6 +1,6 @@
 # PORT-015 — Replace the Command window with a permanent Micro terminal
 
-Status: READY — 2026-08-13
+Status: ACCEPTED — 2026-08-18
 
 Requirement links: `docs/superpowers/specs/2026-08-13-portfolio-os-polish-design.md` §§2, 5, 10–12; `docs/AGENTS.md` §§2–6, 8–12, 16, 18–20; approved implementation brief Task 2 / PORT-015.
 
@@ -41,16 +41,16 @@ User outcome: A recruiter can optionally enter a safe portfolio command in a com
 
 ## Acceptance criteria
 
-- [ ] Desktop shows exactly one small, permanent bottom-right Micro terminal above the dock, visually subordinate to application content; it is neither draggable nor framed-window chrome and has no minimize, maximize, or close controls.
-- [ ] Its root has both `data-micro-terminal` and `data-testid="micro-terminal"`; it contains visible `portfolio command`, a visible and programmatically named `Portfolio command` textbox with id `portfolio-command`, a `>_` prompt, and a submit control named `Run command`.
-- [ ] There is no Command dock button, `data-window-id="command"`, `CommandApp`, visible `Optional shortcut`, visible `Command palette`, explanation/suggestions, or command history.
-- [ ] Enter submits via the unchanged allow-listed parser. Only the latest result is visible in a bounded polite `role="status"`; `clear` removes it, invalid input (including `<script>alert(1)</script>`) stays inert and gives useful parser feedback, and valid navigation commands retain their existing shell dispatch behavior.
-- [ ] The `cv` command retains a download link to the base-path-safe PDF with `download="ben-hutchinson-cv.pdf"`.
-- [ ] `command` is absent from `AppId`, default/open/order state, window positioning, window content/titles/sizes, reducer cases, WindowLayer, and Dock. No framed Command app remains.
-- [ ] At 390×844 and 320×568, the compact terminal exists on `#desktop`, has no horizontal overflow, and is absent on `#career`, `#work`, `#projects`, and `#contact`; it appears in ordinary Desktop flow above the dock.
-- [ ] Visiting `#command` does not declare or open a Command route: it safely normalizes to `#desktop`, where the terminal input is present and can receive focus. Known direct hashes, browser history, headings, keyboard operation, reduced-motion behavior, and visible navigation remain functional.
-- [ ] No critical destination or content depends on typing a command, dragging, hover, animation, or color.
-- [ ] No dependency is added and the static GitHub Pages base path remains supported.
+- [x] Desktop shows exactly one small, permanent bottom-right Micro terminal above the dock, visually subordinate to application content; it is neither draggable nor framed-window chrome and has no minimize, maximize, or close controls.
+- [x] Its root has both `data-micro-terminal` and `data-testid="micro-terminal"`; it contains visible `portfolio command`, a visible and programmatically named `Portfolio command` textbox with id `portfolio-command`, a `>_` prompt, and a submit control named `Run command`.
+- [x] There is no Command dock button, `data-window-id="command"`, `CommandApp`, visible `Optional shortcut`, visible `Command palette`, explanation/suggestions, or command history.
+- [x] Enter submits via the unchanged allow-listed parser. Only the latest result is visible in a bounded polite `role="status"`; `clear` removes it, invalid input (including `<script>alert(1)</script>`) stays inert and gives useful parser feedback, and valid navigation commands retain their existing shell dispatch behavior.
+- [x] The `cv` command retains a download link to the base-path-safe PDF with `download="ben-hutchinson-cv.pdf"`.
+- [x] `command` is absent from `AppId`, default/open/order state, window positioning, window content/titles/sizes, reducer cases, WindowLayer, and Dock. No framed Command app remains.
+- [x] At 390×844 and 320×568, the compact terminal exists on `#desktop`, has no horizontal overflow, and is absent on `#career`, `#work`, `#projects`, and `#contact`; it appears in ordinary Desktop flow above the dock.
+- [x] Visiting `#command` does not declare or open a Command route: it safely normalizes to `#desktop`, where the terminal input is present and can receive focus. Known direct hashes, browser history, headings, keyboard operation, reduced-motion behavior, and visible navigation remain functional.
+- [x] No critical destination or content depends on typing a command, dragging, hover, animation, or color.
+- [x] No dependency is added and the static GitHub Pages base path remains supported.
 
 ## Evidence contract
 
@@ -80,6 +80,6 @@ User outcome: A recruiter can optionally enter a safe portfolio command in a com
 - Record viewport, input method, result, and screenshot/measurement evidence for 1440×1000, 1280×800, 390×844, 320×568, keyboard-only operation, reduced motion, `#command`, every direct known hash/history, `clear`, `reset`, `cv`, invalid characters/script-like input, and visible navigation without commands.
 - Log every defect with severity, reproduction, expected behavior, actual behavior, affected criterion, owner, and retest result.
 
-Defects: None recorded; implementation has not started.
+Defects: None open. The blank-input copy review finding was resolved in production commit `459caf6`; the associated stale Tester assertion was aligned in the exact-head verification commit `6b1e0ce`.
 
-Product Owner decision: **PENDING — READY for Tester RED coverage.**
+Product Owner decision: **ACCEPTED at `6b1e0ce` on 2026-08-18.** Production commits `c18649a` and `459caf6`, plus Tester commits `88d26bb` and `6b1e0ce`, satisfy every PORT-015 acceptance criterion. Fresh exact-head verification recorded 67/67 focused units, 27/27 affected components, 13 Chromium passes with one intentional mobile-project guard skip, 3/3 axe checks, 2/2 reduced-motion/200%-zoom checks, and 156/156 coverage tests at 98.88% statements, 92.08% branches, 99.29% functions, and 99.57% lines. Typecheck, lint, build, and bundle checks pass; the manual/security/mobile/keyboard/`#command` matrix is current in `docs/testing/portfolio-polish-report.md`. No bounded change request remains.
