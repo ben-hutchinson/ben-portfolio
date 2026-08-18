@@ -76,13 +76,18 @@ describe('canonical portfolio content', () => {
     }
   });
 
-  it('preserves the verified Pokeleximon and Safelog actions', () => {
-    const linksByProject = Object.fromEntries(
-      projects.map((project) => [project.id, collectHrefs(project)]),
-    );
+  it('exposes one exact Pokeleximon repository Overview action', () => {
+    const pokeleximon = projects.find(({ id }) => id === 'pokeleximon');
 
-    expect(linksByProject.pokeleximon).toContain('https://pokeleximon.com/daily');
-    expect(linksByProject.safelog).toContain('https://github.com/ben-hutchinson/safelog');
+    expect(pokeleximon?.links).toEqual([
+      { label: 'Overview', href: 'https://github.com/ben-hutchinson/pokeleximon' },
+    ]);
+  });
+
+  it('preserves the verified Safelog repository action', () => {
+    const safelog = projects.find(({ id }) => id === 'safelog');
+
+    expect(collectHrefs(safelog)).toContain('https://github.com/ben-hutchinson/safelog');
   });
 
   it('uses only HTTPS or mailto external actions', () => {
