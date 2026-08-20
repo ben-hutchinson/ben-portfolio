@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const exactClaim = 'Migrated 50+ repositories and reduced average build time by four minutes.';
+const exactClaim = 'Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes';
 
 test.describe('recruiter-first desktop', () => {
   test('exposes the zero-click contract and every one-action recruiter route', async ({ page }, testInfo) => {
@@ -10,9 +10,9 @@ test.describe('recruiter-first desktop', () => {
 
     for (const locator of [
       page.getByText('Ben Hutchinson').first(),
-      page.getByText('Mid-level platform engineer', { exact: true }),
+      page.getByText('Mid-level platform engineer · Manchester, UK', { exact: true }),
       page.getByText('Manchester, UK', { exact: true }),
-      page.getByText('Open to platform and backend engineering opportunities.', { exact: true }).first(),
+      page.getByText('Open to platform and backend engineering opportunities. Production-minded systems, developer experience, and internal tooling.', { exact: true }),
       page.getByText('Backend engineer moving deeper into platform engineering, building reliable paths and reducing friction for engineering teams.', { exact: true }),
       page.getByText(exactClaim, { exact: true }),
     ]) {
@@ -30,7 +30,7 @@ test.describe('recruiter-first desktop', () => {
 
     await page.getByRole('button', { name: 'Open Work' }).click();
     await expect(page).toHaveURL(/#work$/);
-    await page.getByRole('link', { name: 'Desktop' }).click();
+    await page.goBack();
     await expect(page).toHaveURL(/#desktop$/);
     await page.getByRole('button', { name: 'Open Career' }).click();
     await expect(page).toHaveURL(/#career$/);

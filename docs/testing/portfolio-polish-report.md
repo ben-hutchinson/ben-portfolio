@@ -279,3 +279,62 @@ The same full run also found Tester-owned expectations that predate accepted POR
 ## Pending gates
 
 The dedicated accessibility command at port 4346, no-update visual command at 4347, any baseline update/retest at 4348/4349, and all manual keyboard/reduced-motion/direct-hash/history/static-base-path/visual inspection evidence are pending the Developer correction. Protected `.DS_Store` and untracked `.playwright-cli/` remain untouched and unstaged.
+
+---
+
+# PORT-017 exact-head Tester GREEN report
+
+Status: **PASS — ready for Product Owner acceptance.**
+
+## Candidate, scope, and retest
+
+- Production candidate: `533235c2bc34523bf125d2193321ccda26ad5c96` (`fix: make Career stage viewport keyboard reachable`), after scoped review approval of the Career focus repair.
+- Branch: `terminal-redesign`; date: 2026-08-20; Node `v26.7.0`; npm `11.19.0`; Vitest `4.1.10`; Playwright `1.62.1`; Chromium.
+- Clean production preview: `npm run preview -- --host 127.0.0.1 --port 4380 --strictPort`, served from `http://127.0.0.1:4380/ben-portfolio/` (HTTP 200).
+- The former mobile Career axe defect was first retested on a fresh port with `npm run build && CI=1 PLAYWRIGHT_PORT=4373 npx playwright test tests/e2e/career.spec.ts --project=mobile-Chrome --grep "has no serious or critical accessibility violation"`: **1 passed, 0 failed (1.7s)**. The focusable stage viewport repair resolves axe's former serious `scrollable-region-focusable` finding.
+- `.DS_Store` and `.playwright-cli/` were neither modified nor staged. Evidence screenshots are outside the repository in `/private/tmp`.
+
+## Exact-head automated matrix
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | PASS — lockfile-consistent clean dependency install. |
+| `npm run typecheck` | PASS — `tsc -b`, 0 errors. |
+| `npm run lint` | PASS — 0 warnings/errors. |
+| `npm run test:coverage` | PASS — 22 files, 159 tests; statements 98.88% (530/536), branches 92.04% (382/415), functions 99.28% (139/140), lines 99.57% (469/471). Every 91% threshold is met. |
+| `npm run build` | PASS — static Vite build. |
+| `npm run check:bundle` | PASS — 97,403 gzip JavaScript bytes / 204,800; initial images 118,529 bytes / 1,048,576; Pokeleximon 32,772 bytes, Safelog 85,390 bytes, favicon 367 bytes. |
+| `git diff --check` | PASS — no whitespace errors. |
+| `CI=1 PLAYWRIGHT_PORT=4374 npx playwright test tests/e2e/projects.spec.ts tests/e2e/responsive.spec.ts --project=Chromium` | PASS — 8 passed, 1 intentional project-guard skip, 0 failed (3.0s). |
+| `CI=1 PLAYWRIGHT_PORT=4375 npm run test:e2e` | Initial result: 45 passed, 156 skipped, 4 failed — only the four approved visual baselines differed. Post-baseline final exact-head rerun on port 4381: **49 passed, 156 skipped, 0 failed (16.5s)**. |
+| `CI=1 PLAYWRIGHT_PORT=4376 npm run test:e2e:a11y` | PASS — 2 passed, 8 intentional project-guard skips, 0 failed (3.9s). |
+| `CI=1 PLAYWRIGHT_PORT=4377 npm run test:e2e:visual` | Initial result: 4 visual failures, 16 intentional skips only; desktop 1440×1000 ratio 0.26, desktop 390×844 ratio 0.26, Career 1440×1000 ratio 0.31, Career 390×844 ratio 0.26. Behavioural and axe gates were already green. |
+| `CI=1 PLAYWRIGHT_PORT=4378 npm run test:e2e:visual -- --update-snapshots` | PASS — 4 passed, 16 skipped. |
+| `CI=1 PLAYWRIGHT_PORT=4379 npm run test:e2e:visual` | PASS — 4 passed, 16 skipped, 0 failed (3.8s). |
+
+## Tester test maintenance and visual baselines
+
+Two stale E2E expectations conflicted with accepted PORT-014–016 behaviour and were corrected without weakening their behavioural intent:
+
+- `tests/e2e/recruiter-scan.spec.ts` now asserts the accepted canonical Work claim, the existing combined About role/location and availability/supporting-copy text, and Back-history recovery after opening Work rather than the PORT-014-removed header Desktop link.
+- `tests/e2e/window-system.spec.ts` retains desktop Reset-layout visibility of MicroTerminal and now asserts its approved absence after narrow mobile navigation to Work.
+
+Only these approved generic visual baselines were regenerated after the initial drift was confirmed to be approved PORT-014–017 styling: `desktop-1440x1000.png`, `desktop-390x844.png`, `career-1440x1000.png`, and `career-390x844.png` in `tests/e2e/visual.spec.ts-snapshots/`. Manual inspection found the Kernel/header/frame/MicroTerminal/dock and Career composition present with expected styling; no unexpected clipping or blank region was observed in any final PNG.
+
+## Manual evidence
+
+| Scenario | Result |
+| --- | --- |
+| `#projects` at 1440×1000 | PASS — Pokeleximon copy bounds `[303.398, 578.953, 747.992, 1157.594]`; media `[747.992, 578.953, 1291.398, 830.477]`; featured-row bounds `[300.398, 575.953, 1294.398, 1160.594]`; overlap 0; media/image client-height delta 0px; rendered ratio 2.18293 versus intrinsic 2.18878 (0.27%); scroll width = inner width = 1440. |
+| Pokeleximon detail/security | PASS — exactly one `Overview` link, exact href `https://github.com/ben-hutchinson/pokeleximon`, `target="_blank"`, `rel="noreferrer noopener"`; no Live link and no duplicate destination. |
+| 1440×1000, 1024×768, 390×844, 320×568, and CSS 200% zoom | PASS — each geometry capture reports 0 overlap, 0px client-height delta, copy/media containment, correct DOM order, and no horizontal overflow. Rendered-to-intrinsic aspect deviation: 0.00483%, 0.00684%, 0.00780%, 0.01371%, and 0.01553% respectively, all below 2%. Screenshots: `/private/tmp/port017-manual-desktop.png`, `/private/tmp/port017-manual-tablet.png`, `/private/tmp/port017-manual-mobile.png`, `/private/tmp/port017-manual-narrow-mobile.png`, `/private/tmp/port017-manual-200-percent-zoom.png`. |
+| Keyboard, direct hashes, and history | PASS — keyboard Enter on Work opens `#work`; opening Work from `#desktop` then Back restores `#desktop`; static-base routes were exercised from `/ben-portfolio/`; mobile Desktop retains MicroTerminal while Work omits it. |
+| Career reduced motion and keyboard | PASS — exact Chromium coverage confirms reduced-motion attributes `data-reduced-motion="true"`, offset `0`, duration `0`; native labelled Career range accepts ArrowRight/ArrowLeft, direct stage selection updates `aria-pressed`, and the formerly inaccessible mobile stage viewport has zero serious/critical axe findings. |
+
+## Defects, disposition, and remaining risk
+
+The former serious mobile Career `scrollable-region-focusable` defect is fixed by `533235c` and reproduced green before the matrix. No product defect remains under the approved 320px minimum support contract.
+
+The PORT-017 geometry test's former CSS-zoom coordinate-space defect remains corrected: media and image height compare `clientHeight` to `clientHeight` (unscaled layout CSS pixels) within 2px; bounding-client-rect overlap, containment, rendered-ratio, and overflow assertions remain independent.
+
+One compatibility caveat remains: CSS-scale 200% zoom meets the defined acceptance checks, but an approximately 195px effective viewport (the equivalent of browser 200% zoom from 390px) is below the supported 320px floor and visually clips. This is recorded as a scope risk, not a release defect; Product Owner clarification is needed before treating sub-320 effective-width zoom as supported.

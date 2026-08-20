@@ -94,7 +94,7 @@ test.describe('window system mobile', () => {
     const after = await page.locator(workFrame).boundingBox();
     expect(after?.x).toBe(before?.x);
     expect(after?.y).toBe(before?.y);
-    await expect(page.getByTestId('micro-terminal')).toBeVisible();
+    await expect(page.getByTestId('micro-terminal')).toHaveCount(0);
     await expect(page.locator(resetLayout)).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     expect(before).not.toBeNull();
