@@ -65,6 +65,17 @@ describe('Career.app RED contract', () => {
     expect(screen.getByText(careerStages[0].description, { exact: true })).toBeVisible();
   });
 
+  it('names the focusable Career stage viewport from the stable timeline heading', () => {
+    renderCareer();
+
+    const viewport = screen.getByTestId('career-stage').parentElement;
+    expect(viewport).not.toBeNull();
+    expect(viewport).toHaveAttribute('tabindex', '0');
+    expect(viewport).toHaveAttribute('role', 'region');
+    expect(viewport).toHaveAttribute('aria-labelledby', 'career-timeline-heading');
+    expect(screen.getByRole('heading', { name: 'Career timeline' })).toHaveAttribute('id', 'career-timeline-heading');
+  });
+
   it('offers the four direct year buttons and keeps their pressed state synchronized', async () => {
     const user = userEvent.setup();
     renderCareer();

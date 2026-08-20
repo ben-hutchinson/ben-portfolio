@@ -431,3 +431,28 @@ All four final generic baselines were manually inspected without alteration:
 CSS-scale 200% remains green against the specified geometry/overflow contract. As already recorded in the prior exact-head report, a real effective 195px viewport from browser zooming a 390px layout is below the supported 320px floor; its magnified visual framing remains a compatibility-scope caveat, not an open PORT-017 defect.
 
 Protected `.DS_Store` and `.playwright-cli/` were not modified or staged. No open product defect remains at this exact production head.
+
+---
+
+# Final-review accessibility RED checkpoint
+
+Status: **RED — two bounded production accessibility fixes required.**
+
+## Candidate and scope
+
+- Reviewed head: `415c440e09e454f6853a4df195fd2bac9ce76cff` (`docs: accept Portfolio OS polish release`).
+- Tester changed only the requested acceptance assertions in `tests/e2e/window-system.spec.ts` and `tests/component/CareerApp.test.tsx`; no production code, baseline, configuration, `.DS_Store`, or `.playwright-cli/` entry was touched.
+
+## Expected focused RED evidence
+
+| Command | Result | Intended failure |
+| --- | --- | --- |
+| `npm test -- tests/component/CareerApp.test.tsx` | RED — 1 file failed; 5 passed, 1 failed (6 total). | The `tabindex="0"` Career stage viewport has no `role="region"`; it cannot yet be named from the stable `Career timeline` heading via `aria-labelledby="career-timeline-heading"`. |
+| `CI=1 PLAYWRIGHT_PORT=4401 npx playwright test tests/e2e/window-system.spec.ts --project=Chromium` | RED — 3 passed, 1 intentional project-guard skip, 1 failed. | At `#command`, URL normalization reaches `#desktop` and the Portfolio command textbox is visible, but Playwright reports it as inactive rather than focused after the 5s focused-state wait. |
+
+## Required correction and retest
+
+1. On obsolete `#command` hash recovery, autofocus the existing labelled Portfolio command input once the route normalizes to `#desktop`; do not restore the removed Command application or alter ordinary focus behavior.
+2. Make the existing focusable Career stage scroll viewport a semantic `region` named through `aria-labelledby="career-timeline-heading"`, with that ID on the stable Career timeline heading. This prevents the repaired scroll viewport from remaining an anonymous tab stop.
+
+All pre-existing assertions remain intact; the manual `input.focus()` call that masked the command-recovery contract was removed. The component test retains `tabindex="0"` in addition to the new semantic expectations. Rerun these focused tests and the applicable release matrix after production correction.

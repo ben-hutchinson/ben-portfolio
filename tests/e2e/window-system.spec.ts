@@ -100,7 +100,7 @@ test.describe('window system mobile', () => {
     expect(before).not.toBeNull();
   });
 
-  test('normalizes an obsolete command hash to Desktop and leaves the Micro terminal keyboard-focusable', async ({ page }, testInfo) => {
+  test('normalizes an obsolete command hash to Desktop and autofocuses the Micro terminal command', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Direct hash recovery runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.goto('./#command');
@@ -108,7 +108,6 @@ test.describe('window system mobile', () => {
     await expect(page).toHaveURL(/#desktop$/);
     const input = page.getByTestId('micro-terminal').getByRole('textbox', { name: 'Portfolio command' });
     await expect(input).toBeVisible();
-    await input.focus();
     await expect(input).toBeFocused();
   });
 });
