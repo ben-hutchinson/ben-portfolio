@@ -456,3 +456,60 @@ Status: **RED — two bounded production accessibility fixes required.**
 2. Make the existing focusable Career stage scroll viewport a semantic `region` named through `aria-labelledby="career-timeline-heading"`, with that ID on the stable Career timeline heading. This prevents the repaired scroll viewport from remaining an anonymous tab stop.
 
 All pre-existing assertions remain intact; the manual `input.focus()` call that masked the command-recovery contract was removed. The component test retains `tabindex="0"` in addition to the new semantic expectations. Rerun these focused tests and the applicable release matrix after production correction.
+
+---
+
+# Final-review Node-24 Tester GREEN certification
+
+Status: **PASS — ready for final Product Owner release acceptance.**
+
+## Candidate and enforced runtime
+
+- Production candidate: `dd29316bd072237afba8c07e69560e607eaa9fe5` (`fix: complete Portfolio OS focus recovery`), retesting the final-review RED checkpoint `5f31729`.
+- Every command and its npm/npx children was launched with `/opt/homebrew/Cellar/node@24/24.19.0/bin` prepended to `PATH`; direct evidence reports Node `v24.19.0` and npm `11.17.0`. The Node-24 executable was also invoked by absolute path for the manual Playwright evidence script, which reports `runtime: v24.19.0`.
+- Runtime inheritance check: under the same environment, `command -v node`, `npm`, and `npx` each resolved inside the Node-24 Cellar path, and `npx --no-install vite --version` reported `vite/8.2.1 darwin-arm64 node-v24.19.0`.
+- The system default Node `v26.7.0`/npm `11.19.0` was deliberately not used for certification commands. Node-24 `npm run`/`npx` inherit the pinned first PATH entry, including Vite, Vitest, Playwright, and preview child processes.
+- Branch: `terminal-redesign`; date: 2026-08-20; Vitest `4.1.10`; Playwright `1.62.1`; Chromium.
+
+## Focus-recovery retest and negative cases
+
+| Gate | Result |
+| --- | --- |
+| `npm test -- tests/component/CareerApp.test.tsx` | PASS — 1 file, 6 passed. The `tabindex="0"` stage viewport is `role="region"`, names `aria-labelledby="career-timeline-heading"`, and the stable Career timeline heading has that ID. |
+| `CI=1 PLAYWRIGHT_PORT=4414 npx playwright test tests/e2e/window-system.spec.ts tests/e2e/career.spec.ts tests/e2e/accessibility.spec.ts --project=Chromium` | PASS — 14 passed, 5 intentional project-guard skips, 0 failed (3.9s). `#command` normalizes to `#desktop` and immediately focuses the labelled Portfolio command input without a test-side focus call. |
+| Direct negative cases | PASS — the focused Chromium assertion covers fresh `#desktop`, `#unknown-route`, and `#projects/unknown-project`; all resolve to `#desktop` with the visible MicroTerminal input unfocused. Independent fresh-tab manual inspection found `document.activeElement` = `BODY` for direct `#desktop` and unrelated invalid `#projects/unknown-project`; `#command` instead reports `portfolio-command`. |
+
+## Clean Node-24 release matrix
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | PASS — clean lockfile-consistent install; 300 packages added, 301 audited, 0 vulnerabilities. Existing deprecation and optional install-script notices only. |
+| `npm run typecheck` | PASS — `tsc -b`, 0 errors. |
+| `npm run lint` | PASS — 0 warnings/errors. |
+| `npm run test:coverage` | PASS — 22 files, 160 tests; statements 98.35% (539/548), branches 91.68% (386/421), functions 98.59% (140/142), lines 99.37% (477/480). Every configured 91% threshold is met. |
+| `npm run build` | PASS — static Vite build under Node 24. |
+| `npm run check:bundle` | PASS — 97,509 gzip JavaScript bytes / 204,800; initial images 118,529 bytes / 1,048,576; Pokeleximon 32,772, Safelog 85,390, favicon 367 bytes. |
+| `CI=1 PLAYWRIGHT_PORT=4415 npx playwright test tests/e2e/projects.spec.ts tests/e2e/responsive.spec.ts --project=Chromium` | PASS — 8 passed, 1 intentional project-guard skip, 0 failed (3.5s). |
+| `CI=1 PLAYWRIGHT_PORT=4416 npm run test:e2e` | PASS — 50 passed, 160 intentional project-guard skips, 0 failed (19.9s). |
+| `CI=1 PLAYWRIGHT_PORT=4417 npm run test:e2e:a11y` | PASS — 2 passed, 8 intentional project-guard skips, 0 failed (3.3s); no serious or critical axe violation. |
+| `CI=1 PLAYWRIGHT_PORT=4418 npm run test:e2e:visual` | PASS — 4 passed, 16 intentional skips, 0 failed (3.7s). |
+| `CI=1 PLAYWRIGHT_PORT=4419 npm run test:e2e:visual` | PASS — final no-update confirmation: 4 passed, 16 intentional skips, 0 failed (3.8s). No visual baseline update was needed or made. |
+| `git diff --check` | PASS — no whitespace errors. |
+
+## Manual Node-24 static preview and regression evidence
+
+- Static preview: Node-24 `npm run preview -- --host 127.0.0.1 --port 4420 --strictPort` served `http://127.0.0.1:4420/ben-portfolio/` (HTTP 200). Browser console had no warnings/errors.
+- Keyboard/history: Enter on the Work dock control opened `#work`; Back restored `#desktop`. Career range ArrowLeft moved reduced-motion `Now` value 3 to `2025` value 2, with visible focus.
+- Direct hashes all resolve with their matching H1: Desktop, Python Dependency Migration, Career, Engineering projects, Pokeleximon Daily, Safelog, and Contact Ben.
+- Pokeleximon security remains exact: one Overview link to `https://github.com/ben-hutchinson/pokeleximon`, `target="_blank"`, `rel="noreferrer noopener"`; no Live or duplicate destination.
+- At 390×844, Desktop has one MicroTerminal and Work has none; both are overflow-free. PORT-014 simplified Kernel/header/frame/utilities, PORT-015 Desktop-only terminal, PORT-016 zero-offset Career range/motion, and PORT-017 project media/order checks remain green.
+- CSS 200% project measurement: copy bottom = media top = 3571.421875px; copy-before-media true, overlap 0, both row-contained, media/image height delta 0px, intrinsic-ratio delta 0.01553%, and no horizontal overflow. Reduced-motion Career reports `true`, offset `0`, duration `0`, region role and `career-timeline-heading`, no overflow. Evidence: `/private/tmp/port017-final-node24-css-200.png` and `/private/tmp/port017-final-node24-career-reduced.png`.
+- All four unchanged generic baselines were manually inspected: desktop 1440 retains Kernel/header/frame/MicroTerminal/dock utilities with no blank or clipping; desktop 390 is compact and legible; Career 1440 retains stable stage/rail/focus composition; Career 390 retains compact stage/evidence/controls with no unexpected blank region.
+
+## Disposition and worktree audit
+
+The two final-review accessibility defects are fixed and retested: obsolete Command-hash autofocus is bounded to `#command`, while the focusable Career scroll viewport is now a named region rather than an anonymous tab stop. No open product defect remains under the accepted PORT-014–017 scope.
+
+The existing caveat remains documented: CSS-scale 200% satisfies the specified geometry/overflow contract, while real browser zoom producing an effective 195px viewport is below the supported 320px floor. This is a compatibility-scope note, not an open release defect.
+
+Only the intentional Tester negative-case assertion and this certification report are pending commit. Protected `.DS_Store` and `.playwright-cli/` remain untouched and unstaged; no baseline changed.

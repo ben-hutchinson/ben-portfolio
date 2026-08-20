@@ -110,4 +110,17 @@ test.describe('window system mobile', () => {
     await expect(input).toBeVisible();
     await expect(input).toBeFocused();
   });
+
+  test('does not autofocus the Micro terminal for ordinary Desktop or unrelated invalid hashes', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Direct hash recovery runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+
+    for (const hash of ['#desktop', '#unknown-route', '#projects/unknown-project']) {
+      await page.goto(`./${hash}`);
+      await expect(page).toHaveURL(/#desktop$/);
+      const input = page.getByTestId('micro-terminal').getByRole('textbox', { name: 'Portfolio command' });
+      await expect(input).toBeVisible();
+      await expect(input).not.toBeFocused();
+    }
+  });
 });
