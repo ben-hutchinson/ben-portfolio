@@ -477,11 +477,11 @@ Acceptance requires exact user-supplied copy, no visible Work pills, and stable 
 - Preserves: `ProjectMedia({ project }): JSX.Element` and `Project` model.
 - Produces: final exact-head acceptance report covering PORT-014 through PORT-017.
 
-- [ ] **Step 1: Product Owner records the ready packet**
+- [x] **Step 1: Product Owner records the ready packet**
 
 Require no Pokeleximon Live link, Overview to the exact repository URL, no duplicate destination, non-overlapping full screenshot at desktop/tablet/mobile/200%, full combined regression, and exact-head release acceptance. Exclude new project content.
 
-- [ ] **Step 2: Tester writes link and layout RED tests**
+- [x] **Step 2: Tester writes link and layout RED tests**
 
 Add:
 
@@ -494,7 +494,7 @@ expect(pokeleximon?.links).toEqual([
 
 In Playwright, assert the Pokeleximon title/copy and `ProjectMedia` boxes do not intersect, neither element exceeds its featured-row bounds, the screenshot has a positive rendered height with an aspect ratio close to its intrinsic asset, and there is no large media-column Ink block below the image. Repeat at 1440×1000, 1024×768, 390×844, 320×568, and 200% zoom.
 
-- [ ] **Step 3: Tester proves RED against old links and stretched media row**
+- [x] **Step 3: Tester proves RED against old links and stretched media row**
 
 Run:
 
@@ -505,7 +505,7 @@ CI=1 PLAYWRIGHT_PORT=4224 npx playwright test tests/e2e/projects.spec.ts tests/e
 
 Expected: RED for old Live URL and the accepted screenshot overlap/stretch reproduction.
 
-- [ ] **Step 4: Developer updates Pokeleximon data and defensive project layout**
+- [x] **Step 4: Developer updates Pokeleximon data and defensive project layout**
 
 Set the exact single Overview link. In the featured grid, use defensive tracks and top alignment:
 
@@ -528,11 +528,11 @@ Ensure `ProjectMedia` does not stretch to the copy height:
 
 Keep the existing narrow-width stack and verify copy appears before media in DOM order.
 
-- [ ] **Step 5: Developer runs focused checks and commits production files only**
+- [x] **Step 5: Developer runs focused checks and commits production files only**
 
 Run typecheck, lint, focused unit/Chromium, build, and bundle. Commit `src/data/projects.ts`, project/media CSS, and the PO packet with `fix: correct Pokeleximon project presentation`.
 
-- [ ] **Step 6: Tester runs the full exact-head release matrix**
+- [x] **Step 6: Tester runs the full exact-head release matrix**
 
 Run from a clean dependency install and isolated ports:
 
@@ -551,7 +551,7 @@ git diff --check
 
 Record exact pass counts, coverage percentages, bundle bytes, browsers/viewports, axe result, manual keyboard/reduced-motion/zoom evidence, and source commit in `docs/testing/portfolio-polish-report.md`.
 
-- [ ] **Step 7: Tester regenerates visual baselines only after behavioral GREEN**
+- [x] **Step 7: Tester regenerates visual baselines only after behavioral GREEN**
 
 If the no-update visual run fails only because approved styling changed, run:
 
@@ -562,9 +562,11 @@ CI=1 PLAYWRIGHT_PORT=4229 npm run test:e2e:visual
 
 Manually inspect all four PNGs for the Kernel mark, simplified header, larger frame, Micro terminal, stable Career composition, correct Pokeleximon media, focus rings, clipping, and unexpected blank regions. Commit tests, baselines, and report with `test: verify Portfolio OS polish release`.
 
-- [ ] **Step 8: Product Owner performs final acceptance**
+- [x] **Step 8: Product Owner performs final acceptance**
 
 Compare the exact Tester head to every section of the polish design spec and all four PORT packets. Mark PORT-014 through PORT-017 accepted only when current evidence is green and `.DS_Store` is the sole allowed unrelated worktree modification. Commit acceptance records with `docs: accept Portfolio OS polish release`.
+
+**Accepted 2026-08-20:** PORT-017 and the combined PORT-014–017 Portfolio OS polish release are accepted at exact Tester head `e24d6f29be3a96238a6f76b91fbc3feb1a337724`. Focused Chromium passed 8/1/0; full E2E 49/156/0; axe 2/8/0; no-update visuals 4/16/0 with no baseline changes; coverage was 98.88% statements, 92.04% branches, 99.28% functions, and 99.57% lines across 159 passing tests; gzip JavaScript was 97,403 bytes. Manual `/ben-portfolio/`, hash/history, keyboard, reduced-motion, link/security, five-size Pokeleximon geometry, and four-baseline inspections passed. The copy-first correction is proven at 390×844, 320×568, and CSS 200% by `copy.bottom === media.top`. The protected modified `.DS_Store` and untracked `.playwright-cli/` were untouched and unstaged; the ledger's explicit protected-artifact ruling supersedes this step's older sole-`.DS_Store` wording. CSS 200% is accepted; an approximately 195px effective width is below the 320px supported minimum and remains an accepted out-of-scope compatibility risk, not a release defect.
 
 - [ ] **Step 9: Controller checkpoints and deploys locally for Ben's manual review**
 
