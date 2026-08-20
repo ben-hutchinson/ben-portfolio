@@ -16,4 +16,4 @@
 .copy button { min-height: 44px; margin-top: auto; padding: .65rem .9rem; border: var(--border-width) solid var(--color-ink); background: var(--color-orange); box-shadow: var(--shadow-hard-small); color: var(--color-ink); font-weight: 950; }
 .copy button:hover { background: var(--color-yellow); }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-@media (max-width: 700px) { .header h1 { overflow-wrap: break-word; } .entries { padding-top: var(--space-4); gap: var(--space-4); } .featured, .compact { width: 100%; grid-template-columns: minmax(0, 1fr); } .compact { justify-self: stretch; } .featured > :last-child, .compact > :last-child { order: -1; } }
+@media (max-width: 700px) { .header h1 { overflow-wrap: break-word; } .entries { padding-top: var(--space-4); gap: var(--space-4); } .featured, .compact { width: 100%; grid-template-columns: minmax(0, 1fr); } .compact { justify-self: stretch; } .compact > :last-child { order: -1; } }
