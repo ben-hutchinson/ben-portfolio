@@ -338,3 +338,32 @@ The former serious mobile Career `scrollable-region-focusable` defect is fixed b
 The PORT-017 geometry test's former CSS-zoom coordinate-space defect remains corrected: media and image height compare `clientHeight` to `clientHeight` (unscaled layout CSS pixels) within 2px; bounding-client-rect overlap, containment, rendered-ratio, and overflow assertions remain independent.
 
 One compatibility caveat remains: CSS-scale 200% zoom meets the defined acceptance checks, but an approximately 195px effective viewport (the equivalent of browser 200% zoom from 390px) is below the supported 320px floor and visually clips. This is recorded as a scope risk, not a release defect; Product Owner clarification is needed before treating sub-320 effective-width zoom as supported.
+
+---
+
+# PORT-017 PO change-request RED checkpoint
+
+Status: **RED — Developer correction required; do not accept PORT-017 at `e88fd4b`.**
+
+## Bounded rendered-order acceptance
+
+Product Owner identified that the feature media is visually ordered ahead of the copy at widths at or below 700px despite the required copy-first narrow stack. Tester added the smallest rendered-order check to `tests/e2e/projects.spec.ts`: for the existing narrow scenarios only, Pokeleximon copy `getBoundingClientRect().bottom` must be less than or equal to the media `getBoundingClientRect().top`. Existing DOM-adjacency, overlap, containment, client-height, intrinsic-ratio, image-completion, and no-overflow assertions are unchanged. `expect.soft` deliberately records every failing scenario in this one required geometry journey rather than stopping at the first, while still failing the test.
+
+## Fresh-port RED evidence
+
+| Command | Result |
+| --- | --- |
+| `CI=1 PLAYWRIGHT_PORT=4382 npx playwright test tests/e2e/projects.spec.ts tests/e2e/responsive.spec.ts --project=Chromium` | RED — 7 passed, 1 intentional project-guard skip, 1 failed (2.4s). The first hard assertion reproduced the mobile order failure. |
+| `CI=1 PLAYWRIGHT_PORT=4383 npx playwright test tests/e2e/projects.spec.ts tests/e2e/responsive.spec.ts --project=Chromium` | RED — 7 passed, 1 intentional project-guard skip, 1 failed (2.5s). The final soft assertion reports all three affected narrow scenarios below. |
+
+| Scenario | Required relationship | Actual bounds | Result |
+| --- | --- | --- | --- |
+| mobile, 390×844 | copy bottom ≤ media top | 1177.28125 ≤ 433.890625 | FAIL — media visibly precedes copy. |
+| narrow-mobile, 320×568 | copy bottom ≤ media top | 1318.671875 ≤ 433.890625 | FAIL — media visibly precedes copy. |
+| CSS 200%, 390×844 | copy bottom ≤ media top | 3659.265625 ≤ 865.953125 | FAIL — media visibly precedes copy. |
+
+Desktop 1440×1000 and tablet 1024×768 do not enter the narrow assertion and retain their accepted side-by-side geometry. Across the failing run, the preserved featured-row checks still complete: image completion/natural dimensions, no copy-media intersection, row containment, media/image client-height tolerance, intrinsic aspect tolerance, document order, and no horizontal overflow. No production files or visual baselines were changed; `.DS_Store` and `.playwright-cli/` remain untouched and unstaged.
+
+## Developer handoff
+
+Correct the <=700px featured-project visual ordering in `src/apps/projects/ProjectsApp.module.css` so copy is rendered above media, then rerun the focused command and the full release matrix before a new GREEN claim. This is a bounded production layout defect, not a snapshot-only change.

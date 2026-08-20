@@ -154,6 +154,10 @@ test.describe('Projects application', () => {
       ).toBeLessThanOrEqual(0.02);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${scenario.name}: horizontal overflow`).toBe(true);
 
+      if (scenario.viewport.width <= 700) {
+        expect.soft(measurement.copy.bottom, `${scenario.name}: copy renders above media on narrow screens`).toBeLessThanOrEqual(measurement.media.top);
+      }
+
       expect(await copy.evaluate((copyElement) => (
         copyElement.nextElementSibling?.getAttribute('data-testid') === 'project-media-pokeleximon'
       )), `${scenario.name}: copy precedes media in document order`).toBe(true);
