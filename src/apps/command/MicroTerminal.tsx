@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type JSX } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type JSX } from 'react';
 import { usePortfolio } from '../../app/PortfolioContext';
 import type { CommandResult } from './commandRegistry';
 import { parseCommand } from './parseCommand';
@@ -7,10 +7,18 @@ import styles from './MicroTerminal.module.css';
 type VisibleCommandResult = Exclude<CommandResult, { readonly kind: 'clear' }>;
 
 export function MicroTerminal(): JSX.Element {
-  const { state, dispatch } = usePortfolio();
+  const { state, dispatch, commandFocusRequestId } = usePortfolio();
   const [input, setInput] = useState('');
   const [result, setResult] = useState<VisibleCommandResult | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handledCommandFocusRequestId = useRef(0);
   const cvUrl = `${import.meta.env.BASE_URL}cv/ben-hutchinson-cv.pdf`;
+
+  useEffect(() => {
+    if (state.route.kind !== 'desktop' || handledCommandFocusRequestId.current === commandFocusRequestId) return;
+    inputRef.current?.focus();
+    handledCommandFocusRequestId.current = commandFocusRequestId;
+  }, [commandFocusRequestId, state.route.kind]);
 
   if (state.route.kind !== 'desktop') return <></>;
 
@@ -42,6 +50,7 @@ export function MicroTerminal(): JSX.Element {
         <label className={styles.visuallyHidden} htmlFor="portfolio-command">Portfolio command</label>
         <span className={styles.prompt} aria-hidden="true">&gt;_</span>
         <input
+          ref={inputRef}
           id="portfolio-command"
           value={input}
           onChange={(event) => setInput(event.target.value)}

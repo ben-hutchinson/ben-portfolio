@@ -7,7 +7,7 @@ import type { PortfolioRoute } from '../app/portfolioState';
 export function useHashNavigation(
   route: PortfolioRoute,
   dispatch: Dispatch<PortfolioAction>,
-  onInvalidHash?: () => void,
+  onInvalidHash?: (hash: string) => void,
   onKnownHash?: () => void,
 ): void {
   const initialRouteHashRef = useRef<string | null>(null);
@@ -15,9 +15,10 @@ export function useHashNavigation(
 
   useEffect(() => {
     const navigateFromHash = () => {
-      const parsed = parseHash(window.location.hash);
+      const hash = window.location.hash;
+      const parsed = parseHash(hash);
       if (!parsed.isKnown) {
-        onInvalidHash?.();
+        onInvalidHash?.(hash);
         window.history.replaceState(null, '', '#desktop');
       } else {
         onKnownHash?.();
