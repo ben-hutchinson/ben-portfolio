@@ -367,3 +367,67 @@ Desktop 1440×1000 and tablet 1024×768 do not enter the narrow assertion and re
 ## Developer handoff
 
 Correct the <=700px featured-project visual ordering in `src/apps/projects/ProjectsApp.module.css` so copy is rendered above media, then rerun the focused command and the full release matrix before a new GREEN claim. This is a bounded production layout defect, not a snapshot-only change.
+
+---
+
+# PORT-017 exact-head Tester GREEN report — copy-first retest
+
+Status: **PASS — ready for Product Owner acceptance.**
+
+## Candidate, environment, and defect disposition
+
+- Production candidate: `2c99bd60406b74eebc32f98cd2f4ac58e1acf991` (`fix: keep featured project copy first`), scoped-review approved. This retests the bounded order defect recorded in Tester change-request commit `2fa2c5b`.
+- Branch: `terminal-redesign`; date: 2026-08-20; Node `v26.7.0`; npm `11.19.0`; Vitest `4.1.10`; Playwright `1.62.1`; Chromium.
+- Clean preview: `npm run preview -- --host 127.0.0.1 --port 4400 --strictPort`, serving `http://127.0.0.1:4400/ben-portfolio/` with HTTP 200. Manual browser inspection used that exact static `/ben-portfolio/` base path.
+- Defect retest: the <=700px CSS order correction makes featured Pokeleximon copy render before media at 390×844, 320×568, and CSS 200%. The former values where copy was below the media are no longer reproducible. No production, configuration, or baseline change was made by Tester.
+
+## Clean exact-head release matrix
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | PASS — clean lockfile-consistent install; 301 packages audited, 0 vulnerabilities. Existing deprecation and optional install-script notices only. |
+| `npm run typecheck` | PASS — `tsc -b`, 0 errors. |
+| `npm run lint` | PASS — 0 warnings/errors. |
+| `npm run test:coverage` | PASS — 22 files, 159 tests; statements 98.88% (530/536), branches 92.04% (382/415), functions 99.28% (139/140), lines 99.57% (469/471). Each configured 91% threshold is met. |
+| `npm run build` | PASS — static Vite build. |
+| `npm run check:bundle` | PASS — 97,403 gzip JavaScript bytes / 204,800; initial images 118,529 bytes / 1,048,576; Pokeleximon 32,772, Safelog 85,390, favicon 367 bytes. |
+| `CI=1 PLAYWRIGHT_PORT=4394 npx playwright test tests/e2e/projects.spec.ts tests/e2e/responsive.spec.ts --project=Chromium` | PASS — 8 passed, 1 intentional project-guard skip, 0 failed (2.5s). |
+| `CI=1 PLAYWRIGHT_PORT=4395 npm run test:e2e` | PASS — 49 passed, 156 intentional project-guard skips, 0 failed (17.9s). |
+| `CI=1 PLAYWRIGHT_PORT=4396 npm run test:e2e:a11y` | PASS — 2 passed, 8 intentional project-guard skips, 0 failed (3.3s). No serious or critical axe violation. |
+| `CI=1 PLAYWRIGHT_PORT=4397 npm run test:e2e:visual` | PASS — 4 passed, 16 intentional skips, 0 failed (3.6s). No-update visual baseline gate is green; no baseline was regenerated. |
+| `git diff --check` | PASS — no whitespace errors. |
+
+## Featured Pokeleximon rendered-layout evidence
+
+Every measurement waits for image completion and positive natural dimensions. All scenarios have zero copy/media intersection, row containment for both boxes, media/image `clientHeight` delta 0px, positive image height, and no horizontal overflow. Desktop/tablet retain their accepted copy-left/media-right composition; the narrow scenarios now use the required rendered copy-above-media stack.
+
+| Scenario | Rendered order / boundary | Overlap | Height delta | Intrinsic ratio delta | Overflow |
+| --- | --- | ---: | ---: | ---: | --- |
+| 1440×1000 | desktop side-by-side, copy left of media | 0 | 0px | 0.00165% | none |
+| 1024×768 | tablet side-by-side, copy left of media | 0 | 0px | 0.00178% | none |
+| 390×844 | copy bottom = media top = 1042.3515625px | 0 | 0px | 0.00218% | none |
+| 320×568 | copy bottom = media top = 1215.7421875px | 0 | 0px | 0.00620% | none |
+| CSS 200%, 390×844 | copy bottom = media top = 3571.421875px | 0 | 0px | 0.01553% | none |
+
+Focused acceptance supplies the DOM-adjacency check; the manual rendered-order measurements above prove the required visual narrow stack rather than relying on DOM order alone. Screenshots: `/private/tmp/portfolio-os-port-017-desktop.png`, `/private/tmp/portfolio-os-port-017-tablet.png`, `/private/tmp/portfolio-os-port-017-mobile.png`, `/private/tmp/portfolio-os-port-017-narrow-mobile.png`, `/private/tmp/portfolio-os-port-017-200-percent-zoom.png`, and `/private/tmp/port017-round2-css-200.png`.
+
+## Manual interaction, security, and regression evidence
+
+- Keyboard and history: pressing Enter on the Work dock control at `#desktop` opened `#work`; browser Back restored `#desktop`. The reduced-motion Career range accepted ArrowLeft from `Now` value `3` to `2025` value `2`, with visible focus.
+- Reduced motion: `data-reduced-motion="true"`, `data-motion-offset-px="0"`, and `data-motion-duration-ms="0"`; no horizontal overflow. Evidence: `/private/tmp/port017-round2-career-reduced.png`.
+- Direct static hashes all resolved with their matching H1: `#desktop` Ben Hutchinson, `#work` Python Dependency Migration, `#career` Career, `#projects` Engineering projects, `#projects/pokeleximon` Pokeleximon Daily, `#projects/safelog` Safelog, and `#contact` Contact Ben.
+- Pokeleximon detail exposes exactly one link: Overview to `https://github.com/ben-hutchinson/pokeleximon`, `target="_blank"`, `rel="noreferrer noopener"`; Live count is 0 and no duplicate destination exists.
+- PORT-014/015 regression: at 390×844, Desktop has one MicroTerminal and Work has none; both have no horizontal overflow. PORT-016 Career reduced-motion/range interaction and axe retest are green. Browser console had no warnings/errors.
+
+## Visual inspection and remaining risk
+
+All four final generic baselines were manually inspected without alteration:
+
+- `desktop-1440x1000.png`: Kernel mark, simplified header, window frame, Work/About, MicroTerminal, dock, and utility group are present; no blank or clipped region.
+- `desktop-390x844.png`: compact header, About, MicroTerminal, and dock are legible with no unexpected blank region.
+- `career-1440x1000.png`: full Career stage, rail/direct controls, frame, and focusable stage composition are stable.
+- `career-390x844.png`: compact Career stage/evidence/controls render without unexpected blank region or clipping.
+
+CSS-scale 200% remains green against the specified geometry/overflow contract. As already recorded in the prior exact-head report, a real effective 195px viewport from browser zooming a 390px layout is below the supported 320px floor; its magnified visual framing remains a compatibility-scope caveat, not an open PORT-017 defect.
+
+Protected `.DS_Store` and `.playwright-cli/` were not modified or staged. No open product defect remains at this exact production head.
