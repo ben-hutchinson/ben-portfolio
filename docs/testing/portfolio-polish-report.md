@@ -193,3 +193,49 @@ Keyboard-only verification: the native labelled Career range moved from `0` to `
 No open product defect.
 
 During manual checking, an initial 390×844 script independently scrolled each stage headline before reading rail geometry and produced a spurious 30.641px delta. Investigation showed this altered outer page scroll rather than the rail's layout. Reproduction with the acceptance test's whole-stage scrolling method measured a 0.359px delta, and the fresh post-build focused Chromium suite passed. This was a Tester measurement-procedure issue, not a production defect; no production change was made.
+
+---
+
+# PORT-017 exact-head Tester checkpoint
+
+Status: **BLOCKED — non-browser gates pass; browser, visual, and manual release gates remain pending.**
+
+## Candidate, scope, and root-cause correction
+
+- Production candidate: `ed67e899d6459a7570ffddc68053ef9ac34b4b3d` (`fix: correct Pokeleximon project presentation`), reviewed approved with no findings.
+- Tester checkpoint source: `ed67e89` plus the uncommitted Tester-only `tests/e2e/projects.spec.ts` coordinate-space correction recorded below.
+- Branch: `terminal-redesign`; date: 2026-08-18.
+- Node `v26.7.0`; npm `11.19.0`; Vitest `4.1.10`; Playwright `1.62.1`.
+- Protected worktree artifacts `.DS_Store` and `.playwright-cli/` were not modified or staged. No production, configuration, Product Owner packet, visual baseline, or snapshot file was changed.
+
+The first production GREEN focused run exposed a Tester measurement defect only at CSS 200% zoom: `HTMLElement.clientHeight` is in unscaled layout CSS pixels, while `getBoundingClientRect().height` is zoom-scaled. The media-height assertion compared those two coordinate spaces. It now compares the existing `mediaContentHeight` to `imageContentHeight`, both from `clientHeight`, retaining the exact 2-CSS-pixel tolerance. The independently required `getBoundingClientRect()` checks for zero copy/media overlap, featured-row containment, positive rendered image dimensions, and the 2% intrinsic aspect-ratio tolerance are unchanged, as is no-horizontal-overflow coverage. The five required scenarios remain 1440×1000, 1024×768, 390×844, 320×568, and 390×844 at CSS 200% zoom.
+
+## Clean exact-head non-browser matrix
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | PASS — exit 0 from the lockfile-consistent clean install. npm reported only existing dependency deprecation and optional install-script notices. |
+| `npm run typecheck` | PASS — `tsc -b`, exit 0. |
+| `npm run lint` | PASS — zero warnings/errors, exit 0. |
+| `npm run test:coverage` | PASS — 22 files, 159 tests; statements 98.88%, branches 92.04%, functions 99.28%, lines 99.57%. All configured 91% thresholds remain met. |
+| `npm run build` | PASS — static Vite build, exit 0. |
+| `npm run check:bundle` | PASS — 97,401 gzip JavaScript bytes / 204,800; initial images 118,529 bytes / 1,048,576. Pokeleximon image: 32,772 bytes; Safelog image: 85,390 bytes; favicon: 367 bytes. |
+| `git diff --check` | PASS — exit 0, no whitespace errors. |
+
+## Pending browser and release evidence
+
+No current browser result is claimed. The execution environment denied both the fresh-localhost bind escalation and separate in-app Browser access to a localhost preview. Therefore the following required commands were **not run** at this checkpoint:
+
+- `CI=1 PLAYWRIGHT_PORT=4224 npx playwright test tests/e2e/projects.spec.ts tests/e2e/responsive.spec.ts --project=Chromium`
+- `CI=1 PLAYWRIGHT_PORT=4225 npm run test:e2e`
+- `CI=1 PLAYWRIGHT_PORT=4226 npm run test:e2e:a11y`
+- `CI=1 PLAYWRIGHT_PORT=4227 npm run test:e2e:visual`
+
+No visual baseline was updated. The four approved baseline files retain their generic established names, and none was inspected or modified at this exact head. Consequently the required Chromium pass/skip/fail counts, axe outcome, direct-hash/history/link/media geometry results, keyboard-only and reduced-motion evidence, `/ben-portfolio/` preview smoke test, five-viewport/zoom measurements, and manual inspection of Kernel mark/header/frame/MicroTerminal/Career/Pokeleximon/focus/clipping/blank regions are all pending a browser-capable verification environment.
+
+## Defects and disposition
+
+| Item | Severity | Reproduction | Disposition |
+| --- | --- | --- | --- |
+| PORT-017 200%-zoom media-height assertion mixed unscaled `clientHeight` with scaled `getBoundingClientRect().height`. | Tester measurement defect | CSS zoom = 200% in the featured Pokeleximon geometry scenario. | Corrected in Tester acceptance code; browser retest pending. |
+| Browser/visual/manual release execution unavailable. | Release blocker | Fresh local-preview bind and in-app browser localhost access are denied by the environment. | Open; do not accept PORT-017 or the combined PORT-014–017 release until the pending browser matrix is run and recorded at one exact head. |

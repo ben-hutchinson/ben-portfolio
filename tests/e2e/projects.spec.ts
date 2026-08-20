@@ -8,6 +8,7 @@ type FeaturedProjectMeasurement = {
   readonly media: DOMRect;
   readonly mediaContentHeight: number;
   readonly image: DOMRect;
+  readonly imageContentHeight: number;
   readonly imageNaturalWidth: number;
   readonly imageNaturalHeight: number;
 };
@@ -131,6 +132,7 @@ test.describe('Projects application', () => {
           media: mediaElement.getBoundingClientRect(),
           mediaContentHeight: mediaElement.clientHeight,
           image: imageElement.getBoundingClientRect(),
+          imageContentHeight: imageElement.clientHeight,
           imageNaturalWidth: imageElement.naturalWidth,
           imageNaturalHeight: imageElement.naturalHeight,
         };
@@ -145,7 +147,7 @@ test.describe('Projects application', () => {
       expect(isContainedBy(measurement.media, measurement.row), `${scenario.name}: media escapes featured row`).toBe(true);
       expect(measurement.image.height, `${scenario.name}: image has positive height`).toBeGreaterThan(0);
       await page.screenshot({ path: `/private/tmp/portfolio-os-port-017-${scenario.name}.png`, fullPage: true });
-      expect(Math.abs(measurement.mediaContentHeight - measurement.image.height), `${scenario.name}: media has empty Ink below image`).toBeLessThanOrEqual(2);
+      expect(Math.abs(measurement.mediaContentHeight - measurement.imageContentHeight), `${scenario.name}: media has empty Ink below image`).toBeLessThanOrEqual(2);
       expect(
         Math.abs((measurement.image.width / measurement.image.height) / (measurement.imageNaturalWidth / measurement.imageNaturalHeight) - 1),
         `${scenario.name}: image differs from its intrinsic aspect ratio`,
