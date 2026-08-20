@@ -239,3 +239,43 @@ No visual baseline was updated. The four approved baseline files retain their ge
 | --- | --- | --- | --- |
 | PORT-017 200%-zoom media-height assertion mixed unscaled `clientHeight` with scaled `getBoundingClientRect().height`. | Tester measurement defect | CSS zoom = 200% in the featured Pokeleximon geometry scenario. | Corrected in Tester acceptance code; browser retest pending. |
 | Browser/visual/manual release execution unavailable. | Release blocker | Fresh local-preview bind and in-app browser localhost access are denied by the environment. | Open; do not accept PORT-017 or the combined PORT-014–017 release until the pending browser matrix is run and recorded at one exact head. |
+
+---
+
+# PORT-017 exact-head Tester FAIL checkpoint
+
+Status: **FAIL — Developer handoff required before release verification can continue.**
+
+Candidate: `182192e0433b04d1450a2b1e34ad201cd1b2ab67` (`test: checkpoint PORT-017 release verification`) on `terminal-redesign`, based on production `ed67e89` (`fix: correct Pokeleximon project presentation`). Date: 2026-08-20. Node `v26.7.0`; npm `11.19.0`; Playwright `1.62.1`.
+
+## Completed gates
+
+| Command | Result |
+| --- | --- |
+| `npm ci` | PASS — exit 0, lockfile-consistent clean install. Existing dependency deprecation/optional install-script notices only. |
+| `npm run typecheck` | PASS — `tsc -b`, exit 0. |
+| `npm run lint` | PASS — zero warnings/errors, exit 0. |
+| `npm run test:coverage` | PASS — 22 files, 159 tests; statements 98.88%, branches 92.04%, functions 99.28%, lines 99.57%. Configured 91% thresholds remain met. |
+| `npm run build` | PASS — static Vite build, exit 0. |
+| `npm run check:bundle` | PASS — 97,401 gzip JavaScript bytes / 204,800; 118,529 initial image bytes / 1,048,576. |
+| `CI=1 PLAYWRIGHT_PORT=4344 npx playwright test tests/e2e/projects.spec.ts tests/e2e/responsive.spec.ts --project=Chromium` | PASS — 8 passed, 1 established project-guard skip, 0 failed (4.2s). The Pokeleximon geometry test covers 1440×1000, 1024×768, 390×844, 320×568, and 200% zoom. |
+| `CI=1 PLAYWRIGHT_PORT=4345 npm run test:e2e` | FAIL — 41 passed, 156 skipped, 8 failed (26.6s). The blocking product failure is detailed below. |
+| `git diff --check` | PASS — no whitespace errors before this report append. |
+
+## Blocking product defect
+
+| Severity | Reproduction | Expected | Actual | Affected criterion | Owner | Retest/disposition |
+| --- | --- | --- | --- | --- | --- | --- |
+| Serious accessibility defect | In mobile Chromium at 390×844, load `http://127.0.0.1:4350/ben-portfolio/#career`, inject axe 4.13, then run `axe.run()`. The required full suite independently reproduces it in `tests/e2e/career.spec.ts` (`Career.app mobile > has no serious or critical accessibility violation at the Career route`). | The scrollable Career stage region is keyboard reachable. Axe serious/critical violations equal zero. | Axe returns one serious `scrollable-region-focusable` violation. Target `._stageViewport_1dyup_62` is `<div class="_stageViewport_1dyup_62">`; axe reports it has neither focusable content nor focusability. | PORT-017 keyboard reachability and preserved PORT-016 mobile Career accessibility/regression contract. | Developer | Open. Do not continue release acceptance, update visual baselines, or claim browser GREEN until the region is keyboard reachable and the exact full matrix is rerun. |
+
+## Non-blocking observed test debt and visual drift
+
+The same full run also found Tester-owned expectations that predate accepted PORT-014–016 behavior; they are not a reason to change production while the accessibility defect is open:
+
+- `tests/e2e/recruiter-scan.spec.ts` still expects removed header role text (`Mid-level platform engineer`) and the pre-PORT-016 Work sentence with a trailing period.
+- `tests/e2e/window-system.spec.ts` still expects MicroTerminal to remain visible after switching a narrow viewport to Work, contrary to the accepted Desktop-only Micro terminal contract.
+- The four approved visual baselines differ: desktop 1440×1000 (0.26 pixel ratio), desktop 390×844 (0.26), Career 1440×1000 (0.31), Career 390×844 (0.26). Whether each difference is solely approved styling has not been manually assessed; no snapshot was updated because behavioral release gates are not green.
+
+## Pending gates
+
+The dedicated accessibility command at port 4346, no-update visual command at 4347, any baseline update/retest at 4348/4349, and all manual keyboard/reduced-motion/direct-hash/history/static-base-path/visual inspection evidence are pending the Developer correction. Protected `.DS_Store` and untracked `.playwright-cli/` remain untouched and unstaged.
