@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseCommand } from '../../src/apps/command/parseCommand';
+import { workIds } from '../../src/data/work';
 
 describe('parseCommand', () => {
   it.each([
@@ -23,9 +24,16 @@ describe('parseCommand', () => {
 
   it('helps recover from empty, missing project, missing or unknown Work ID, and misspelled commands', () => {
     expect(parseCommand('')).toEqual({ kind: 'message', output: 'Type help for supported commands.' });
+    expect(parseCommand('help')).toMatchObject({
+      kind: 'message',
+      output: expect.stringContaining(`work <${workIds.join(', ')}>`),
+    });
     expect(parseCommand('project')).toMatchObject({ kind: 'message', output: expect.stringMatching(/pokeleximon.*safelog/i) });
     expect(parseCommand('project other')).toMatchObject({ kind: 'message', output: expect.stringMatching(/unknown project/i) });
-    expect(parseCommand('work other')).toMatchObject({ kind: 'message', output: expect.stringMatching(/uv-ruff-migration/i) });
+    expect(parseCommand('work other')).toMatchObject({
+      kind: 'message',
+      output: expect.stringContaining(workIds.join(', ')),
+    });
     expect(parseCommand('carear')).toMatchObject({ kind: 'message', output: expect.stringMatching(/career/i) });
   });
 

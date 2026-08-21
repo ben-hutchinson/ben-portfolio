@@ -75,3 +75,22 @@ At the Developer implementation head, verify and record:
 - The local process is Node 26.7.0, not the locked Node 24 LTS. Re-run release gates under the repository's Node 24 toolchain if available before Product Owner acceptance.
 - Do not weaken the new axe assertion. The expected green implementation needs an actual keyboard-operable catalogue action and a valid detail reading surface.
 - Do not touch `.DS_Store` or `.playwright-cli/`.
+
+## Fix-loop round 1 — reviewed gaps RED
+
+At production commit `6e76bea`, run with Node `v24.19.0`:
+
+```text
+PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/portfolioReducer.test.ts tests/unit/parseCommand.test.ts
+
+Test Files  2 failed (2)
+Tests  2 failed | 51 passed (53)
+Exit 1
+```
+
+Both failures match the independent review exactly:
+
+1. `createInitialPortfolioState` lacks an enumerable `activeWorkId: null` in structural equality because it is installed non-enumerably with `Object.defineProperty`.
+2. `help` returns the static `work` usage rather than supported data-derived `work <uv-ruff-migration>` guidance. The unknown Work-ID assertion remains data-derived through `workIds.join(', ')`.
+
+No unrelated affected-unit failure occurred. These tests must remain owned by the Tester; the Developer should correct only the state construction and help guidance before the next handoff.

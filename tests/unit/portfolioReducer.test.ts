@@ -55,6 +55,7 @@ describe('createInitialPortfolioState', () => {
       windowPositions: DEFAULT_WINDOW_POSITIONS,
       activeCareerStageId: 'graduate',
       activeProjectId: null,
+      activeWorkId: null,
     });
     expect(reset).toEqual(initial);
     expect(initial.windowPositions.work.y).toBeLessThan(initial.windowPositions.about.y);
