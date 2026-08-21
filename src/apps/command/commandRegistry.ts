@@ -26,7 +26,10 @@ const projectIds: readonly ProjectId[] = ['pokeleximon', 'safelog'];
 export const commandRegistry: readonly CommandDefinition[] = [
   {
     name: 'help', usage: 'help', description: 'Show this command guide',
-    execute: () => ({ kind: 'message', output: 'Try: help, about, work, career, projects, project <pokeleximon|safelog>, contact, cv, reset, clear.' }),
+    execute: () => ({
+      kind: 'message',
+      output: `Try: help, about, work, work <${workIds.join(', ')}>, career, projects, project <pokeleximon|safelog>, contact, cv, reset, clear.`,
+    }),
   },
   {
     name: 'about', usage: 'about', description: 'Open Ben’s profile',

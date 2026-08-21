@@ -37,7 +37,7 @@ export const DEFAULT_WINDOW_POSITIONS: Readonly<Record<AppId, Point>> = {
 };
 
 export function createInitialPortfolioState(): PortfolioState {
-  const state = {
+  return {
     route: { kind: 'desktop' },
     openAppIds: ['about', 'work'],
     focusedAppId: 'about',
@@ -47,14 +47,6 @@ export function createInitialPortfolioState(): PortfolioState {
     windowPositions: DEFAULT_WINDOW_POSITIONS,
     activeCareerStageId: 'graduate',
     activeProjectId: null,
-  } as Omit<PortfolioState, 'activeWorkId'>;
-
-  Object.defineProperty(state, 'activeWorkId', {
-    configurable: false,
-    enumerable: false,
-    value: null,
-    writable: false,
-  });
-
-  return state as PortfolioState;
+    activeWorkId: null,
+  };
 }
