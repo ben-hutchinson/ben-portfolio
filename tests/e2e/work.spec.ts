@@ -3,6 +3,40 @@ import { expect, test } from '@playwright/test';
 const workFrame = '[data-window-id="work"]';
 
 test.describe('Work.app', () => {
+  test('supports direct catalogue/detail loading, reload, click, keyboard and browser history at desktop and mobile widths', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Focused Work acceptance runs in Chromium.');
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('./#work/uv-ruff-migration');
+      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
+      await expect(page.getByRole('heading', { level: 1, name: 'Python Dependency Migration' })).toBeVisible();
+      await page.reload();
+      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
+      await page.goto('./#work');
+      await expect(page).toHaveURL(/#work$/);
+      const catalogue = page.locator(workFrame);
+      await expect(catalogue.getByText(/featured case study/i)).toBeVisible();
+      const open = catalogue.getByRole('button', { name: 'Open Python Dependency Migration case study' });
+      await open.focus();
+      await page.keyboard.press('Enter');
+      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
+      await page.reload();
+      await expect(page.getByRole('heading', { level: 1, name: 'Python Dependency Migration' })).toBeVisible();
+      await page.getByRole('button', { name: 'Back to work' }).click();
+      await expect(page).toHaveURL(/#work$/);
+      await page.goBack();
+      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      if (viewport.width === 390) {
+        await page.getByRole('button', { name: 'Career' }).click();
+        await expect(page).toHaveURL(/#career$/);
+        expect(await page.locator('[data-window-id]').evaluateAll((frames) => frames
+          .filter((frame) => getComputedStyle(frame).display !== 'none')
+          .map((frame) => frame.getAttribute('data-window-id')))).toEqual(['career']);
+      }
+    }
+  });
+
   test('opens directly with a keyboard-readable case outline and CV exit', async ({ page }) => {
     await page.goto('./#work');
     await expect(page).toHaveURL(/#work$/);

@@ -3,7 +3,7 @@ import { externalLinks } from '../../src/data/externalLinks';
 import type { AppId, CareerStage, CareerStageId, ProjectId } from '../../src/data/models';
 import { profile } from '../../src/data/profile';
 import { projects } from '../../src/data/projects';
-import { flagshipWork } from '../../src/data/work';
+import * as workData from '../../src/data/work';
 import { WINDOW_APP_ORDER } from '../../src/shell/WindowLayer';
 import { describe, expect, it } from 'vitest';
 
@@ -15,6 +15,34 @@ const expectedCareerIds: readonly CareerStageId[] = ['graduate', 'observability'
 const expectedProjectIds: readonly ProjectId[] = ['pokeleximon', 'safelog'];
 const allowedCareerAccents = ['orange', 'yellow', 'blue', 'mint'];
 const supportedProjectHashes = ['#projects/pokeleximon', '#projects/safelog'];
+
+type WorkRecord = {
+  readonly id: string;
+  readonly title: string;
+  readonly context: string;
+  readonly friction: string;
+  readonly ownership: string;
+  readonly technicalApproach: string;
+  readonly rollout: string;
+  readonly outcome: string;
+  readonly result: string;
+  readonly publicDetail: string;
+  readonly links: readonly unknown[];
+};
+
+const workCatalogue = workData as typeof workData & {
+  readonly workItems?: readonly WorkRecord[];
+  readonly workIds?: readonly string[];
+  readonly isWorkId?: (value: string) => boolean;
+};
+
+function workItems(): readonly WorkRecord[] {
+  return workCatalogue.workItems ?? [];
+}
+
+function flagshipWork(): WorkRecord | undefined {
+  return workData.flagshipWork as WorkRecord | undefined;
+}
 
 function collectStrings(value: unknown): string[] {
   if (typeof value === 'string') return [value];
@@ -99,34 +127,51 @@ describe('canonical portfolio content', () => {
   });
 
   it('keeps non-public SKAO actions absent instead of publishing placeholders', () => {
-    const skaoHrefs = collectHrefs(flagshipWork);
+    const skaoHrefs = collectHrefs(flagshipWork());
 
     expect(skaoHrefs).toEqual([]);
     expect(skaoHrefs).not.toContain('#');
   });
 
   it('stores the flagship migration sentence exactly once across canonical data', () => {
-    const canonicalStrings = collectStrings([profile, careerStages, flagshipWork, projects, externalLinks]);
+    const canonicalStrings = collectStrings([profile, careerStages, flagshipWork(), projects, externalLinks]);
     const sentenceOccurrences = canonicalStrings.filter((value) => value === canonicalMigrationSentence);
 
     expect(sentenceOccurrences).toHaveLength(1);
   });
 
   it('keeps the flagship Work evidence in the approved first-person wording without Work technology data', () => {
-    expect(flagshipWork.result).toBe(
+    expect(flagshipWork()?.result).toBe(
       'Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes',
     );
-    expect(flagshipWork.ownership).toBe('I proposed the uv/ruff migration.');
-    expect(flagshipWork.technicalApproach).toBe(
+    expect(flagshipWork()?.ownership).toBe('I proposed the uv/ruff migration.');
+    expect(flagshipWork()?.technicalApproach).toBe(
       'I designed the base-Makefile implementation and rollout.',
     );
-    expect(flagshipWork).not.toHaveProperty('technologies');
+    expect(flagshipWork()).not.toHaveProperty('technologies');
     expect(projects.every((project) => project.tags.length > 0)).toBe(true);
   });
 
   it('does not turn the verified result into annualised or extrapolated savings', () => {
-    const canonicalText = collectStrings([profile, careerStages, flagshipWork, projects, externalLinks]).join(' ');
+    const canonicalText = collectStrings([profile, careerStages, flagshipWork(), projects, externalLinks]).join(' ');
 
     expect(canonicalText).not.toMatch(/\b(annuali[sz]ed|annual|yearly|per[- ]year|a year|savings?)\b/i);
+  });
+
+  it('derives the professional Work catalogue and accepted IDs from the single typed collection', () => {
+    const items = workItems();
+
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      id: 'uv-ruff-migration',
+      outcome: 'The shared developer workflow became faster across the migrated repositories.',
+      result: canonicalMigrationSentence,
+    });
+    expect(flagshipWork()).toBe(items[0]);
+    expect(workCatalogue.workIds).toEqual(items.map(({ id }) => id));
+    expect(workCatalogue.workIds).toEqual(['uv-ruff-migration']);
+    expect(workCatalogue.isWorkId?.('uv-ruff-migration')).toBe(true);
+    expect(workCatalogue.isWorkId?.('Python Dependency Migration')).toBe(false);
+    expect(items[0]).not.toHaveProperty('technologies');
   });
 });

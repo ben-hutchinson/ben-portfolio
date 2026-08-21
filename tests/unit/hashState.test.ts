@@ -7,6 +7,7 @@ import { useHashNavigation } from '../../src/hooks/useHashNavigation';
 const exactRoutes: readonly [string, PortfolioRoute][] = [
   ['#desktop', { kind: 'desktop' }],
   ['#work', { kind: 'work' }],
+  ['#work/uv-ruff-migration', { kind: 'workDetail', workId: 'uv-ruff-migration' }],
   ['#career', { kind: 'career' }],
   ['#projects', { kind: 'projects' }],
   ['#projects/pokeleximon', { kind: 'project', projectId: 'pokeleximon' }],
@@ -20,7 +21,11 @@ describe('hash state', () => {
     expect(serializeHash(route)).toBe(hash);
   });
 
-  it.each(['', '#WORK', '#projects/', '#projects/Pokeleximon', '#projects/safelog/more', '#contact?hello=true', '#about'])(
+  it.each([
+    '', '#WORK', '#projects/', '#projects/Pokeleximon', '#projects/safelog/more', '#contact?hello=true', '#about',
+    '#work/', '#work/UV-RUFF-MIGRATION', '#work/uv-ruff-migration/', '#work/unknown',
+    '#work/uv-ruff-migration/extra', '#work/uv-ruff-migration?x=1',
+  ])(
     'recovers invalid hash %s to desktop without accepting it',
     (hash) => expect(parseHash(hash)).toEqual({ route: { kind: 'desktop' }, isKnown: false }),
   );

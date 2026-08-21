@@ -1,4 +1,5 @@
-import { render, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PortfolioProvider } from '../../src/app/PortfolioContext';
 import { flagshipWork } from '../../src/data/work';
@@ -26,6 +27,25 @@ afterEach(() => {
 });
 
 describe('Work.app', () => {
+  it('maps a featured catalogue entry to a named direct case-study route and supports keyboard return', async () => {
+    const user = userEvent.setup();
+    renderWork();
+
+    const frame = workFrame();
+    expect(within(frame).getByText(/featured case study/i)).toBeVisible();
+    expect(within(frame).getByText(flagshipWork.context, { exact: true })).toBeVisible();
+    expect(within(frame).getByText(flagshipWork.result, { exact: true })).toBeVisible();
+    const open = within(frame).getByRole('button', { name: `Open ${flagshipWork.title} case study` });
+    open.focus();
+    await user.keyboard('{Enter}');
+
+    expect(window.location.hash).toBe('#work/uv-ruff-migration');
+    expect(within(workFrame()).getByRole('heading', { level: 1, name: flagshipWork.title })).toBeVisible();
+    expect(within(workFrame()).getByText('The shared developer workflow became faster across the migrated repositories.')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Back to work' }));
+    expect(window.location.hash).toBe('#work');
+  });
+
   it('presents the flagship case file with a scoped accessible outline', () => {
     renderWork();
     const frame = workFrame();

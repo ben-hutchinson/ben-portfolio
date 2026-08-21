@@ -4,6 +4,7 @@ import { parseCommand } from '../../src/apps/command/parseCommand';
 describe('parseCommand', () => {
   it.each([
     ['  WoRK  ', 'action', 'NAVIGATE'],
+    ['work uv-ruff-migration', 'action', 'SELECT_WORK'],
     ['career', 'action', 'NAVIGATE'],
     ['PROJECTS', 'action', 'NAVIGATE'],
     ['project POKELEXIMON', 'action', 'SELECT_PROJECT'],
@@ -20,10 +21,11 @@ describe('parseCommand', () => {
     if (result.kind === 'action') expect(result.action.type).toBe(actionType);
   });
 
-  it('helps recover from empty, missing project, unknown project and misspelled commands', () => {
+  it('helps recover from empty, missing project, missing or unknown Work ID, and misspelled commands', () => {
     expect(parseCommand('')).toEqual({ kind: 'message', output: 'Type help for supported commands.' });
     expect(parseCommand('project')).toMatchObject({ kind: 'message', output: expect.stringMatching(/pokeleximon.*safelog/i) });
     expect(parseCommand('project other')).toMatchObject({ kind: 'message', output: expect.stringMatching(/unknown project/i) });
+    expect(parseCommand('work other')).toMatchObject({ kind: 'message', output: expect.stringMatching(/uv-ruff-migration/i) });
     expect(parseCommand('carear')).toMatchObject({ kind: 'message', output: expect.stringMatching(/career/i) });
   });
 

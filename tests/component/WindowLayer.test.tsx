@@ -121,6 +121,24 @@ describe('WindowLayer', () => {
     expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"focusedAppId":"about"');
   });
 
+  it('uses the full Work window for a direct selected case study and recovers it to Desktop when closed', async () => {
+    installFinePointer();
+    window.history.replaceState(null, '', '#work/uv-ruff-migration');
+    const user = userEvent.setup();
+    render(
+      <PortfolioProvider>
+        <main id="main-content" tabIndex={-1}><WindowLayer /></main>
+        <Dock />
+        <StateProbe />
+      </PortfolioProvider>,
+    );
+
+    expect(screen.getByRole('region', { name: 'Work' })).toHaveTextContent('The shared developer workflow became faster across the migrated repositories.');
+    expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"activeWorkId":"uv-ruff-migration"');
+    await user.click(screen.getByRole('button', { name: 'Close Work' }));
+    expect(window.location.hash).toBe('#desktop');
+  });
+
   it('uses existing actions for close, minimize, maximize, restore, dock recovery, and focus placement', async () => {
     installFinePointer();
     const user = userEvent.setup();

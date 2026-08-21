@@ -10,6 +10,7 @@ import { portfolioReducer, type PortfolioAction } from '../../src/app/portfolioR
 const routeCases: readonly [PortfolioRoute, string, string | null][] = [
   [{ kind: 'desktop' }, 'desktop', null],
   [{ kind: 'work' }, 'work', 'work'],
+  [{ kind: 'workDetail', workId: 'uv-ruff-migration' }, 'workDetail', 'work'],
   [{ kind: 'career' }, 'career', 'career'],
   [{ kind: 'projects' }, 'projects', 'projects'],
   [{ kind: 'project', projectId: 'pokeleximon' }, 'project', 'projects'],
@@ -76,7 +77,9 @@ describe('portfolioReducer routes', () => {
       expect(state.focusedAppId).toBe(target);
       expect(last(state.windowOrder)).toBe(target);
       if (route.kind === 'project') expect(state.activeProjectId).toBe(route.projectId);
+      if (route.kind === 'workDetail') expect(state.activeWorkId).toBe(route.workId);
       if (kind === 'projects') expect(state.activeProjectId).toBeNull();
+      if (kind === 'work') expect(state.activeWorkId).toBeNull();
     }
     expectWindowInvariants(state);
   });
@@ -138,6 +141,14 @@ describe('portfolioReducer action contract', () => {
     ['SELECT_PROJECT selects an accepted detail route and opens projects', (state) => {
       const next = portfolioReducer(state, { type: 'SELECT_PROJECT', projectId: 'safelog' });
       expect(next).toMatchObject({ route: { kind: 'project', projectId: 'safelog' }, activeProjectId: 'safelog', focusedAppId: 'projects' });
+    }],
+    ['SELECT_WORK selects an accepted detail route and opens Work', (state) => {
+      const next = portfolioReducer(state, { type: 'SELECT_WORK', workId: 'uv-ruff-migration' } as never);
+      expect(next).toMatchObject({
+        route: { kind: 'workDetail', workId: 'uv-ruff-migration' },
+        activeWorkId: 'uv-ruff-migration',
+        focusedAppId: 'work',
+      });
     }],
     ['RESET_LAYOUT discards all transient window and selection state', (state) => {
       const next = portfolioReducer(portfolioReducer(state, { type: 'SELECT_PROJECT', projectId: 'safelog' }), { type: 'RESET_LAYOUT' });
@@ -201,6 +212,7 @@ describe('portfolioReducer no-ops', () => {
     const state = createInitialPortfolioState();
     expect(portfolioReducer(state, { type: 'SELECT_CAREER_STAGE', stageId: 'unknown' as never })).toBe(state);
     expect(portfolioReducer(state, { type: 'SELECT_PROJECT', projectId: 'unknown' as never })).toBe(state);
+    expect(portfolioReducer(state, { type: 'SELECT_WORK', workId: 'unknown' } as never)).toBe(state);
   });
 });
 
@@ -252,9 +264,12 @@ describe('portfolioReducer edge transitions', () => {
     );
     const project = portfolioReducer(createInitialPortfolioState(), { type: 'SELECT_PROJECT', projectId: 'safelog' });
     const catalogue = portfolioReducer(project, { type: 'NAVIGATE', route: { kind: 'projects' } });
+    const workDetail = portfolioReducer(createInitialPortfolioState(), { type: 'SELECT_WORK', workId: 'uv-ruff-migration' } as never);
+    const workCatalogue = portfolioReducer(workDetail, { type: 'NAVIGATE', route: { kind: 'work' } });
 
     expect(career.activeCareerStageId).toBe('observability');
     expect(catalogue).toMatchObject({ route: { kind: 'projects' }, activeProjectId: null, focusedAppId: 'projects' });
+    expect(workCatalogue).toMatchObject({ route: { kind: 'work' }, activeWorkId: null, focusedAppId: 'work' });
   });
 
   it('navigates to an already current route without changing its state reference', () => {

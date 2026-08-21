@@ -64,6 +64,17 @@ test.describe('PORT-011 accessible shell', () => {
     }
   });
 
+  test('has no serious, critical, or contrast axe violations on Work catalogue and detail @a11y', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Work accessibility coverage runs in Chromium.');
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(viewport);
+      for (const hash of ['#work', '#work/uv-ruff-migration']) {
+        await page.goto(`./${hash}`);
+        expect(await seriousCriticalAndContrastViolations(page)).toEqual([]);
+      }
+    }
+  });
+
   test('recovers an invalid hash to Desktop and announces the non-blocking recovery', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Invalid-hash accessibility coverage runs in Chromium.');
     await page.goto('./#not-a-portfolio-route');

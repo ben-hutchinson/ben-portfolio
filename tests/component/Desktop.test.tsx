@@ -42,6 +42,7 @@ function renderDesktop(width = 1440, finePointer = true) {
 function readState() {
   return JSON.parse(screen.getByRole('status', { name: 'portfolio state' }).textContent ?? '{}') as {
     route: { kind: string };
+    activeWorkId: string | null;
     openAppIds: string[];
     focusedAppId: string | null;
     windowOrder: string[];
@@ -121,6 +122,18 @@ describe('recruiter-first Desktop', () => {
     expect(screen.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('href', 'https://www.linkedin.com/in/ben-hutchinson0412/');
     await user.click(screen.getByRole('button', { name: 'Contact' }));
     expect(window.location.hash).toBe('#contact');
+  });
+
+  it('opens the desktop Featured Work action at its shareable Work detail', async () => {
+    const user = userEvent.setup();
+    renderDesktop();
+
+    await user.click(screen.getByRole('button', { name: 'View Work' }));
+    expect(window.location.hash).toBe('#work/uv-ruff-migration');
+    expect(readState()).toMatchObject({
+      route: { kind: 'workDetail', workId: 'uv-ruff-migration' },
+      activeWorkId: 'uv-ruff-migration',
+    });
   });
 
   it('shows only About with the page h1 in coarse mobile mode and omits shortcut dependency', () => {
