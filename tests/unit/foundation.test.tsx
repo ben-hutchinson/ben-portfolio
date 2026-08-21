@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import App from '../../src/App';
+import { PortfolioProvider } from '../../src/app/PortfolioContext';
 import { WorkApp } from '../../src/apps/work/WorkApp';
 
 describe('Portfolio OS foundation', () => {
@@ -67,7 +68,7 @@ describe('Portfolio OS foundation', () => {
   });
 
   it('does not render a technology list or named Work technologies in the case study', () => {
-    render(<WorkApp />);
+    render(<PortfolioProvider><WorkApp /></PortfolioProvider>);
 
     expect(screen.queryByRole('list', { name: /technologies used/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('list', { name: /technologies/i })).not.toBeInTheDocument();
