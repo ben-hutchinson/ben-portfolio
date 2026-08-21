@@ -30,12 +30,14 @@ export interface Project {
 }
 
 export interface WorkCaseStudy {
+  id: string;
   title: string;
   context: string;
   friction: string;
   ownership: string;
   technicalApproach: string;
   rollout: string;
+  outcome: string;
   result: string;
   publicDetail: string;
   links: readonly ExternalLink[];

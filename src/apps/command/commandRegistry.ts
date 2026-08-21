@@ -1,5 +1,6 @@
 import type { PortfolioAction } from '../../app/portfolioReducer';
 import type { ProjectId } from '../../data/models';
+import { isWorkId, workIds } from '../../data/work';
 
 export type CommandResult =
   | { readonly kind: 'action'; readonly output: string; readonly action: PortfolioAction }
@@ -31,7 +32,21 @@ export const commandRegistry: readonly CommandDefinition[] = [
     name: 'about', usage: 'about', description: 'Open Ben’s profile',
     execute: () => ({ kind: 'action', output: 'Opening about.', action: { type: 'OPEN_APP', appId: 'about' } }),
   },
-  { name: 'work', usage: 'work', description: 'Open the flagship work case', execute: route('work') },
+  {
+    name: 'work', usage: 'work [case-study-id]', description: 'Open the professional work catalogue or a case study',
+    execute: (args) => {
+      const workId = args[0];
+      if (workId === undefined) return route('work')([]);
+      if (args.length !== 1 || !isWorkId(workId)) {
+        return { kind: 'message', output: `Unknown work case “${workId}”. Try: ${workIds.join(', ')}.` };
+      }
+      return {
+        kind: 'action',
+        output: `Opening ${workId}.`,
+        action: { type: 'SELECT_WORK', workId },
+      };
+    },
+  },
   { name: 'career', usage: 'career', description: 'Open the career timeline', execute: route('career') },
   { name: 'projects', usage: 'projects', description: 'Open the project catalogue', execute: route('projects') },
   {

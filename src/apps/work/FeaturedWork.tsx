@@ -14,7 +14,7 @@ export function FeaturedWork() {
         <button
           className={styles.workAction}
           type="button"
-          onClick={() => dispatch({ type: 'OPEN_APP', appId: 'work' })}
+          onClick={() => dispatch({ type: 'SELECT_WORK', workId: flagshipWork.id })}
         >
           View Work
         </button>

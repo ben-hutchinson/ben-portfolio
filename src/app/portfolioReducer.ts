@@ -1,4 +1,5 @@
 import type { AppId, CareerStageId, ProjectId } from '../data/models';
+import { isWorkId, type WorkId } from '../data/work';
 import {
   createInitialPortfolioState,
   type Point,
@@ -20,11 +21,13 @@ export type PortfolioAction =
   | { type: 'MOVE_WINDOW'; appId: AppId; position: Point }
   | { type: 'SELECT_CAREER_STAGE'; stageId: CareerStageId }
   | { type: 'SELECT_PROJECT'; projectId: ProjectId }
+  | { type: 'SELECT_WORK'; workId: WorkId }
   | { type: 'RESET_LAYOUT' };
 
 function routesEqual(left: PortfolioRoute, right: PortfolioRoute): boolean {
   return left.kind === right.kind
-    && (left.kind !== 'project' || (right.kind === 'project' && left.projectId === right.projectId));
+    && (left.kind !== 'project' || (right.kind === 'project' && left.projectId === right.projectId))
+    && (left.kind !== 'workDetail' || (right.kind === 'workDetail' && left.workId === right.workId));
 }
 
 function without<T>(values: readonly T[], value: T): readonly T[] {
@@ -58,6 +61,9 @@ function appRoute(appId: AppId): PortfolioRoute | null {
 function routeTarget(route: PortfolioRoute): AppId | null {
   switch (route.kind) {
     case 'work':
+      return 'work';
+    case 'workDetail':
+      return 'work';
     case 'career':
     case 'projects':
     case 'contact':
@@ -76,6 +82,7 @@ function isInitialState(state: PortfolioState): boolean {
     && state.maximizedAppId === initial.maximizedAppId
     && state.activeCareerStageId === initial.activeCareerStageId
     && state.activeProjectId === initial.activeProjectId
+    && state.activeWorkId === initial.activeWorkId
     && state.openAppIds.length === initial.openAppIds.length
     && state.openAppIds.every((value, index) => value === initial.openAppIds[index])
     && state.minimizedAppIds.length === 0
@@ -94,6 +101,7 @@ function openAndFocus(
   route: PortfolioRoute,
   maximizedAppId: AppId | null,
   activeProjectId: ProjectId | null = state.activeProjectId,
+  activeWorkId: WorkId | null = state.activeWorkId,
 ): PortfolioState {
   const openAppIds = addOnce(state.openAppIds, appId);
   const minimizedAppIds = without(state.minimizedAppIds, appId);
@@ -104,7 +112,8 @@ function openAndFocus(
     && windowOrder === state.windowOrder
     && state.focusedAppId === appId
     && state.maximizedAppId === maximizedAppId
-    && state.activeProjectId === activeProjectId;
+    && state.activeProjectId === activeProjectId
+    && state.activeWorkId === activeWorkId;
 
   if (unchanged) return state;
   return {
@@ -116,6 +125,7 @@ function openAndFocus(
     maximizedAppId,
     windowOrder,
     activeProjectId,
+    activeWorkId,
   };
 }
 
@@ -134,14 +144,18 @@ export function portfolioReducer(state: PortfolioState, action: PortfolioAction)
       const projectId = action.route.kind === 'project'
         ? action.route.projectId
         : action.route.kind === 'projects' ? null : state.activeProjectId;
+      const workId = action.route.kind === 'workDetail'
+        ? action.route.workId
+        : action.route.kind === 'work' ? null : state.activeWorkId;
       const maximizedAppId = state.maximizedAppId === target ? target : null;
-      return openAndFocus(state, target, action.route, maximizedAppId, projectId);
+      return openAndFocus(state, target, action.route, maximizedAppId, projectId, workId);
     }
     case 'OPEN_APP': {
       const route = routeForOpen(state, action.appId);
       const projectId = action.appId === 'projects' ? null : state.activeProjectId;
+      const workId = action.appId === 'work' ? null : state.activeWorkId;
       const maximizedAppId = state.maximizedAppId === action.appId ? action.appId : null;
-      return openAndFocus(state, action.appId, route, maximizedAppId, projectId);
+      return openAndFocus(state, action.appId, route, maximizedAppId, projectId, workId);
     }
     case 'FOCUS_WINDOW': {
       if (!state.openAppIds.includes(action.appId) || state.minimizedAppIds.includes(action.appId)) return state;
@@ -168,7 +182,8 @@ export function portfolioReducer(state: PortfolioState, action: PortfolioAction)
     case 'MAXIMIZE_WINDOW': {
       const route = routeForOpen(state, action.appId);
       const projectId = action.appId === 'projects' ? null : state.activeProjectId;
-      return openAndFocus(state, action.appId, route, action.appId, projectId);
+      const workId = action.appId === 'work' ? null : state.activeWorkId;
+      return openAndFocus(state, action.appId, route, action.appId, projectId, workId);
     }
     case 'RESTORE_WINDOW':
       if (state.maximizedAppId !== action.appId) return state;
@@ -218,6 +233,16 @@ export function portfolioReducer(state: PortfolioState, action: PortfolioAction)
         { kind: 'project', projectId: action.projectId },
         state.maximizedAppId === 'projects' ? 'projects' : null,
         action.projectId,
+      );
+    case 'SELECT_WORK':
+      if (!isWorkId(action.workId)) return state;
+      return openAndFocus(
+        state,
+        'work',
+        { kind: 'workDetail', workId: action.workId },
+        state.maximizedAppId === 'work' ? 'work' : null,
+        state.activeProjectId,
+        action.workId,
       );
     case 'RESET_LAYOUT':
       return isInitialState(state) ? state : createInitialPortfolioState();

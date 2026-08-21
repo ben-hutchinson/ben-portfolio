@@ -7,6 +7,33 @@
   color: var(--color-ink);
 }
 
+.catalogueEntry { min-width: 0; }
+.catalogueEntry + .catalogueEntry { margin-top: var(--space-6); }
+
+.detail {
+  display: grid;
+  width: 100%;
+  max-width: 64rem;
+  min-width: 0;
+  margin: 0 auto;
+  gap: var(--space-4);
+  color: var(--color-ink);
+}
+
+.back, .entryAction {
+  width: fit-content;
+  min-height: 44px;
+  padding: .65rem .9rem;
+  border: var(--border-width) solid var(--color-ink);
+  background: var(--color-paper);
+  box-shadow: var(--shadow-hard-small);
+  color: var(--color-ink);
+  font-weight: 950;
+}
+
+.entryAction { margin-top: var(--space-3); background: var(--color-orange); }
+.back:hover, .entryAction:hover { background: var(--color-yellow); }
+
 .header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.62fr);
@@ -17,7 +44,7 @@
   box-shadow: var(--shadow-hard);
 }
 
-.context {
+.index, .context {
   grid-column: 1 / -1;
   margin: 0;
   font-size: 0.72rem;
@@ -25,6 +52,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+.context { color: var(--color-ink); }
 
 .title {
   margin: 0;

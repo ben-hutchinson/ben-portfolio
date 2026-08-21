@@ -5,6 +5,7 @@ import { ContactApp } from '../apps/contact/ContactApp';
 import { ProjectDetailApp } from '../apps/projects/ProjectDetailApp';
 import { ProjectsApp } from '../apps/projects/ProjectsApp';
 import { FeaturedWork } from '../apps/work/FeaturedWork';
+import { WorkDetailApp } from '../apps/work/WorkDetailApp';
 import { WorkApp } from '../apps/work/WorkApp';
 import { usePortfolio } from '../app/PortfolioContext';
 import { useMediaQuery } from '../hooks/useMediaQuery';
@@ -37,7 +38,9 @@ function appContent(appId: AppId, state: PortfolioState): ReactNode {
     case 'about':
       return <AboutApp />;
     case 'work':
-      return state.route.kind === 'work' ? <WorkApp /> : <FeaturedWork />;
+      return state.route.kind === 'work'
+        ? <WorkApp />
+        : state.route.kind === 'workDetail' ? <WorkDetailApp /> : <FeaturedWork />;
     case 'career':
       return <CareerApp />;
     case 'projects':
@@ -48,7 +51,7 @@ function appContent(appId: AppId, state: PortfolioState): ReactNode {
 }
 
 function windowSize(appId: AppId, state: PortfolioState): WindowSize {
-  if ((appId === 'work' && state.route.kind === 'work')
+  if ((appId === 'work' && (state.route.kind === 'work' || state.route.kind === 'workDetail'))
     || (appId === 'projects' && (state.route.kind === 'projects' || state.route.kind === 'project'))) {
     return { width: 1040, height: 650 };
   }
@@ -71,6 +74,7 @@ function visibleAppIds(state: PortfolioState): readonly AppId[] {
 function routeAppId(state: PortfolioState): AppId | null {
   switch (state.route.kind) {
     case 'work':
+    case 'workDetail':
       return 'work';
     case 'career':
       return 'career';

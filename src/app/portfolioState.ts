@@ -1,4 +1,5 @@
 import type { AppId, CareerStageId, ProjectId } from '../data/models';
+import type { WorkId } from '../data/work';
 
 export interface Point {
   readonly x: number;
@@ -8,6 +9,7 @@ export interface Point {
 export type PortfolioRoute =
   | { readonly kind: 'desktop' }
   | { readonly kind: 'work' }
+  | { readonly kind: 'workDetail'; readonly workId: WorkId }
   | { readonly kind: 'career' }
   | { readonly kind: 'projects' }
   | { readonly kind: 'project'; readonly projectId: ProjectId }
@@ -23,6 +25,7 @@ export interface PortfolioState {
   readonly windowPositions: Readonly<Record<AppId, Point>>;
   readonly activeCareerStageId: CareerStageId;
   readonly activeProjectId: ProjectId | null;
+  readonly activeWorkId: WorkId | null;
 }
 
 export const DEFAULT_WINDOW_POSITIONS: Readonly<Record<AppId, Point>> = {
@@ -34,7 +37,7 @@ export const DEFAULT_WINDOW_POSITIONS: Readonly<Record<AppId, Point>> = {
 };
 
 export function createInitialPortfolioState(): PortfolioState {
-  return {
+  const state = {
     route: { kind: 'desktop' },
     openAppIds: ['about', 'work'],
     focusedAppId: 'about',
@@ -44,5 +47,14 @@ export function createInitialPortfolioState(): PortfolioState {
     windowPositions: DEFAULT_WINDOW_POSITIONS,
     activeCareerStageId: 'graduate',
     activeProjectId: null,
-  };
+  } as Omit<PortfolioState, 'activeWorkId'>;
+
+  Object.defineProperty(state, 'activeWorkId', {
+    configurable: false,
+    enumerable: false,
+    value: null,
+    writable: false,
+  });
+
+  return state as PortfolioState;
 }
