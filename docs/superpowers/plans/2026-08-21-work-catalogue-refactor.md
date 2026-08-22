@@ -10,6 +10,8 @@
 
 **Spec:** docs/tasks/PORT-018-work-catalogue.md
 
+**Status:** ACCEPTED — 2026-08-22 at Tester evidence head `1f6e906` for exact tested code-and-tests head `cfd2d1446f4ef1ad3028d611a9963282b1945f10`.
+
 ## Global Constraints
 
 - Preserve these exact approved fields for the initial record: `ownership: 'I proposed the uv/ruff migration.'`, `technicalApproach: 'I designed the base-Makefile implementation and rollout.'`, and `result: 'Migrated 50+ repositories to uv and ruff, reducing average build time by four minutes'`.
@@ -96,7 +98,7 @@
 - Hash rules: `parseHash('#work')` returns `{ route: { kind: 'work' }, isKnown: true }`; `parseHash('#work/uv-ruff-migration')` returns `{ route: { kind: 'workDetail', workId: 'uv-ruff-migration' }, isKnown: true }`; `serializeHash` returns the exact inverse. Unknown input returns the established Desktop/`isKnown: false` result.
 - Command rules: `work` yields `NAVIGATE { route: { kind: 'work' } }`; `work uv-ruff-migration` yields `SELECT_WORK`; missing/unknown extra values yield a message naming derived `workIds` and no state action.
 
-- [ ] **Step 1: Tester RED checkpoint — add exact acceptance coverage and record intentional failures**
+- [x] **Step 1: Tester RED checkpoint — add exact acceptance coverage and record intentional failures**
 
   Tester changes only the listed test files. Add assertions equivalent to the following, adapting imports to established test helpers:
 
@@ -155,7 +157,7 @@
 
   Commit only Tester-owned tests/evidence as `test: specify extensible work catalogue`.
 
-- [ ] **Step 2: Developer implementation — make data, state, navigation, and rendering satisfy the RED contract**
+- [x] **Step 2: Developer implementation — make data, state, navigation, and rendering satisfy the RED contract**
 
   Implement the interfaces above in the listed production files. Use a tuple-preserving data declaration so the collection is non-empty and `flagshipWork` has no undefined branch:
 
@@ -190,7 +192,7 @@
 
   Add CSS only for catalogue entry hierarchy and responsive stacking. Preserve 44px controls, normal document reading order, hard outlines/shadows, no Work tags, and no page-overflow workaround that clips content. Do not change Tester-owned files or protected artifacts.
 
-- [ ] **Step 3: Developer verification and commit**
+- [x] **Step 3: Developer verification and commit**
 
   From the production implementation HEAD, run:
 
@@ -206,7 +208,7 @@
 
   Record exit codes, changed production files, Work-ID derivation proof (`rg -n "WORK_IDS|uv-ruff-migration" src/app src/apps/command src/data`), and `git status --short` showing `.DS_Store`/`.playwright-cli/` untouched. Commit production files only as `feat: add extensible work catalogue`.
 
-- [ ] **Step 4: Tester GREEN — run independent exact-head automated and manual verification**
+- [x] **Step 4: Tester GREEN — run independent exact-head automated and manual verification**
 
   Re-run the focused RED commands at the Developer commit, then run:
 
@@ -223,7 +225,7 @@
 
   Manually verify at 1440×1000, 1024×768, 390×844, and 320×568: direct `#work` and `#work/uv-ruff-migration`, reload, browser Back/Forward, click/keyboard Enter open/detail/back, visible focus, no horizontal overflow, readable full detail, mobile one-active-app switching, and reduced-motion equivalence. Verify production preview under `/ben-portfolio/`, a Project direct hash, and Micro terminal Desktop-only presence as regression sentinels. Record exact commit, environment, coverage percentages, browser pass/skip/fail totals, bundle result, manual evidence, and defects/retests. Commit Tester-only updates as `test: verify extensible work catalogue`.
 
-- [ ] **Step 5: Product Owner acceptance**
+- [x] **Step 5: Product Owner acceptance**
 
   Compare the exact Tester commit and report against `docs/tasks/PORT-018-work-catalogue.md`. Confirm every acceptance checkbox: data-only extensibility, exact approved SKAO copy, catalogue/detail semantics, command boundaries, routing/history/window recovery, responsive/a11y/reduced-motion/static-hosting evidence, coverage threshold, no dependency, and protected-artifact audit. If every item is current and green, set the packet status to ACCEPTED, append the accepted commit and concise evidence to its Product Owner acceptance section, mark this task complete in the plan/ledger, and commit only those PO docs as `docs: accept extensible work catalogue`. Otherwise issue a narrowly scoped defect record without accepting.
 
@@ -231,10 +233,11 @@
 
 | Decision | Rationale | Status |
 | --- | --- | --- |
-| Treat this as one independently reviewable task | Projects already contains the required catalogue/detail and state/hash seams; adding another split would produce no independently valuable release. | Approved |
-| Infer `WorkId` from `workItems` | A future data record must not require synchronised component, reducer, hash, or command ID edits. | Approved |
-| Keep uv/ruff first and expose it as `flagshipWork` | It preserves the accepted recruiter-first SKAO story while the collection can grow. | Approved |
-| Use `#work` catalogue plus `#work/uv-ruff-migration` detail | Catalogue is durable discovery; direct detail is shareable and efficient for recruiter evaluation. | Approved |
-| Add optional `work <id>` rather than a new command | It preserves the optional expert path and keeps all input allow-listed/data-derived. | Approved |
-| Keep Work technologies absent | PORT-016 accepted their removal; evidence should lead, not a tool inventory. | Locked regression |
-| Leave Project routes unchanged | The user approved Work extensibility; Project refactoring is unrelated risk. | Excluded |
+| Treat this as one independently reviewable task | Projects already contains the required catalogue/detail and state/hash seams; adding another split would produce no independently valuable release. | ACCEPTED |
+| Infer `WorkId` from `workItems` | A future data record must not require synchronised component, reducer, hash, or command ID edits. | ACCEPTED |
+| Keep uv/ruff first and expose it as `flagshipWork` | It preserves the accepted recruiter-first SKAO story while the collection can grow. | ACCEPTED |
+| Use `#work` catalogue plus `#work/uv-ruff-migration` detail | Catalogue is durable discovery; direct detail is shareable and efficient for recruiter evaluation. | ACCEPTED |
+| Add optional `work <id>` rather than a new command | It preserves the optional expert path and keeps all input allow-listed/data-derived. | ACCEPTED |
+| Keep Work technologies absent | PORT-016 accepted their removal; evidence should lead, not a tool inventory. | ACCEPTED regression |
+| Leave Project routes unchanged | The user approved Work extensibility; Project refactoring is unrelated risk. | ACCEPTED exclusion |
+| Accept PORT-018 at exact Tester evidence head `1f6e906` | All packet criteria, exact-head automated/manual gates, and review gates are green with no open defect. | ACCEPTED |

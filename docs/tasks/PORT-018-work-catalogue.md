@@ -1,6 +1,6 @@
 # PORT-018 — Make professional Work an extensible catalogue
 
-Status: READY FOR TESTER RED
+Status: ACCEPTED — 2026-08-22 at Tester evidence head `1f6e906` for exact tested code-and-tests head `cfd2d1446f4ef1ad3028d611a9963282b1945f10`.
 
 Requirement links: `docs/PRD.md` §§2, 6–9; `docs/DESIGN.md` §§1–2, 5–6; `docs/SOUL.md` Recruiter Contract and Interaction Standard; `docs/AGENTS.md` §§3, 5–6, 8–9, 12–16.
 
@@ -53,15 +53,15 @@ User outcome: Ben can add a further professional case study by extending typed W
 
 ## Acceptance criteria
 
-- [ ] `workItems` is the single typed canonical professional-work collection and contains exactly the initial `uv-ruff-migration` item; `WorkId` and runtime accepted IDs are derived from it. Adding a valid future item requires no Work component, reducer ID-list, hash-list, or command-list edit.
-- [ ] The uv/ruff migration remains the derived flagship and retains all approved first-person/context/result/public-boundary copy exactly. It has no Work `technologies` field or rendered technology pills/list.
-- [ ] `#work` opens a labelled Work catalogue. The featured entry visibly shows the current context, title, and exact result once in its catalogue content, and its accessible action selects the direct case-study route.
-- [ ] `#work/uv-ruff-migration` directly opens the labelled detail with every required section and a keyboard-operable `Back to work` control. Detail navigation, Work dock/menu control, and `work` command return to `#work`.
-- [ ] `work uv-ruff-migration` opens the direct detail; missing/unknown IDs produce a helpful allow-listed message with data-derived choices and do not change state. No arbitrary command input is executed.
-- [ ] Exact direct hashes, reload, browser back/forward, focus/open/minimize/maximize/close/reset flows, and unknown-hash recovery work for catalogue and detail without regressing Projects or other applications.
-- [ ] At 1440×1000, 1024×768, 390×844, and 320×568, Work catalogue/detail have readable complete content, visible focus, no horizontal page overflow, no required drag/command use, and the mobile single-active-app model remains intact. Keyboard-only activation and back navigation are possible.
-- [ ] Scoped axe checks report no violations; reduced-motion leaves Work content and navigation equivalent; current static `/ben-portfolio/` build and bundle checks pass with no added dependency.
-- [ ] Tester evidence records current passing focused and full relevant gates, coverage remains above the configured 91% thresholds, and the protected artifacts remain untouched/unstaged.
+- [x] `workItems` is the single typed canonical professional-work collection and contains exactly the initial `uv-ruff-migration` item; `WorkId` and runtime accepted IDs are derived from it. Adding a valid future item requires no Work component, reducer ID-list, hash-list, or command-list edit.
+- [x] The uv/ruff migration remains the derived flagship and retains all approved first-person/context/result/public-boundary copy exactly. It has no Work `technologies` field or rendered technology pills/list.
+- [x] `#work` opens a labelled Work catalogue. The featured entry visibly shows the current context, title, and exact result once in its catalogue content, and its accessible action selects the direct case-study route.
+- [x] `#work/uv-ruff-migration` directly opens the labelled detail with every required section and a keyboard-operable `Back to work` control. Detail navigation, Work dock/menu control, and `work` command return to `#work`.
+- [x] `work uv-ruff-migration` opens the direct detail; missing/unknown IDs produce a helpful allow-listed message with data-derived choices and do not change state. No arbitrary command input is executed.
+- [x] Exact direct hashes, reload, browser back/forward, focus/open/minimize/maximize/close/reset flows, and unknown-hash recovery work for catalogue and detail without regressing Projects or other applications.
+- [x] At 1440×1000, 1024×768, 390×844, and 320×568, Work catalogue/detail have readable complete content, visible focus, no horizontal page overflow, no required drag/command use, and the mobile single-active-app model remains intact. Keyboard-only activation and back navigation are possible.
+- [x] Scoped axe checks report no violations; reduced-motion leaves Work content and navigation equivalent; current static `/ben-portfolio/` build and bundle checks pass with no added dependency.
+- [x] Tester evidence records current passing focused and full relevant gates, coverage remains above the configured 91% thresholds, and the protected artifacts remain untouched/unstaged.
 
 ## Tester RED evidence contract
 
@@ -107,3 +107,13 @@ Log every defect with severity, reproduction, expected/actual result, affected c
 ## Product Owner acceptance
 
 Accept only when all criteria and evidence above are green at one exact Tester head, the worktree contains only intentional PORT-018 changes plus the protected artifacts, no professional copy or confidential detail was invented, and the interface remains recognisably Portfolio OS rather than a generic project grid.
+
+### Decision — 2026-08-22
+
+**Verdict: ACCEPTED.** PORT-018 is accepted at Tester evidence commit `1f6e906` for exact tested code-and-tests commit `cfd2d1446f4ef1ad3028d611a9963282b1945f10` (`fix: preserve detail route on maximize`). The original Tester RED checkpoint is `7f2e1fe`; production began at `6e76bea`; the first two Important review gaps were closed by tests `a1dd515` and production `e2fb594`; the final maximize/detail-route defect was specified at `3a689c4` and fixed at the accepted tested head. The task-scoped review, final whole-change review, and its single scoped re-review have no remaining Critical, Important, or Minor findings.
+
+The implementation satisfies the data-only extensibility contract: `workItems` is the non-empty canonical tuple, `WorkId`, `workIds`, `isWorkId`, `flagshipWork`, hash validation, and command choices derive from it, and there is no manually maintained Work ID list in reducer, hash, or command code. The exact SKAO ownership, approach, result, outcome, and confidentiality copy is preserved; Work technologies remain absent. The catalogue, reusable detail, direct hash, Desktop flagship action, allow-listed command, accessible open/back controls, and data-backed case-study sections match the packet.
+
+Exact-head Tester evidence is current and green under Node `v24.19.0`: **176/176** coverage tests passed with statements **98.47%**, branches **91.33%**, functions **99.35%**, and lines **99.61%**; full E2E passed **53** with **172 intentional skips** and zero failures; axe passed **3** with **12 intentional skips** and zero failures. Typecheck, lint, static build, bundle budgets, focused unit/component/Chromium checks, and `git diff --check` passed. Manual checks passed at 1440×1000, 1024×768, 390×844, and 320×568 for direct hashes/reload/history, keyboard and visible focus, maximize/restore route preservation, unknown-hash recovery, responsive no-overflow/mobile switching, reduced-motion equivalence, Project/Micro-terminal regressions, and static `/ben-portfolio/` hosting.
+
+No open defect, new dependency, invented professional claim, confidential detail, or excluded-scope change remains. At acceptance, the only dirty worktree entries are the protected pre-existing modified `.DS_Store` and untracked `.playwright-cli/`; neither is staged or changed by PORT-018.
