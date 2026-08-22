@@ -133,6 +133,10 @@ function routeForOpen(state: PortfolioState, appId: AppId): PortfolioRoute {
   return appRoute(appId) ?? state.route;
 }
 
+function routeForMaximize(state: PortfolioState, appId: AppId): PortfolioRoute {
+  return routeTarget(state.route) === appId ? state.route : routeForOpen(state, appId);
+}
+
 export function portfolioReducer(state: PortfolioState, action: PortfolioAction): PortfolioState {
   switch (action.type) {
     case 'NAVIGATE': {
@@ -180,9 +184,13 @@ export function portfolioReducer(state: PortfolioState, action: PortfolioAction)
       };
     }
     case 'MAXIMIZE_WINDOW': {
-      const route = routeForOpen(state, action.appId);
-      const projectId = action.appId === 'projects' ? null : state.activeProjectId;
-      const workId = action.appId === 'work' ? null : state.activeWorkId;
+      const route = routeForMaximize(state, action.appId);
+      const projectId = route.kind === 'project'
+        ? route.projectId
+        : route.kind === 'projects' ? null : state.activeProjectId;
+      const workId = route.kind === 'workDetail'
+        ? route.workId
+        : route.kind === 'work' ? null : state.activeWorkId;
       return openAndFocus(state, action.appId, route, action.appId, projectId, workId);
     }
     case 'RESTORE_WINDOW':
