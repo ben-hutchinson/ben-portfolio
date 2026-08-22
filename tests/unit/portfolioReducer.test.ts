@@ -114,6 +114,35 @@ describe('portfolioReducer action contract', () => {
       expect(next).toMatchObject({ route: { kind: 'contact' }, focusedAppId: 'contact', maximizedAppId: 'contact' });
       expect(next.minimizedAppIds).not.toContain('contact');
     }],
+    ['MAXIMIZE_WINDOW and RESTORE_WINDOW preserve selected Work and Project detail routes', (state) => {
+      const workDetail = portfolioReducer(state, { type: 'SELECT_WORK', workId: 'uv-ruff-migration' });
+      const maximizedWork = portfolioReducer(workDetail, { type: 'MAXIMIZE_WINDOW', appId: 'work' });
+      const restoredWork = portfolioReducer(maximizedWork, { type: 'RESTORE_WINDOW', appId: 'work' });
+      expect(maximizedWork).toMatchObject({
+        route: { kind: 'workDetail', workId: 'uv-ruff-migration' },
+        activeWorkId: 'uv-ruff-migration',
+        maximizedAppId: 'work',
+      });
+      expect(restoredWork).toMatchObject({
+        route: { kind: 'workDetail', workId: 'uv-ruff-migration' },
+        activeWorkId: 'uv-ruff-migration',
+        maximizedAppId: null,
+      });
+
+      const projectDetail = portfolioReducer(state, { type: 'SELECT_PROJECT', projectId: 'safelog' });
+      const maximizedProject = portfolioReducer(projectDetail, { type: 'MAXIMIZE_WINDOW', appId: 'projects' });
+      const restoredProject = portfolioReducer(maximizedProject, { type: 'RESTORE_WINDOW', appId: 'projects' });
+      expect(maximizedProject).toMatchObject({
+        route: { kind: 'project', projectId: 'safelog' },
+        activeProjectId: 'safelog',
+        maximizedAppId: 'projects',
+      });
+      expect(restoredProject).toMatchObject({
+        route: { kind: 'project', projectId: 'safelog' },
+        activeProjectId: 'safelog',
+        maximizedAppId: null,
+      });
+    }],
     ['RESTORE_WINDOW clears only the matching maximized state', (state) => {
       const moved = portfolioReducer(state, { type: 'MOVE_WINDOW', appId: 'work', position: { x: 144, y: 88 } });
       const maximized = portfolioReducer(moved, { type: 'MAXIMIZE_WINDOW', appId: 'work' });

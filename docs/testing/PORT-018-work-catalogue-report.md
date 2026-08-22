@@ -53,3 +53,14 @@ The first full-coverage run found one test-harness failure, not a production def
 ## Defects and retest
 
 No open production defect remains. No assertion was weakened, no production file was modified by the Tester, and no protected artifact was staged.
+
+## Final-review fix wave — RED evidence
+
+At pre-fix Tester head `3af66fe`, the shared `MAXIMIZE_WINDOW` reducer branch incorrectly rebuilt an application's catalogue route. New Tester-owned regression coverage requires that a selected Work detail retains its exact route, `activeWorkId`, visible detail content, Back control, and hash through maximize and restore; the same assertion covers selected Project detail preservation because it uses the same reducer branch.
+
+| Command | Result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/portfolioReducer.test.ts tests/component/WindowLayer.test.tsx` | Expected RED — 2 failures, 46 passing. Reducer changed Work from `{ kind: 'workDetail', workId: 'uv-ruff-migration' }` with active ID to catalogue `{ kind: 'work' }`/`null`; WindowLayer changed the hash to `#work`. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4238 npx playwright test tests/e2e/work.spec.ts --project=Chromium --grep "preserves a direct Work detail"` | Expected RED — 1 failure, 0 passing. After Maximize Work, the browser URL was `#work`, not `#work/uv-ruff-migration`. |
+
+The Project-detail assertion is intentionally included in the reducer test because the fault is shared; the test stops at the first Work expectation, so the Developer must repair the shared branch rather than Work-specific rendering. Final GREEN verification must rerun the affected tests and required release matrix at the exact final Tester head, recording that commit explicitly before Product Owner acceptance.

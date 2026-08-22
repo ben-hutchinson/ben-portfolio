@@ -3,6 +3,19 @@ import { expect, test } from '@playwright/test';
 const workFrame = '[data-window-id="work"]';
 
 test.describe('Work.app', () => {
+  test('preserves a direct Work detail through maximize and restore', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Focused Work acceptance runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('./#work/uv-ruff-migration');
+    await page.getByRole('button', { name: 'Maximize Work' }).click();
+    await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
+    await expect(page.getByRole('button', { name: 'Back to work' })).toBeVisible();
+    await page.getByRole('button', { name: 'Restore Work' }).click();
+    await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Python Dependency Migration' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Back to work' })).toBeVisible();
+  });
+
   test('supports direct catalogue/detail loading, reload, click, keyboard and browser history at desktop and mobile widths', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Focused Work acceptance runs in Chromium.');
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {

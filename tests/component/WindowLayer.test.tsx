@@ -139,6 +139,28 @@ describe('WindowLayer', () => {
     expect(window.location.hash).toBe('#desktop');
   });
 
+  it('preserves direct Work detail content and hash while maximizing then restoring the Work window', async () => {
+    installFinePointer();
+    window.history.replaceState(null, '', '#work/uv-ruff-migration');
+    const user = userEvent.setup();
+    render(
+      <PortfolioProvider>
+        <main id="main-content" tabIndex={-1}><WindowLayer /></main>
+        <Dock />
+        <StateProbe />
+      </PortfolioProvider>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Maximize Work' }));
+    expect(window.location.hash).toBe('#work/uv-ruff-migration');
+    expect(screen.getByRole('button', { name: 'Back to work' })).toBeVisible();
+    expect(screen.getByRole('status', { name: 'portfolio state' })).toHaveTextContent('"activeWorkId":"uv-ruff-migration"');
+    await user.click(screen.getByRole('button', { name: 'Restore Work' }));
+    expect(window.location.hash).toBe('#work/uv-ruff-migration');
+    expect(screen.getByRole('button', { name: 'Back to work' })).toBeVisible();
+    expect(screen.getByRole('region', { name: 'Work' })).toHaveTextContent('The shared developer workflow became faster across the migrated repositories.');
+  });
+
   it('uses existing actions for close, minimize, maximize, restore, dock recovery, and focus placement', async () => {
     installFinePointer();
     const user = userEvent.setup();
