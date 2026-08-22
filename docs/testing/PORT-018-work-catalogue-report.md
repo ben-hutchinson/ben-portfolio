@@ -1,6 +1,6 @@
 # PORT-018 Tester verification report
 
-Status: **PASS — ready for Product Owner acceptance.**
+Status: **PASS — final detail-route preservation retest complete; ready for Product Owner acceptance.**
 
 ## Candidate and environment
 
@@ -64,3 +64,38 @@ At pre-fix Tester head `3af66fe`, the shared `MAXIMIZE_WINDOW` reducer branch in
 | `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4238 npx playwright test tests/e2e/work.spec.ts --project=Chromium --grep "preserves a direct Work detail"` | Expected RED — 1 failure, 0 passing. After Maximize Work, the browser URL was `#work`, not `#work/uv-ruff-migration`. |
 
 The Project-detail assertion is intentionally included in the reducer test because the fault is shared; the test stops at the first Work expectation, so the Developer must repair the shared branch rather than Work-specific rendering. Final GREEN verification must rerun the affected tests and required release matrix at the exact final Tester head, recording that commit explicitly before Product Owner acceptance.
+
+## Final detail-route preservation — GREEN verification
+
+- Exact tested code-and-tests head: `cfd2d1446f4ef1ad3028d611a9963282b1945f10` (`fix: preserve detail route on maximize`). This contains the production repair and the Tester-owned maximize-route regressions; this report commit records the resulting evidence only.
+- Date: 2026-08-22. Toolchain: Node `v24.19.0` from `/opt/homebrew/opt/node@24/bin`; Vitest `4.1.10`; Playwright `1.62.1`.
+- Fresh verification ports: Chromium focused `4239`, full E2E `4240`, axe `4241`; manual static preview `4242` at `http://127.0.0.1:4242/ben-portfolio/`. The existing local preview on `4230` was not disturbed.
+
+| Command | Result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/portfolioReducer.test.ts tests/component/WindowLayer.test.tsx` | PASS — 2 files, **48 tests**, 0 failed. The Work and Project detail preservation assertions are green. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/content.test.ts tests/unit/hashState.test.ts tests/unit/portfolioReducer.test.ts tests/unit/parseCommand.test.ts tests/component/WorkApp.test.tsx tests/component/Desktop.test.tsx tests/component/WindowLayer.test.tsx` | PASS — 7 files, **110 tests**, 0 failed. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` | PASS — exit 0. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run lint` | PASS — zero warnings/errors. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:coverage` | PASS — 22 files, **176 tests**, 0 failed. Statements **98.47%** (580/589), branches **91.33%** (432/473), functions **99.35%** (153/154), lines **99.61%** (513/515); all configured thresholds met. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run build` | PASS — static Vite build. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run check:bundle` | PASS — 98,215 gzip JS bytes / 204,800 budget; 118,529 initial image bytes / 1,048,576 budget. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4239 npx playwright test tests/e2e/work.spec.ts --project=Chromium --grep "preserves a direct Work detail"` | PASS — **1 passed**, 0 failed. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4240 npm run test:e2e` | PASS — **53 passed, 172 intentional skips, 0 failed** (225 total). |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4241 npm run test:e2e:a11y` | PASS — **3 passed, 12 intentional skips, 0 failed**. |
+| `git diff --check` | PASS — no whitespace errors before this evidence-only update; repeated before committing this report. |
+
+### Final manual retest
+
+| Check | Evidence | Result |
+| --- | --- | --- |
+| Direct Work detail, maximize, restore | At 1440×1000, `#work/uv-ruff-migration` retained its exact hash, visible Back control, outcome text, and no horizontal overflow after both Maximize and Restore. | PASS |
+| Project detail sentinel | At 1440×1000, `#projects/safelog` retained its exact hash and `SAFELOG` detail heading after both Maximize and Restore, proving the shared route branch remains intact. | PASS |
+| Work route resilience | At 1024×768, direct detail reload retained `#work/uv-ruff-migration`, Back, outcome, and no overflow. Keyboard Back returned to catalogue; browser Back returned to the detail hash and Forward returned to catalogue. Unknown `#work/unknown` recovered to `#desktop` with About visible. | PASS |
+| Mobile layout and switching | At 390×844, direct detail contained Public detail, had no horizontal overflow, and only `work` was focused; the Career dock control produced only focused `career`. At 320×568, direct Work detail had no horizontal overflow. | PASS |
+| Keyboard and Desktop regression | Keyboard Tab at 1440×1000 showed solid 3px focus outlines on Close, Minimize, Maximize, and named Work-catalogue open controls. The Micro terminal was visible at `#desktop` and absent at `#career`. | PASS |
+| Reduced motion and static base path | The full browser suite retained its reduced-motion coverage. All direct hashes were loaded from the GitHub Pages-compatible `/ben-portfolio/` static base without asset/runtime or console errors. | PASS |
+
+### Defect disposition
+
+The final-review defect is **fixed**: maximize/restore no longer resets a selected Work or Project detail to its catalogue route. The focused reducer/component and Chromium regressions, full suite, accessibility suite, and manual matrix are green. **No open PORT-018 defect remains.**
