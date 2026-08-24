@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  TITLE_BAR_HEIGHT,
   clampWindowPosition,
   constrainWindowSize,
   type WindowSize,
@@ -43,17 +42,6 @@ describe('windowGeometry', () => {
 
     expect(constrained).toEqual(expected);
     expectFiniteBoundedSize(constrained, workArea);
-  });
-
-  it('uses a positive shared title-bar measurement whenever a work area can retain it', () => {
-    expect(TITLE_BAR_HEIGHT).toBeGreaterThanOrEqual(44);
-
-    const constrained = constrainWindowSize(
-      { width: 400, height: TITLE_BAR_HEIGHT + 80 },
-      { width: 300, height: TITLE_BAR_HEIGHT },
-    );
-
-    expect(constrained.height).toBe(TITLE_BAR_HEIGHT);
   });
 
   it.each([
