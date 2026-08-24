@@ -8,7 +8,7 @@ Status: Approved visual and interaction direction
 
 The portfolio is a modern operating-system interface built from semantic web content.
 
-The operating system is the primary visual language. It is not a replica of a real desktop environment and not a wrapper around a conventional portfolio page. The desktop, windows, applications, menu bar, dock, and command interface form one coherent product.
+The operating system is the primary visual language. It is not a replica of a real desktop environment and not a wrapper around a conventional portfolio page. The Desktop, windows, five applications, identity-only menu bar, dock, and Micro terminal form one coherent product.
 
 Career is a distinct application inside that system. It may maximize to occupy the work area, but the shell remains visible and understandable. Its kinetic colour and typography are allowed to be more expressive than the desktop because it represents movement over time.
 
@@ -111,7 +111,6 @@ The display face should support heavy weights and tight tracking without looking
 
 ### Scale
 
-- Desktop background statement: fluid 64 to 170 pixels
 - Career year: fluid 92 to 210 pixels
 - Career headline: fluid 29 to 63 pixels
 - Window headline: 24 to 32 pixels
@@ -135,25 +134,7 @@ The desktop shell contains:
 
 The menu bar remains at the top of the shell.
 
-Left:
-
-- BH mark
-- Ben Hutchinson
-- Platform Engineer
-
-Centre on wide screens:
-
-- Desktop
-- Work
-- Career
-- Projects
-
-Right:
-
-- Manchester, UK
-- Availability state
-
-The menu bar is navigation, not decoration. Active state uses the coral underline and a subtle surface change.
+The menu bar is identity-only: Kernel mark, Ben Hutchinson, and Manchester, UK. It contains no application navigation, role, or availability status.
 
 ### Dock
 
@@ -166,8 +147,12 @@ Required items:
 - Career
 - Projects
 - Contact
-- Command
-- CV
+
+Utility actions:
+
+- GitHub
+- LinkedIn
+- Download CV
 
 The dock provides a predictable recovery path when windows overlap or an application is closed. Active applications show a small state indicator.
 
@@ -179,12 +164,12 @@ Desktop shortcuts are an optional secondary path for About, Career, and Work. Th
 
 On initial load, the desktop shows:
 
-- Profile window toward the upper left
-- Featured Work window toward the upper right
-- Command window lower and near the centre
-- Large, low-contrast background statement
+- Featured Work upper-right
+- Profile lower-left
+- Desktop shortcuts on capable viewports
+- Micro terminal bottom-right
 
-The flagship impact must remain readable without moving windows.
+There is no background statement. The flagship impact remains readable without moving windows. The permanent compact Micro terminal is an optional expert path, not a sixth application or a draggable window.
 
 ## 6. Window System
 
@@ -232,10 +217,9 @@ Career.app is the signature application.
 
 Career can open from:
 
-- Menu bar
 - Dock
 - Desktop shortcut
-- Command interface
+- Micro terminal
 - Direct #career hash
 
 The application opens in a large focused window. The user may maximize, minimize, or close it.
@@ -320,13 +304,7 @@ Avoid a long biography.
 
 ### Work
 
-Work opens with the SKAO case study and provides supporting professional evidence. Its default view is structured like a technical work file:
-
-- Problem
-- Ownership
-- Approach
-- Rollout
-- Outcome
+Work is a typed `workItems` catalogue with reusable detail and stable `#work/<work-id>` hashes, including `#work/uv-ruff-migration`. Its detail foregrounds Problem, ownership, approach, rollout, outcome, result, and public-detail boundaries; it has no Work technologies, technology pills, or inventory.
 
 Use diagrams only when they can be truthful without exposing confidential details.
 
@@ -338,9 +316,9 @@ Projects opens a catalogue view with Pokeleximon and Safelog. Selecting a projec
 
 Contact is deliberately simple. It surfaces direct external actions with obvious labels and does not mimic an email client.
 
-### Command
+### Micro terminal
 
-The command interface supports:
+The Desktop-owned Micro terminal is the optional expert path, rather than a sixth application. It supports:
 
 - help
 - about
@@ -369,7 +347,7 @@ Unknown commands return a helpful suggestion. Commands dispatch the same applica
 
 - Reduced default overlap
 - Fewer default windows visible at once
-- Menu navigation may collapse
+- The identity-only menu remains compact
 - Dock remains primary
 - Dragging may remain if a precise pointer is available
 - Career evidence card reduces in size
@@ -380,7 +358,7 @@ Unknown commands return a helpful suggestion. Commands dispatch the same applica
 - No required window dragging
 - Applications fill the work area
 - Dock becomes horizontally scrollable or a compact application switcher
-- Menu status becomes secondary
+- Menu identity remains secondary
 - Desktop shortcuts may be omitted
 - Career uses a single content column
 - Range input remains, with year buttons above or below
@@ -420,7 +398,7 @@ Do not use:
 ### Keyboard
 
 - Skip link enters primary portfolio content.
-- Menu and dock use ordinary buttons or links.
+- Dock controls use ordinary buttons or links.
 - Tab order follows application and content order, not visual z-index.
 - Window title bars are not the only focus target.
 - Career range supports arrow keys.
@@ -433,7 +411,7 @@ Do not use:
 - Shell, desktop, navigation, and applications have clear labels.
 - Application state changes are announced sparingly.
 - Window position is not announced because it is not meaningful content.
-- Decorative desktop pattern and background statement are hidden.
+- Decorative desktop pattern is hidden.
 - Project and career content exists as text in the document.
 
 ### Reduced motion
@@ -461,13 +439,14 @@ PortfolioRoot
       WindowLayer
         ProfileWindow
         FeaturedWorkWindow
-        CommandWindow
+        MicroTerminal
         ApplicationWindow
     Dock
     LiveRegion
 
 ApplicationWindow renders one of:
 
+- AboutApp
 - WorkApp
 - CareerApp
 - ProjectsApp
@@ -486,6 +465,7 @@ Use one reducer for:
 - Desktop window positions
 - Active career stage
 - Active project
+- activeWorkId
 
 Do not distribute shell state across unrelated local hooks.
 
@@ -495,6 +475,8 @@ Map supported hashes to application state:
 
 - #desktop
 - #work
+- #work/<work-id>
+- #work/uv-ruff-migration
 - #career
 - #projects
 - #projects/pokeleximon
@@ -509,7 +491,7 @@ Keep professional content in typed data modules:
 
 - profile
 - careerStages
-- workEntries
+- workItems
 - projects
 - externalLinks
 - commandRegistry

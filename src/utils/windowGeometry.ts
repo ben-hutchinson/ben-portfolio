@@ -10,8 +10,6 @@ export interface WindowWorkArea {
   readonly height: number;
 }
 
-export const TITLE_BAR_HEIGHT = 44;
-
 function finiteNonNegative(value: number): number {
   return Number.isFinite(value) && value > 0 ? value : 0;
 }

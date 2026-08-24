@@ -8,5 +8,6 @@ test-results/
 .superpowers/
 *.tsbuildinfo
 .playwright-mcp/
+.playwright-cli/
 .worktrees/
 /*.png

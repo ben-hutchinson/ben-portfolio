@@ -27,11 +27,6 @@
 
 .resetButton:hover { background: var(--color-yellow); }
 
-.appContent { max-width: 46rem; }
-.appContent > :first-child { margin-top: 0; }
-.appContent > :last-child { margin-bottom: 0; }
-.eyebrow { color: var(--color-muted); font-size: 0.72rem; font-weight: 900; text-transform: uppercase; }
-
 @media (max-width: 767px), (pointer: coarse), (pointer: none) {
   .layer {
     display: flex;

@@ -69,7 +69,7 @@ Windows, applications, commands, and the dock represent bounded tools and paved 
 
 ### Two valid browsing modes
 
-Explorers can drag windows, use the terminal, scrub the career timeline, and open applications. Scanners can use the menu bar, dock, keyboard, or direct hash links.
+Explorers can drag windows, use the Desktop-owned Micro terminal, scrub the career timeline, and open applications. Scanners can use desktop shortcuts, the dock, keyboard, or direct hash links.
 
 ### Professional content is canonical
 
@@ -95,45 +95,25 @@ The redesign succeeds when:
 
 ## 7. Approved Information Architecture
 
-The portfolio contains one shell and five primary applications:
+The portfolio contains one Desktop shell and five primary applications:
 
-1. Desktop
+1. About
 2. Work
 3. Career
 4. Projects
 5. Contact
 
-CV, GitHub, and LinkedIn are persistent external actions.
+The dock has exactly five application controls—About, Work, Career, Projects, Contact—plus GitHub, LinkedIn, and Download CV utility actions.
 
 ### Desktop
 
-The default view contains:
-
-- Ben's name and role in the menu bar
-- Location and availability status
-- A concise positioning statement
-- A featured-impact window
-- A profile window
-- An optional command window
-- Desktop shortcuts
-- Persistent dock navigation
+The identity-only menu bar contains the Kernel mark, Ben Hutchinson, and Manchester, UK; it has no duplicated application navigation, role, or availability. The default Desktop composition has Featured Work upper-right, Profile lower-left, Desktop shortcuts on capable viewports, and a permanent compact Micro terminal bottom-right. The Micro terminal is an optional expert path, not a sixth application or a draggable window. There is no background statement.
 
 There is no splash screen, boot sequence, loading bar, character selection, or artificial delay.
 
 ### Work application
 
-Work presents professional evidence. The SKAO tooling migration is the flagship case study.
-
-The case study must include:
-
-- Context
-- Friction or problem
-- Ben's ownership
-- Technical approach
-- Rollout approach
-- Result
-- Technologies
-- Public-detail boundaries
+Work is a typed catalogue with reusable detail and stable `#work/<work-id>` hashes, including the accepted `#work/uv-ruff-migration` route. It foregrounds Problem, ownership, approach, rollout, outcome, result, and public-detail boundaries. There are no Work technologies, technology pills, or technology inventory.
 
 Professional work with limited public detail uses an honest, concise summary rather than invented diagrams or metrics.
 
@@ -196,7 +176,7 @@ Contact provides:
 - Location
 - Availability statement
 
-The terminal may open Contact, but terminal use is optional.
+The Micro terminal may open Contact, but terminal use is optional.
 
 ## 8. Core User Journeys
 
@@ -219,7 +199,7 @@ The terminal may open Contact, but terminal use is optional.
 1. Drag and focus desktop windows.
 2. Launch applications from the dock.
 3. Scrub Career.
-4. Use the command interface.
+4. Use the Micro terminal.
 5. Discover optional small personal details.
 
 ### Direct-link journey
@@ -232,19 +212,20 @@ The terminal may open Contact, but terminal use is optional.
 
 ### Operating-system shell
 
-- Menu bar with identity, primary navigation, and status
+- Identity-only menu bar with the Kernel mark, Ben Hutchinson, and Manchester, UK
 - Desktop with bounded draggable windows on capable viewports
-- Dock with primary applications and persistent external actions
+- Dock with exactly five application controls and GitHub, LinkedIn, and Download CV utilities
 - Focused window rises above other windows
 - Minimize, maximize, close, and restore states
 - Reset-layout action
 - Window positions constrained to a recoverable visible area
 - Essential content unaffected by window position
 
-### Command interface
+### Micro terminal
 
+- The permanent compact Micro terminal belongs to Desktop and is not an application
 - Supports discoverable commands for career, work, projects, contact, help, and reset
-- Provides autocomplete or visible command suggestions
+- Provides visible command suggestions
 - Never executes arbitrary code
 - Never becomes the only navigation method
 - Gives clear feedback for unknown commands
@@ -252,13 +233,13 @@ The terminal may open Contact, but terminal use is optional.
 ### Navigation and URLs
 
 - Uses static-host-safe hash navigation
-- Supports Desktop, Work, Career, Projects, individual project details, and Contact
+- Supports Desktop, Work, `#work/<work-id>` detail routes including `#work/uv-ruff-migration`, Career, Projects, individual project details, and Contact
 - Synchronizes UI state with browser back and forward
 - Does not require a history fallback
 
 ### Content
 
-- Typed, data-driven career and project entries
+- Typed, data-driven career, `workItems`, and project entries
 - No professional evidence hardcoded across multiple components
 - No runtime fetch required for core content
 - External links are verified before release
@@ -268,7 +249,7 @@ The terminal may open Contact, but terminal use is optional.
 
 - One active application at a time
 - No overlapping draggable-window requirement
-- Menu and dock become compact application navigation
+- Dock becomes compact application navigation while the menu remains identity-only
 - Career retains year buttons and a range control
 - Project details use a readable full-width view
 - All content scrolls naturally

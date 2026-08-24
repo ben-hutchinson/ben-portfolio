@@ -1,7 +1,6 @@
 import { useReducedMotion } from 'motion/react';
 import type { JSX } from 'react';
 import { usePortfolio } from '../../app/PortfolioContext';
-import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 import { careerStages } from '../../data/career';
 import { CAREER_DIRECT_LABELS, CareerControls } from './CareerControls';
 import { CareerStage } from './CareerStage';
@@ -10,8 +9,7 @@ import styles from './CareerApp.module.css';
 export function CareerApp(): JSX.Element {
   const { state, dispatch } = usePortfolio();
   const motionPreference = useReducedMotion();
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const reducedMotion = motionPreference === true || prefersReducedMotion;
+  const reducedMotion = motionPreference === true;
   const derivedIndex = careerStages.findIndex((stage) => stage.id === state.activeCareerStageId);
   const activeIndex = derivedIndex >= 0 ? derivedIndex : 0;
   const activeStage = careerStages[activeIndex];

@@ -10,8 +10,6 @@ export type CommandResult =
 
 export interface CommandDefinition {
   readonly name: string;
-  readonly usage: string;
-  readonly description: string;
   execute(args: readonly string[]): CommandResult;
 }
 
@@ -25,18 +23,18 @@ const projectIds: readonly ProjectId[] = ['pokeleximon', 'safelog'];
 
 export const commandRegistry: readonly CommandDefinition[] = [
   {
-    name: 'help', usage: 'help', description: 'Show this command guide',
+    name: 'help',
     execute: () => ({
       kind: 'message',
       output: `Try: help, about, work, work <${workIds.join(', ')}>, career, projects, project <pokeleximon|safelog>, contact, cv, reset, clear.`,
     }),
   },
   {
-    name: 'about', usage: 'about', description: 'Open Ben’s profile',
+    name: 'about',
     execute: () => ({ kind: 'action', output: 'Opening about.', action: { type: 'OPEN_APP', appId: 'about' } }),
   },
   {
-    name: 'work', usage: 'work [case-study-id]', description: 'Open the professional work catalogue or a case study',
+    name: 'work',
     execute: (args) => {
       const workId = args[0];
       if (workId === undefined) return route('work')([]);
@@ -50,10 +48,10 @@ export const commandRegistry: readonly CommandDefinition[] = [
       };
     },
   },
-  { name: 'career', usage: 'career', description: 'Open the career timeline', execute: route('career') },
-  { name: 'projects', usage: 'projects', description: 'Open the project catalogue', execute: route('projects') },
+  { name: 'career', execute: route('career') },
+  { name: 'projects', execute: route('projects') },
   {
-    name: 'project', usage: 'project <pokeleximon|safelog>', description: 'Open a project case study',
+    name: 'project',
     execute: (args) => {
       const projectId = args[0];
       if (projectId === undefined) return { kind: 'message', output: 'Choose a project: pokeleximon or safelog.' };
@@ -65,14 +63,14 @@ export const commandRegistry: readonly CommandDefinition[] = [
       };
     },
   },
-  { name: 'contact', usage: 'contact', description: 'Open direct contact options', execute: route('contact') },
+  { name: 'contact', execute: route('contact') },
   {
-    name: 'cv', usage: 'cv', description: 'Show the CV download',
+    name: 'cv',
     execute: () => ({ kind: 'download', output: 'CV ready to download.' }),
   },
   {
-    name: 'reset', usage: 'reset', description: 'Restore the desktop layout',
+    name: 'reset',
     execute: () => ({ kind: 'action', output: 'Desktop layout reset.', action: { type: 'RESET_LAYOUT' } }),
   },
-  { name: 'clear', usage: 'clear', description: 'Clear command output', execute: () => ({ kind: 'clear' }) },
+  { name: 'clear', execute: () => ({ kind: 'clear' }) },
 ];
