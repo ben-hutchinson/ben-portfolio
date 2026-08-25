@@ -173,7 +173,7 @@ Suggested structure:
   - commands
 - src/hooks
   - useHashNavigation
-  - usePrefersReducedMotion
+  - useMediaQuery
   - useWindowDrag
 - src/styles
   - global.css
@@ -201,9 +201,9 @@ State should cover:
 - Window positions
 - Active career stage
 - Active project
-- Command history needed for the current session
+- Command-focus requests needed by the Desktop Micro terminal
 
-Application actions should be shared by dock controls, menu controls, desktop shortcuts, hashes, and commands. Do not implement separate navigation logic for each surface.
+Application actions should be shared by dock controls, desktop shortcuts, hashes, and the Micro terminal. Do not implement separate navigation logic for each surface.
 
 Do not persist window positions in the initial release. Persisting arbitrary positions creates recovery and breakpoint problems without improving the recruiter journey.
 
@@ -215,11 +215,11 @@ Owns shell composition and reducer wiring.
 
 ### MenuBar
 
-Owns identity, primary navigation, and status presentation.
+Owns the Kernel identity mark, Ben's name, and location. It does not duplicate application navigation, role, or availability.
 
 ### Desktop
 
-Owns wallpaper, shortcuts, and default composition.
+Owns the desktop surface, shortcuts, permanent Micro terminal utility, and default composition.
 
 ### WindowLayer
 
@@ -237,9 +237,9 @@ Dispatches application actions and exposes open or active state.
 
 Owns the kinetic career presentation and direct stage controls. Career content comes from typed data.
 
-### CommandApp
+### MicroTerminal
 
-Parses only known commands and dispatches ordinary shell actions. It never evaluates code or arbitrary input.
+Parses only allow-listed commands and dispatches ordinary shell actions. It is a Desktop utility, not a window-managed application, and it never evaluates code or arbitrary input.
 
 ## 10. Styling Rules
 
