@@ -439,8 +439,8 @@ PortfolioRoot
       WindowLayer
         ProfileWindow
         FeaturedWorkWindow
-        MicroTerminal
         ApplicationWindow
+      MicroTerminal
     Dock
     LiveRegion
 
