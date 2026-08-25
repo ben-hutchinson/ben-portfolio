@@ -104,3 +104,24 @@ The static-hosting browser suite independently covered same-origin resource fail
 ### Defects and disposition
 
 The initial test-only Motion media-query defect is corrected in `08aeb1d`; production was already correct. No production, dependency, CSP/referrer, deployment, visual-baseline, or protected-artifact drift was introduced. **No open PORT-019 defect remains.**
+
+## Final-review shallow-checkout correction
+
+A final-review Critical blocker identified that the release-audit test read the three immutable release inputs through `git show 151456d:<path>`. GitHub's pinned `actions/checkout` v4 uses a shallow checkout by default, so a fresh checkout cannot resolve that historical object even when the working-tree files are correct.
+
+The premise was reproduced without changing the repository: `git clone --depth 1 file:///Users/ben.hutchinson/code/personal/ben-portfolio` reported `shallow=true`, and `git cat-file -e '151456d^{commit}'` failed because the historical object was absent. The release audit now hashes the raw current file bytes against literal, history-independent SHA-256 contracts while retaining its `git ls-files` hygiene coverage:
+
+| File | SHA-256 |
+| --- | --- |
+| `package.json` | `8683a71b1187d9bffd610e3a8cbc78d1340e6135c5c95d8daa52e24d04872d71` |
+| `package-lock.json` | `9673b4caf416cde42bcfc5e87635381c279d81f4fe54695151ff70aa559f5f00` |
+| `index.html` | `a3c6b6a4c021ff9480dc4effafc4fb581ea6d875088cce8039b6077ee47c210d` |
+
+The assertion remains byte-integrity coverage (the test reads each file as a `Buffer` before hashing); it no longer depends on repository history. The workflow behavior itself is unchanged.
+
+| Command | Result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts` | PASS — **1 file, 7 tests**, 0 failed. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts tests/unit/windowGeometry.test.ts tests/unit/parseCommand.test.ts tests/component/CareerApp.test.tsx tests/component/ProjectsApp.test.tsx` | PASS — **5 files, 45 tests**, 0 failed. |
+
+No Tester-owned or production concern remains from this correction.

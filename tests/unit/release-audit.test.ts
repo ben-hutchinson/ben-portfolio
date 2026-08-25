@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import path from 'node:path';
@@ -7,6 +8,11 @@ import { describe, expect, it } from 'vitest';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const execFileAsync = promisify(execFile);
+const releaseInputSha256 = {
+  'package.json': '8683a71b1187d9bffd610e3a8cbc78d1340e6135c5c95d8daa52e24d04872d71',
+  'package-lock.json': '9673b4caf416cde42bcfc5e87635381c279d81f4fe54695151ff70aa559f5f00',
+  'index.html': 'a3c6b6a4c021ff9480dc4effafc4fb581ea6d875088cce8039b6077ee47c210d',
+} as const;
 
 async function trackedFiles(): Promise<readonly string[]> {
   const { stdout } = await execFileAsync('git', ['ls-files'], { cwd: repositoryRoot });
@@ -17,9 +23,8 @@ async function expectMissing(relativePath: string): Promise<void> {
   await expect(stat(path.join(repositoryRoot, relativePath))).rejects.toMatchObject({ code: 'ENOENT' });
 }
 
-async function gitShow(revision: string, relativePath: string): Promise<string> {
-  const { stdout } = await execFileAsync('git', ['show', `${revision}:${relativePath}`], { cwd: repositoryRoot });
-  return stdout;
+function sha256(contents: Uint8Array): string {
+  return createHash('sha256').update(contents).digest('hex');
 }
 
 async function filesBelow(directory: string): Promise<string[]> {
@@ -265,9 +270,9 @@ describe('PORT-019 release hardening', () => {
     const [qualityWorkflow, pagesWorkflow, packageManifest, packageLock, html] = await Promise.all([
       readFile(path.join(repositoryRoot, '.github/workflows/quality.yml'), 'utf8'),
       readFile(path.join(repositoryRoot, '.github/workflows/gh-pages.yml'), 'utf8'),
-      readFile(path.join(repositoryRoot, 'package.json'), 'utf8'),
-      readFile(path.join(repositoryRoot, 'package-lock.json'), 'utf8'),
-      readFile(path.join(repositoryRoot, 'index.html'), 'utf8'),
+      readFile(path.join(repositoryRoot, 'package.json')),
+      readFile(path.join(repositoryRoot, 'package-lock.json')),
+      readFile(path.join(repositoryRoot, 'index.html')),
     ]);
     const workflows = `${qualityWorkflow}\n${pagesWorkflow}`;
 
@@ -284,8 +289,8 @@ describe('PORT-019 release hardening', () => {
     expect(workflows).not.toMatch(/uses:\s+actions\/(?:checkout|setup-node|upload-artifact|download-artifact|upload-pages-artifact|deploy-pages)@v\d+/);
     expect(qualityWorkflow).toContain('npm run test:e2e');
     expect(pagesWorkflow).toContain("if: github.ref == 'refs/heads/master'");
-    expect(packageManifest).toBe(await gitShow('151456d', 'package.json'));
-    expect(packageLock).toBe(await gitShow('151456d', 'package-lock.json'));
-    expect(html).toBe(await gitShow('151456d', 'index.html'));
+    expect(sha256(packageManifest)).toBe(releaseInputSha256['package.json']);
+    expect(sha256(packageLock)).toBe(releaseInputSha256['package-lock.json']);
+    expect(sha256(html)).toBe(releaseInputSha256['index.html']);
   });
 });
