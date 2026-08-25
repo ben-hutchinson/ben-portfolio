@@ -1,80 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+@import './tokens.css';
+
+* { box-sizing: border-box; }
 
 :root {
-  --surface-root: linear-gradient(140deg, #030814, #071224 45%, #081832);
-  --surface-panel: linear-gradient(170deg, rgba(6, 20, 44, 0.88), rgba(8, 28, 61, 0.82));
-  --surface-elevated: rgba(8, 33, 70, 0.92);
-  --stroke: rgba(97, 170, 255, 0.4);
-  --accent-cyan: #63f7eb;
-  --accent-purple: #9f85ff;
-  --accent-warm: #f7c46f;
-  --text-primary: #eff7ff;
-  --text-secondary: #b4c6db;
-  --focus-ring: #ffe285;
+  color: var(--color-ink);
+  background: var(--color-charcoal);
+  font-family: var(--font-ui);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
-* {
-  box-sizing: border-box;
-}
+html { background: var(--color-charcoal); }
 
-html,
-body,
-#root {
-  width: 100%;
-  min-height: 100%;
-  height: 100%;
-  margin: 0;
+body { min-height: 100vh; margin: 0; background: var(--color-charcoal); }
+
+button, a { font: inherit; }
+
+a { color: inherit; }
+
+button { cursor: pointer; }
+
+:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-offset); }
+
+#root { min-height: 100vh; }
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   padding: 0;
-}
-
-body {
-  font-family: 'Outfit', 'Segoe UI', sans-serif;
-  color: var(--text-primary);
-  background: #050b17;
+  margin: -1px;
   overflow: hidden;
-}
-
-h1,
-h2,
-h3,
-h4,
-button,
-[role='tab'] {
-  font-family: 'Press Start 2P', 'Outfit', sans-serif;
-}
-
-p,
-li,
-label,
-a,
-span {
-  line-height: 1.5;
-}
-
-a {
-  color: inherit;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
-}
-
-:focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 2px;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 1ms !important; animation-duration: 1ms !important; animation-iteration-count: 1 !important; }
 }

@@ -1,0 +1,23 @@
+import { DesktopShortcut, type DesktopShortcutAppId } from './DesktopShortcut';
+import { MicroTerminal } from '../apps/command/MicroTerminal';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { WindowLayer } from './WindowLayer';
+import styles from './Desktop.module.css';
+
+const SHORTCUT_APP_IDS: readonly DesktopShortcutAppId[] = ['about', 'career', 'work'];
+
+export function Desktop() {
+  const showShortcuts = useMediaQuery('(min-width: 768px) and (pointer: fine)');
+
+  return (
+    <div className={styles.desktop}>
+      {showShortcuts ? (
+        <div className={styles.shortcuts} aria-label="Desktop shortcuts">
+          {SHORTCUT_APP_IDS.map((appId) => <DesktopShortcut appId={appId} key={appId} />)}
+        </div>
+      ) : null}
+      <WindowLayer />
+      <MicroTerminal />
+    </div>
+  );
+}

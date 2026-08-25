@@ -1,0 +1,275 @@
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type JSX, type ReactNode } from 'react';
+import { AboutApp } from '../apps/about/AboutApp';
+import { CareerApp } from '../apps/career/CareerApp';
+import { ContactApp } from '../apps/contact/ContactApp';
+import { ProjectDetailApp } from '../apps/projects/ProjectDetailApp';
+import { ProjectsApp } from '../apps/projects/ProjectsApp';
+import { FeaturedWork } from '../apps/work/FeaturedWork';
+import { WorkDetailApp } from '../apps/work/WorkDetailApp';
+import { WorkApp } from '../apps/work/WorkApp';
+import { usePortfolio } from '../app/PortfolioContext';
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import type { PortfolioState } from '../app/portfolioState';
+import type { AppId } from '../data/models';
+import { clampWindowPosition, type WindowSize, type WindowWorkArea } from '../utils/windowGeometry';
+import { WindowFrame } from './WindowFrame';
+import styles from './WindowLayer.module.css';
+
+export const WINDOW_APP_ORDER = ['about', 'work', 'career', 'projects', 'contact'] as const;
+
+const WINDOW_TITLES: Readonly<Record<AppId, string>> = {
+  about: 'About',
+  work: 'Work',
+  career: 'Career',
+  projects: 'Projects',
+  contact: 'Contact',
+};
+
+const WINDOW_SIZES: Readonly<Record<AppId, WindowSize>> = {
+  about: { width: 520, height: 360 },
+  work: { width: 620, height: 340 },
+  career: { width: 1080, height: 650 },
+  projects: { width: 520, height: 320 },
+  contact: { width: 480, height: 300 },
+};
+
+function appContent(appId: AppId, state: PortfolioState): ReactNode {
+  switch (appId) {
+    case 'about':
+      return <AboutApp />;
+    case 'work':
+      return state.route.kind === 'work'
+        ? <WorkApp />
+        : state.route.kind === 'workDetail' ? <WorkDetailApp /> : <FeaturedWork />;
+    case 'career':
+      return <CareerApp />;
+    case 'projects':
+      return state.route.kind === 'project' ? <ProjectDetailApp /> : <ProjectsApp />;
+    case 'contact':
+      return <ContactApp />;
+  }
+}
+
+function windowSize(appId: AppId, state: PortfolioState): WindowSize {
+  if ((appId === 'work' && (state.route.kind === 'work' || state.route.kind === 'workDetail'))
+    || (appId === 'projects' && (state.route.kind === 'projects' || state.route.kind === 'project'))) {
+    return { width: 1040, height: 650 };
+  }
+  if (appId === 'contact' && state.route.kind === 'contact') return { width: 760, height: 600 };
+  return WINDOW_SIZES[appId];
+}
+
+function getWorkArea(element: HTMLElement | null): WindowWorkArea {
+  if (element === null) return { width: 0, height: 0 };
+  const rect = element.getBoundingClientRect();
+  return { width: rect.width, height: rect.height };
+}
+
+function visibleAppIds(state: PortfolioState): readonly AppId[] {
+  return WINDOW_APP_ORDER.filter((appId) => (
+    state.openAppIds.includes(appId) && !state.minimizedAppIds.includes(appId)
+  ));
+}
+
+function routeAppId(state: PortfolioState): AppId | null {
+  switch (state.route.kind) {
+    case 'work':
+    case 'workDetail':
+      return 'work';
+    case 'career':
+      return 'career';
+    case 'projects':
+    case 'project':
+      return 'projects';
+    case 'contact':
+      return 'contact';
+    case 'desktop':
+      return null;
+  }
+}
+
+function focusFrameHeading(appId: AppId): void {
+  const frame = document.querySelector<HTMLElement>(`[data-window-id="${appId}"]`);
+  const heading = frame?.querySelector<HTMLElement>('[data-window-title]');
+  const firstControl = frame?.querySelector<HTMLElement>('[data-window-control]');
+  (heading ?? firstControl)?.focus();
+}
+
+export function WindowLayer(): JSX.Element {
+  const { state, dispatch } = usePortfolio();
+  const layerRef = useRef<HTMLDivElement>(null);
+  const stateRef = useRef(state);
+  const previousVisibleRef = useRef<readonly AppId[]>(visibleAppIds(state));
+  const previousMaximizedRef = useRef<AppId | null>(state.maximizedAppId);
+  const pendingFocusFallbackRef = useRef<AppId | null>(null);
+  const [workArea, setWorkArea] = useState<WindowWorkArea>(() => getWorkArea(null));
+  const desktopCapable = useMediaQuery('(min-width: 768px) and (pointer: fine)');
+  stateRef.current = state;
+
+  const desktopCapableRef = useRef(desktopCapable);
+  desktopCapableRef.current = desktopCapable;
+  const allVisibleIds = visibleAppIds(state);
+  const activeRouteAppId = routeAppId(state);
+  const renderedAppIds = activeRouteAppId === null
+    ? allVisibleIds
+    : [activeRouteAppId, ...allVisibleIds.filter((appId) => appId !== activeRouteAppId)];
+  const activeDisplayedIds = desktopCapable
+    ? allVisibleIds
+    : allVisibleIds.filter((appId) => appId === state.focusedAppId).slice(0, 1);
+  const displayedIds = activeDisplayedIds.length > 0
+    ? activeDisplayedIds
+    : desktopCapable ? activeDisplayedIds : allVisibleIds.slice(0, 1);
+
+  useLayoutEffect(() => {
+    const element = layerRef.current;
+    if (element === null) return undefined;
+
+    const updateWorkArea = (next: WindowWorkArea) => {
+      setWorkArea((current) => (
+        current.width === next.width && current.height === next.height ? current : next
+      ));
+    };
+    if (desktopCapableRef.current) updateWorkArea(getWorkArea(element));
+
+    if (typeof ResizeObserver !== 'function') return undefined;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry && desktopCapableRef.current) {
+        updateWorkArea({ width: entry.contentRect.width, height: entry.contentRect.height });
+      }
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [desktopCapable]);
+
+  useLayoutEffect(() => {
+    const frames = layerRef.current?.querySelectorAll<HTMLElement>('[data-window-id]') ?? [];
+    for (const frame of frames) {
+      const isInactiveSingleApp = !desktopCapable && frame.dataset.windowId !== state.focusedAppId;
+      frame.style.display = isInactiveSingleApp ? 'none' : '';
+    }
+  }, [desktopCapable, state.focusedAppId, state.openAppIds, state.minimizedAppIds]);
+
+  useEffect(() => {
+    if (!desktopCapable || workArea.width <= 0 || workArea.height <= 0) return;
+    for (const appId of visibleAppIds(state)) {
+      if (state.maximizedAppId === appId) continue;
+      const current = state.windowPositions[appId];
+      const normalized = clampWindowPosition(
+        current,
+        current,
+        windowSize(appId, state),
+        workArea,
+      );
+      if (normalized.x !== current.x || normalized.y !== current.y) {
+        dispatch({ type: 'MOVE_WINDOW', appId, position: normalized });
+      }
+    }
+  }, [desktopCapable, dispatch, state, workArea]);
+
+  useLayoutEffect(() => {
+    const pendingFallback = pendingFocusFallbackRef.current;
+    if (pendingFallback !== null) {
+      pendingFocusFallbackRef.current = null;
+      const activeElement = document.activeElement;
+      if (activeElement === document.body || activeElement === null) {
+        const dockControl = document.querySelector<HTMLButtonElement>(
+          `[data-dock-app-id="${pendingFallback}"]`,
+        );
+        if (dockControl && !dockControl.disabled) dockControl.focus();
+        else document.getElementById('main-content')?.focus();
+      }
+    }
+
+    const previousVisible = previousVisibleRef.current;
+    const newlyDisplayed = displayedIds.find((appId) => !previousVisible.includes(appId));
+    const restored = previousMaximizedRef.current !== null
+      && previousMaximizedRef.current === state.focusedAppId
+      && state.maximizedAppId !== previousMaximizedRef.current
+      ? previousMaximizedRef.current
+      : null;
+    const focusTarget = newlyDisplayed ?? restored;
+    if (focusTarget !== undefined && focusTarget !== null) {
+      const activeElement = document.activeElement;
+      const dockControl = document.querySelector(`[data-dock-app-id="${focusTarget}"]`);
+      const resetControl = document.querySelector('[data-window-control="reset-layout"]');
+      const frame = document.querySelector(`[data-window-id="${focusTarget}"]`);
+      const restoredFromInsideFrame = restored !== null && frame?.contains(activeElement);
+      if (activeElement === dockControl || activeElement === resetControl || restoredFromInsideFrame) {
+        focusFrameHeading(focusTarget);
+      }
+    }
+
+    previousVisibleRef.current = displayedIds;
+    previousMaximizedRef.current = state.maximizedAppId;
+  }, [displayedIds, state.focusedAppId, state.maximizedAppId]);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      const maximizedAppId = stateRef.current.maximizedAppId;
+      if (maximizedAppId === null || !(event.target instanceof Node)) return;
+      const frame = document.querySelector(`[data-window-id="${maximizedAppId}"]`);
+      if (!frame?.contains(event.target)) return;
+      event.preventDefault();
+      dispatch({ type: 'RESTORE_WINDOW', appId: maximizedAppId });
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [dispatch]);
+
+  const hideWindow = useCallback((appId: AppId, type: 'CLOSE_WINDOW' | 'MINIMIZE_WINDOW') => {
+    const frame = document.querySelector(`[data-window-id="${appId}"]`);
+    if (frame?.contains(document.activeElement)) pendingFocusFallbackRef.current = appId;
+    dispatch({ type, appId });
+  }, [dispatch]);
+
+  return (
+    <div
+      className={styles.layer}
+      data-desktop-windows={desktopCapable || undefined}
+      data-mobile-windows={!desktopCapable || undefined}
+      ref={layerRef}
+    >
+      {renderedAppIds.map((appId) => {
+        const title = WINDOW_TITLES[appId];
+        const isMaximized = state.maximizedAppId === appId;
+        const size = windowSize(appId, state);
+        return (
+          <WindowFrame
+            appId={appId}
+            title={title}
+            titleIsHeading={activeRouteAppId !== appId}
+            position={state.windowPositions[appId]}
+            size={size}
+            workArea={workArea}
+            zIndex={state.windowOrder.indexOf(appId) + 1}
+            isFocused={state.focusedAppId === appId}
+            isMaximized={isMaximized}
+            dragEnabled={desktopCapable}
+            onFocus={() => dispatch({ type: 'FOCUS_WINDOW', appId })}
+            onPositionChange={(position) => dispatch({ type: 'MOVE_WINDOW', appId, position })}
+            onClose={() => hideWindow(appId, 'CLOSE_WINDOW')}
+            onMinimize={() => hideWindow(appId, 'MINIMIZE_WINDOW')}
+            onMaximize={() => {
+              dispatch({ type: isMaximized ? 'RESTORE_WINDOW' : 'MAXIMIZE_WINDOW', appId });
+            }}
+            key={appId}
+          >
+            {appContent(appId, state)}
+          </WindowFrame>
+        );
+      })}
+      <div className={styles.utilities}>
+        <button
+          className={styles.resetButton}
+          type="button"
+          data-window-control="reset-layout"
+          onClick={() => dispatch({ type: 'RESET_LAYOUT' })}
+        >
+          Reset layout
+        </button>
+      </div>
+    </div>
+  );
+}

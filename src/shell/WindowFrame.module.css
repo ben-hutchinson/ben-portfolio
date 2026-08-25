@@ -1,0 +1,105 @@
+.frame {
+  position: absolute;
+  inset: 0 auto auto 0;
+  display: flex;
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  overflow: hidden;
+  border: var(--border-heavy) solid var(--color-ink);
+  border-radius: var(--radius-control);
+  background: var(--color-paper);
+  box-shadow: var(--shadow-hard);
+  flex-direction: column;
+}
+
+.frame[data-focused='true'] { box-shadow: 7px 7px 0 var(--color-ink); }
+
+.frame[data-maximized='true'] {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-inline-size: none;
+  max-block-size: none;
+  border-radius: 0;
+  transform: none;
+}
+
+.titleBar {
+  display: flex;
+  min-height: 44px;
+  align-items: stretch;
+  justify-content: space-between;
+  border-bottom: 0;
+  background: var(--color-yellow);
+  box-shadow: inset 0 calc(-1 * var(--border-heavy)) 0 var(--color-ink);
+  touch-action: none;
+  user-select: none;
+}
+
+.frame[data-drag-enabled='true'] .titleBar { cursor: grab; }
+.frame[data-dragging='true'] .titleBar { cursor: grabbing; }
+
+.title {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.controls { display: flex; flex: 0 0 auto; }
+
+.control {
+  display: grid;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-left: var(--border-width) solid var(--color-ink);
+  background: var(--color-paper);
+  box-shadow: inset 0 calc(-1 * var(--border-heavy)) 0 var(--color-ink);
+  color: var(--color-ink);
+  font-size: 1.25rem;
+  font-weight: 900;
+  place-items: center;
+}
+
+.control:hover { background: var(--color-mint); }
+.control:first-child:hover { background: var(--color-orange); }
+
+.content {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-4);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.content:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: calc(-1 * var(--focus-width));
+}
+
+@media (max-width: 767px), (pointer: coarse), (pointer: none) {
+  .frame,
+  .frame[data-maximized='true'] {
+    position: relative;
+    inset: auto;
+    width: 100% !important;
+    height: auto !important;
+    max-block-size: none;
+    border-radius: var(--radius-control);
+    transform: none !important;
+  }
+
+  .content { overflow: visible; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame { transition: none; }
+}

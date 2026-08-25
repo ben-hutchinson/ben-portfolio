@@ -1,0 +1,11 @@
+.page { min-height: 100vh; padding: clamp(var(--space-2), 1.5vw, var(--space-4)); background: var(--color-charcoal); }
+.frame { display: flex; width: min(100%, 98rem); min-height: calc(100vh - 2 * clamp(var(--space-2), 1.5vw, var(--space-4))); margin: 0 auto; overflow: hidden; border: var(--border-heavy) solid var(--color-ink); border-radius: var(--radius-frame); background: var(--color-mint); box-shadow: 9px 9px 0 var(--color-ink); flex-direction: column; }
+.header { flex: 0 0 auto; }
+.main { position: relative; display: flex; flex: 1 1 auto; min-height: 42rem; overflow: hidden; }
+.footer { flex: 0 0 auto; }
+
+@media (max-width: 767px), (pointer: coarse), (pointer: none) {
+  .page { padding: var(--space-2); }
+  .frame { min-height: calc(100vh - var(--space-2) - var(--space-2)); overflow: visible; border-radius: 10px; box-shadow: 5px 5px 0 var(--color-ink); }
+  .main { min-height: 0; overflow: visible; }
+}

@@ -1,0 +1,15 @@
+.detail { display: grid; width: 100%; max-width: 64rem; min-width: 0; margin: 0 auto; gap: var(--space-4); }
+.back { width: fit-content; min-height: 44px; padding: .55rem .8rem; border: var(--border-width) solid var(--color-ink); background: var(--color-paper); box-shadow: var(--shadow-hard-small); color: var(--color-ink); font-weight: 900; }
+.header { padding: clamp(var(--space-4), 3vw, var(--space-6)); border: var(--border-heavy) solid var(--color-ink); background: var(--color-yellow); box-shadow: var(--shadow-hard); }
+.header p { margin: 0 0 var(--space-2); font-size: .72rem; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+.header h1 { margin: 0; font-family: var(--font-display); font-size: clamp(2.7rem, 7vw, 5.7rem); font-weight: 950; letter-spacing: -.07em; line-height: .86; text-transform: uppercase; }
+.evidence { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(14rem, .7fr); border-top: var(--border-heavy) solid var(--color-ink); }
+.evidence section { padding: var(--space-4); border-bottom: var(--border-width) solid var(--color-ink); }
+.evidence section + section { border-left: var(--border-width) solid var(--color-ink); background: var(--color-mint); }
+.evidence h2 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: 1.2rem; text-transform: uppercase; }
+.evidence p { max-width: 70ch; margin: 0; font-weight: 700; line-height: 1.55; }
+.evidence ul { display: flex; margin: 0; padding: 0; gap: var(--space-2); flex-wrap: wrap; list-style: none; }
+.evidence li { padding: .28rem .55rem; border: var(--border-width) solid var(--color-ink); background: var(--color-paper); font-size: .72rem; font-weight: 900; }
+.actions { display: flex; padding: var(--space-3); border: var(--border-heavy) solid var(--color-ink); background: var(--color-orange); gap: var(--space-3); flex-wrap: wrap; box-shadow: var(--shadow-hard-small); }
+.actions a { min-height: 44px; padding: .65rem .9rem; border: var(--border-width) solid var(--color-ink); background: var(--color-paper); color: var(--color-ink); font-weight: 950; }
+@media (max-width: 640px) { .header h1 { overflow-wrap: break-word; } .evidence { grid-template-columns: minmax(0, 1fr); } .evidence section + section { border-left: 0; } }

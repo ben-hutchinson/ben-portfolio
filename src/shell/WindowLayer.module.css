@@ -1,0 +1,53 @@
+.layer {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+}
+
+.utilities {
+  position: absolute;
+  right: auto;
+  bottom: var(--space-3);
+  left: var(--space-3);
+  z-index: 100;
+}
+
+.resetButton {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-ink);
+  border-radius: var(--radius-control);
+  background: var(--color-menu-paper);
+  box-shadow: var(--shadow-hard-small);
+  color: var(--color-ink);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.resetButton:hover { background: var(--color-yellow); }
+
+@media (max-width: 767px), (pointer: coarse), (pointer: none) {
+  .layer {
+    display: flex;
+    min-height: 0;
+    gap: var(--space-4);
+    flex-direction: column;
+  }
+
+  .utilities {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.layer[data-mobile-windows] [data-window-id]:not([data-focused='true']) {
+  display: none;
+}
+
+@media (pointer: coarse), (pointer: none) {
+  .layer:not([data-desktop-windows]) [data-window-id]:not([data-focused='true']) {
+    display: none;
+  }
+}
