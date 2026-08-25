@@ -28,6 +28,10 @@ const approvedActionPins = [
   'actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4',
   'actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4',
 ] as const;
+const interSourceSha256 = {
+  'InterVariable.woff2': '693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3',
+  'OFL-1.1.txt': '262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a',
+} as const;
 
 async function trackedFiles(): Promise<readonly string[]> {
   const { stdout } = await execFileAsync('git', ['ls-files'], { cwd: repositoryRoot });
@@ -377,5 +381,59 @@ describe('PORT-020 CI portability', () => {
     expect(officialActionReferences.every((reference) => approvedActionPins.includes(
       reference as typeof approvedActionPins[number],
     ))).toBe(true);
+  });
+
+  it('ships the exact official Inter 4.1 display font and complete OFL custody files', async () => {
+    const tracked = await trackedFiles();
+    const expectedFontFiles = Object.keys(interSourceSha256).sort();
+    const fontRoot = path.join(repositoryRoot, 'public/fonts');
+
+    expect(tracked).toEqual(expect.arrayContaining(expectedFontFiles.map((name) => `public/fonts/${name}`)));
+    expect((await readdir(fontRoot)).sort()).toEqual(expectedFontFiles);
+    for (const filename of expectedFontFiles) {
+      expect(sha256(await readFile(path.join(fontRoot, filename))))
+        .toBe(interSourceSha256[filename as keyof typeof interSourceSha256]);
+    }
+  });
+
+  it('maps the unchanged display token to one local normal variable Inter face without a runtime font service', async () => {
+    const tracked = await trackedFiles();
+    const tokensPath = path.join(repositoryRoot, 'src/styles/tokens.css');
+    const tokens = await readFile(tokensPath, 'utf8');
+    const faceMatches = [...tokens.matchAll(/@font-face\s*\{([^}]+)\}/g)];
+    const faceDeclarations = Object.fromEntries(
+      (faceMatches[0]?.[1] ?? '')
+        .split(';')
+        .map((declaration) => declaration.trim())
+        .filter(Boolean)
+        .map((declaration) => {
+          const separator = declaration.indexOf(':');
+          return [declaration.slice(0, separator).trim(), declaration.slice(separator + 1).trim()];
+        }),
+    );
+    const auditableSource = tracked.filter((relativePath) => (
+      relativePath === 'index.html'
+      || relativePath.startsWith('src/')
+    ) && /\.(?:html|css|[jt]sx?)$/.test(relativePath));
+    const externalFontReferences = (await Promise.all(auditableSource.map(async (relativePath) => ({
+      relativePath,
+      contents: await readFile(path.join(repositoryRoot, relativePath), 'utf8'),
+    })))).filter(({ contents }) => (
+      /fonts\.(?:googleapis|gstatic)\.com/i.test(contents)
+      || /@import\s+(?:url\()?['"]?https?:\/\//i.test(contents)
+      || /url\(['"]?https?:\/\/[^)]*\.(?:woff2?|ttf|otf)/i.test(contents)
+    ));
+
+    expect(faceMatches).toHaveLength(1);
+    expect(tokens.indexOf('@font-face')).toBeLessThan(tokens.indexOf(':root'));
+    expect(faceDeclarations).toEqual({
+      'font-family': '"Inter"',
+      'font-style': 'normal',
+      'font-weight': '100 900',
+      src: 'url("/ben-portfolio/fonts/InterVariable.woff2") format("woff2")',
+      'font-display': 'block',
+    });
+    expect(tokens).toContain('--font-display: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;');
+    expect(externalFontReferences).toEqual([]);
   });
 });

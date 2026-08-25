@@ -1,4 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
+import { createHash } from 'node:crypto';
+import { expectLoadedInterDisplayFace } from './helpers/displayFont';
 
 const previewBasePath = '/ben-portfolio/';
 const supportedRoutes = [
@@ -52,6 +54,27 @@ function recordPreviewFailures(page: Page) {
 }
 
 test.describe('PORT-012 GitHub Pages preview', () => {
+  test('publishes and loads the pinned Inter face below both static and relative preview paths', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Production font contract runs in Chromium.');
+    const fontResponse = await page.request.get(`${previewBasePath}fonts/InterVariable.woff2`);
+    const licenseResponse = await page.request.get(`${previewBasePath}fonts/OFL-1.1.txt`);
+
+    expect(fontResponse.status()).toBe(200);
+    expect(fontResponse.headers()['content-type']).toMatch(/(?:font\/woff2|application\/(?:font-woff|octet-stream))/i);
+    expect(createHash('sha256').update(await fontResponse.body()).digest('hex'))
+      .toBe('693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3');
+    expect(licenseResponse.status()).toBe(200);
+    expect(createHash('sha256').update(await licenseResponse.body()).digest('hex'))
+      .toBe('262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a');
+
+    for (const route of [`${previewBasePath}#desktop`, './#career']) {
+      await page.goto(route);
+      await page.evaluate(() => document.fonts.ready);
+      expect(await page.evaluate(() => document.fonts.check('900 16px Inter'))).toBe(true);
+      await expectLoadedInterDisplayFace(page);
+    }
+  });
+
   test('serves supported hashes below the repository base path without local failures or runtime API requests', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Production-preview contract runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });

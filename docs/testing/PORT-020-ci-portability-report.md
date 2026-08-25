@@ -86,3 +86,45 @@ Retest evidence:
 | `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:coverage` | PASS — **22 files, 185 tests**, 0 failed. Statements **98.46%** (577/586), branches **91.29%** (430/471), functions **99.34%** (152/153), lines **99.60%** (510/512). Every dimension remains above 90% and every checked-in 91% threshold passes. |
 
 Disposition: the stale Tester sequence is corrected without changing production or weakening navigation coverage. No open concern remains from this maintenance fix.
+
+## First Linux calibration — rejected display-font fallback
+
+- GitHub quality run: [32829755322](https://github.com/ben-hutchinson/ben-portfolio/actions/runs/32829755322).
+- Result boundary: every non-visual check passed; Playwright reported **49 passed, 172 skipped, exactly 4 failed**, all four caused by absent Linux expected baselines.
+- Artifact: `playwright-failure-evidence-linux`, downloaded to `/tmp/portfolio-port020-32829755322.uLrq7A` for Tester inspection only.
+
+Each actual was inspected at full size against the corresponding accepted Darwin baseline:
+
+| Candidate source | SHA-256 | Inspection finding | Decision |
+| --- | --- | --- | --- |
+| `test-results/visual-PORT-012-approved-v-096fd-ed-Portfolio-OS-composition-Chromium/desktop-1440x1000-actual.png` | `a9153208d1796acd18540f14f98eeb1369b61cb88152caff8363d545869dbe7d` | Display fallback makes Ben's name wrap to two lines, materially reflows Work, and clips About copy at the frame bottom. | REJECT |
+| `test-results/visual-PORT-012-approved-v-c6c49-ed-Portfolio-OS-composition-Chromium/desktop-390x844-actual.png` | `8d5dd56b3d314944a377fa6cc98add11afc5f728fb68143a9ae9eedaa7685995` | Fallback metrics reflow the About composition and push `Hutchinson` into the right frame edge. | REJECT |
+| `test-results/visual-PORT-012-approved-v-5e8e3-ed-Portfolio-OS-composition-Chromium/career-1440x1000-actual.png` | `772f9841d762e409ecc29093323ca3ef1de0d9f27f26ff7c1eee0d69d2450de2` | Career headline/evidence typography reflows; `SYSTEMS` is absent from the visible headline and evidence copy clips. | REJECT |
+| `test-results/visual-PORT-012-approved-v-52a1c-ed-Portfolio-OS-composition-Chromium/career-390x844-actual.png` | `420267029d725c44378219e6d5642b9591ec6be58c890a5c3b5dc8a481bb1742` | Large stage/evidence typography and wrapping materially differ from the accepted composition. | REJECT |
+
+Root cause: the display token names Inter but the release neither ships nor loads it, so Ubuntu falls through to a system sans-serif with different metrics. No rejected actual was copied into the expected-baseline tree. The accepted bounded correction is the official immutable Inter 4.1 normal variable face and OFL custody files, self-hosted under `/ben-portfolio/fonts/`.
+
+Official custody sources for the replacement acceptance contract:
+
+- Inter 4.1 normal variable WOFF2: `https://raw.githubusercontent.com/rsms/inter/refs/tags/v4.1/docs/font-files/InterVariable.woff2`; SHA-256 `693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3`; 352,240 bytes.
+- Inter 4.1 SIL OFL 1.1: `https://raw.githubusercontent.com/rsms/inter/refs/tags/v4.1/LICENSE.txt`; SHA-256 `262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a`; 4,380 bytes.
+
+## Deterministic display-font Tester RED
+
+Acceptance coverage now requires exact source-file custody, a single normal 100–900 `@font-face` with `font-display: block`, the unchanged display token and no external runtime font service, built-preview publication and response integrity, and observable browser evidence consisting of the loaded document face, the Inter computed family, and the `/ben-portfolio/fonts/InterVariable.woff2` resource. `document.fonts.check()` remains an explicit visual precondition but is not accepted alone.
+
+The four existing screenshot tests now await `document.fonts.ready`, assert the current 900-weight normal face check, prove the actual loaded face/resource/computed family, and only then run their unchanged filenames and `animations: 'disabled'` screenshot assertions. No tolerance, retry, skip, timeout, or update mode was added.
+
+RED executed against Product Owner candidate `58e0ddd` with no production, configuration, workflow, package, or font-asset change.
+
+| Command | RED result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts` | Expected RED — **1 failed file; 2 failed / 12 passed tests**. Failures are limited to the absent tracked Inter/OFL files and the absent sole local `@font-face`. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` | PASS. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run lint` | PASS — zero warnings. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run build` | PASS; inspection confirmed both `dist/fonts/InterVariable.woff2` and `dist/fonts/OFL-1.1.txt` are absent as expected before implementation. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4253 npx playwright test tests/e2e/github-pages.spec.ts tests/e2e/visual.spec.ts --project=Chromium` | Expected RED — **5 failed / 2 passed tests**. The built-preview font URL falls through to HTML rather than a WOFF2 response, and each of four visual paths reports no loaded Inter `FontFace`. Existing GitHub Pages route/resource/history tests pass. |
+
+The focused browser result demonstrates why `document.fonts.check('900 16px Inter')` is insufficient alone: on this macOS host it returns true for the locally installed face, while `document.fonts` contains no page-defined loaded Inter face and the WOFF2 resource is absent. The additional face/resource/computed-family contract fails deterministically before any screenshot comparison and will require the shipped face to be genuinely loaded.
+
+All prior release assertions remain green. The unchanged visual assertion still has the same four filenames and `{ animations: 'disabled' }`; no tolerance or snapshot-update setting exists. These failures are solely the missing approved font custody, declaration, production publication, and browser-load behavior requested by the bounded change.
