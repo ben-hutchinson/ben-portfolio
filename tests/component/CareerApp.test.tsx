@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { hasReducedMotionListener, prefersReducedMotion } from 'motion-dom';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PortfolioProvider, usePortfolio } from '../../src/app/PortfolioContext';
@@ -13,16 +14,54 @@ function StateProbe() {
 }
 
 function installMedia(reducedMotion = false) {
-  vi.stubGlobal('matchMedia', vi.fn((query: string) => ({
-    matches: query === '(pointer: fine)' || (query === '(prefers-reduced-motion: reduce)' && reducedMotion),
-    media: query,
-    onchange: null,
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })));
+  hasReducedMotionListener.current = false;
+  prefersReducedMotion.current = null;
+  let reducedMotionEnabled = reducedMotion;
+  const mediaQueries = new Map<string, MediaQueryList>();
+  const listeners = new Map<string, Set<(event: MediaQueryListEvent) => void>>();
+
+  const matches = (query: string) => query === '(pointer: fine)'
+    || (query === '(prefers-reduced-motion)' && reducedMotionEnabled);
+  const notify = (query: string) => {
+    const event = { matches: matches(query), media: query } as MediaQueryListEvent;
+    for (const listener of listeners.get(query) ?? []) listener(event);
+    mediaQueries.get(query)?.onchange?.(event);
+  };
+
+  vi.stubGlobal('matchMedia', vi.fn((query: string) => {
+    const existing = mediaQueries.get(query);
+    if (existing !== undefined) return existing;
+
+    const queryListeners = new Set<(event: MediaQueryListEvent) => void>();
+    listeners.set(query, queryListeners);
+    const mediaQuery = {
+      get matches() { return matches(query); },
+      media: query,
+      onchange: null,
+      addEventListener: (type: string, listener: EventListenerOrEventListenerObject | null) => {
+        if (type === 'change' && typeof listener === 'function') queryListeners.add(listener as (event: MediaQueryListEvent) => void);
+      },
+      removeEventListener: (type: string, listener: EventListenerOrEventListenerObject | null) => {
+        if (type === 'change' && typeof listener === 'function') queryListeners.delete(listener as (event: MediaQueryListEvent) => void);
+      },
+      addListener: (listener: (event: MediaQueryListEvent) => void) => queryListeners.add(listener),
+      removeListener: (listener: (event: MediaQueryListEvent) => void) => queryListeners.delete(listener),
+      dispatchEvent: (event: Event) => {
+        for (const listener of queryListeners) listener(event as MediaQueryListEvent);
+        return true;
+      },
+    } as MediaQueryList;
+    mediaQueries.set(query, mediaQuery);
+    return mediaQuery;
+  }));
+
+  return {
+    setReducedMotion(next: boolean) {
+      if (reducedMotionEnabled === next) return;
+      reducedMotionEnabled = next;
+      notify('(prefers-reduced-motion)');
+    },
+  };
 }
 
 function renderCareer(reducedMotion = false) {
@@ -44,6 +83,8 @@ function state() {
 }
 
 afterEach(() => {
+  hasReducedMotionListener.current = false;
+  prefersReducedMotion.current = null;
   vi.unstubAllGlobals();
   window.history.replaceState(null, '', '#desktop');
 });

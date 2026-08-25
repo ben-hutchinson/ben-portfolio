@@ -43,3 +43,15 @@ The four failures are intentional and confined to `PORT-019 release hardening` a
 4. Workflows still reference mutable `@v4` Action tags rather than the approved SHA/comment pins.
 
 No unrelated failure occurred: `windowGeometry`, `parseCommand`, `CareerApp`, and `ProjectsApp` suites all passed (**41 tests**). The intentional geometry-test maintenance removed only the test-only `TITLE_BAR_HEIGHT` import/assertion; all public `constrainWindowSize` and `clampWindowPosition` cases remain covered and green.
+
+## Tester harness correction — Motion reduced motion
+
+The initial `CareerApp` test helper modelled only `(prefers-reduced-motion: reduce)`, while Motion's `useReducedMotion()` queries `(prefers-reduced-motion)`. Its previous listener methods were no-ops, making preference changes unfaithful. The Tester-owned mock now caches query objects, exposes Motion's actual query with the requested state, and maintains `change`/legacy listener registration and dispatch semantics. Production was not changed and the existing reduced-motion assertion remains exact (`data-reduced-motion="true"` and zero duration).
+
+Focused GREEN at the production candidate `238880aa9a2fd1370c803e8af9564e43d6f1f871` before this evidence-only checkpoint:
+
+```text
+PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts tests/unit/windowGeometry.test.ts tests/unit/parseCommand.test.ts tests/component/CareerApp.test.tsx tests/component/ProjectsApp.test.tsx
+```
+
+Result: **5 files passed, 45 tests passed, 0 failed**. The Motion hook now initialises from the faithful `(prefers-reduced-motion)` mock rather than a stale module-level state; the assertion verifies the same reduced-motion output contract without weakening it.
