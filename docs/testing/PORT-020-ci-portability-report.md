@@ -73,3 +73,16 @@ PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run lint       PASS — zero warnin
 ```
 
 All seven manual screenshot calls now use `testInfo.outputPath(...)` with their original unique filenames and `fullPage: true`. No Linux baseline exists in this checkpoint, and no snapshot-update command was used.
+
+## Tester maintenance after Developer handoff
+
+At Developer candidate `bc786d514f5f91b0f92584f6fa92306f7f1c2cd5`, full coverage exposed one stale Tester-owned keyboard sequence: `PortfolioShell.test.tsx` still expected `Close Work` immediately after `Maximize About`. The accepted shared WindowFrame contract now places labelled, focusable content regions after each frame's controls. The test sequence now explicitly requires `About content` before `Close Work` and `Work content` before the existing `View Work` body action; every prior control, body, shell, terminal, dock, and utility-link assertion remains in order.
+
+Retest evidence:
+
+| Command | Result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/component/PortfolioShell.test.tsx tests/component/WindowFrame.test.tsx` | PASS — **2 files, 12 tests**, 0 failed. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:coverage` | PASS — **22 files, 185 tests**, 0 failed. Statements **98.46%** (577/586), branches **91.29%** (430/471), functions **99.34%** (152/153), lines **99.60%** (510/512). Every dimension remains above 90% and every checked-in 91% threshold passes. |
+
+Disposition: the stale Tester sequence is corrected without changing production or weakening navigation coverage. No open concern remains from this maintenance fix.
