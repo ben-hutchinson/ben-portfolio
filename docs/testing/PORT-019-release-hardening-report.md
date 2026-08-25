@@ -125,3 +125,50 @@ The assertion remains byte-integrity coverage (the test reads each file as a `Bu
 | `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts tests/unit/windowGeometry.test.ts tests/unit/parseCommand.test.ts tests/component/CareerApp.test.tsx tests/component/ProjectsApp.test.tsx` | PASS — **5 files, 45 tests**, 0 failed. |
 
 No Tester-owned or production concern remains from this correction.
+
+## Final exact-head recertification after the approved fix wave
+
+- Exact tested code-and-tests candidate: `43c1e6c6f646bebd58e7c0121fb559aa03fabf87` (`docs: align agent architecture`). This is the complete release candidate before this report-only certification commit.
+- Date: 2026-08-25. Toolchain: Node `v24.19.0`, npm `11.17.0`, Vitest `4.1.10`, Playwright `1.62.1`, Vite `8.2.1`.
+- Fresh ports: full browser matrix `4247`; axe `4248`; no-update visual comparison `4249`; Browser production-preview smoke `4250`. No snapshot-update command was run.
+
+| Command | Exact result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts tests/unit/windowGeometry.test.ts tests/unit/parseCommand.test.ts tests/component/CareerApp.test.tsx tests/component/ProjectsApp.test.tsx` | PASS — **5 files, 45 tests**, 0 failed. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` | PASS — exit 0. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run lint` | PASS — exit 0, zero warnings. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:coverage` | PASS — **22 files, 179 tests**, 0 failed. Statements **98.46%** (577/586), branches **91.29%** (430/471), functions **99.34%** (152/153), lines **99.60%** (510/512); every checked-in 91% threshold met. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run build` | PASS — 475 modules; CSS **31.08 kB** (**5.89 kB gzip**), JavaScript **309.06 kB** (**99.21 kB gzip**). |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run check:bundle` | PASS — initial JavaScript **97,948 gzip bytes** / 204,800 budget; initial images **118,529 bytes** / 1,048,576 budget; all three deployable images below the non-hero limit. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4247 npm run test:e2e` | PASS — **53 passed, 172 intentional project skips, 0 failed** (225 total). |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4248 npm run test:e2e:a11y` | PASS — **3 passed, 12 intentional project skips, 0 failed** (15 total). |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4249 npm run test:e2e:visual` | PASS — **4 passed, 16 intentional project skips, 0 failed** (20 total); existing baselines compared without update. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm audit --audit-level=high` | PASS — `found 0 vulnerabilities`. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm audit --omit=dev --audit-level=high` | PASS — `found 0 vulnerabilities`. |
+| `git merge-tree --write-tree master HEAD` | PASS — clean merged-tree object `96572dee796eaf1f53471a31b7c7e94bcbbbbbb5`; no conflict output. |
+| `git diff --check` | PASS — no whitespace errors. |
+
+### Shallow-checkout and release-boundary evidence
+
+- A new depth-one local clone of the exact candidate reported `shallow=true` and could not resolve `151456d^{commit}`, reproducing the GitHub Actions history boundary. With the repository's existing dependency tree linked only into that temporary clone for execution, `npm test -- tests/unit/release-audit.test.ts` passed **1 file / 7 tests**. The audit therefore executes without historical Git objects; its raw-byte SHA-256 contracts and `git ls-files` hygiene check remain active.
+- Current raw-file SHA-256 values are unchanged: `package.json` `8683a71b1187d9bffd610e3a8cbc78d1340e6135c5c95d8daa52e24d04872d71`; `package-lock.json` `9673b4caf416cde42bcfc5e87635381c279d81f4fe54695151ff70aa559f5f00`; `index.html` `a3c6b6a4c021ff9480dc4effafc4fb581ea6d875088cce8039b6077ee47c210d`. `git diff --exit-code 151456d -- package.json package-lock.json index.html` was empty.
+- The two workflows contain exactly the six approved 40-character Action pins with `# v4` comments. The focused release audit continues to protect their trigger, job, command, artifact, environment, and deploy-guard behavior.
+- `git ls-files` returned zero forbidden Finder/Playwright paths, obsolete screenshots, or obsolete asset documents. All ten explicitly checked protected CV/favicon/WebP/baseline/historical-document paths remain files.
+- Local `.DS_Store` SHA-1 remains `08c1372d09e6e56db51a532ba076b208269b556e`. All **18** `.playwright-cli/` names, sizes, and SHA-1 values match the Developer's recorded pre-index inventory. `.DS_Store`, `.playwright-cli/`, and `.playwright-mcp/` remain ignored and untracked; none was staged or modified.
+
+### Proportionate Browser production-preview smoke
+
+The Browser plugin selected the connected Chrome browser and inspected the built preview under `http://127.0.0.1:4250/ben-portfolio/`. The full charter had already passed in the fresh-port Playwright matrix above; this smoke rechecked its highest-risk rendered paths without changing the UI.
+
+| Viewport / route | Evidence | Result |
+| --- | --- | --- |
+| 1440×1000 `#desktop` | Correct title and meaningful Portfolio OS DOM; Profile, Featured Work, permanent Micro terminal, five-app dock, GitHub/LinkedIn, and base-safe CV download rendered. Document width equalled viewport width; no error overlay, warning, or console error. | PASS |
+| 1024×768 `#work/uv-ruff-migration` | Exact detail hash, heading, complete case-study content, and Back control rendered. Keyboard Maximize and Restore preserved the exact hash/content/Back control. Keyboard catalogue open plus browser Back/Forward moved exactly between `#work` and `#work/uv-ruff-migration`. | PASS |
+| 390×844 `#career` and `#projects/safelog` | Career heading/slider and Safelog heading/Back rendered directly. Document width remained 390 px with natural vertical scroll, no horizontal overflow, no Micro terminal, overlay, warning, or console error. | PASS |
+| 320×568 `#contact` → keyboard Career dock switch | Contact loaded directly with base-safe CV action, then keyboard activation selected exact `#career`. Computed visibility showed Career as the sole visible application while About/Work/Projects/Contact were `display:none`; document width remained 320 px. | PASS |
+
+Browser viewport override was reset after inspection. The full E2E suite supplies the unchanged reduced-motion, keyboard focus, Project detail maximize/restore, static-resource, and wider history coverage; the axe and no-update visual suites independently reconfirmed accessibility and baseline fidelity. No framework overlay, page error, relevant console entry, clipping, or horizontal overflow was observed.
+
+### Final disposition
+
+Ordinary `git status --short` was empty immediately before this report-only edit. Ignored status contained only the documented local artifacts, caches, build/test output, and worktrees. **Final exact-head recertification is GREEN; no PORT-019 defect or release concern remains.**
