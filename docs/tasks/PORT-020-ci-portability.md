@@ -148,6 +148,47 @@ Final evidence also includes `git diff --check`, clean ordinary status, an audit
 
 Product Owner accepts only the exact tested candidate after a clean task-scoped review, no open defect, a successful final GitHub quality run, and evidence for every criterion below. The allowed first calibration failure must be documented and limited to four absent Linux baselines.
 
+## Product Owner change request — deterministic approved display font
+
+### Decision and rejection
+
+**Status: RETURNED TO DEVELOPER — bounded PORT-020 portability defect.** The first Linux calibration candidate is rejected under the explicit calibration clause: all four `*-actual.png` images are materially unfaithful. Linux resolves the existing `Inter` display-token name to a fallback because the repository neither ships nor loads Inter. The resulting fallback metrics reflow or clip approved content: desktop 1440 About and Work, desktop 390 Hutchinson, career 1440 headline/Evidence, and career 390 typography/layout. No Linux baseline may be committed from this candidate.
+
+The accepted Darwin design is preserved. This request supplies the already-approved display family deterministically; it does not approve a redesign, a different typeface, adjusted copy or layout, changed routes, changed visual tolerances, altered Pages behavior, or a dependency/lockfile change.
+
+### Exact implementation scope
+
+Developer adds these source-controlled static files, without an npm package, remote runtime fetch, or lockfile change:
+
+```text
+public/fonts/InterVariable.woff2
+public/fonts/OFL-1.1.txt
+```
+
+- `InterVariable.woff2` must be the unmodified normal/roman variable WOFF2 at the official immutable Inter 4.1 tag: `https://raw.githubusercontent.com/rsms/inter/refs/tags/v4.1/docs/font-files/InterVariable.woff2`. Do not fetch from `master`, a CDN, Google Fonts, or a third-party repackager. Record this source URL, release/tag, and the downloaded file's SHA-256 in the Tester report before final calibration.
+- `OFL-1.1.txt` must be the complete SIL Open Font License 1.1 at `https://raw.githubusercontent.com/rsms/inter/refs/tags/v4.1/LICENSE.txt`, supplied by the same official immutable Inter distribution. Preserve the filename and text; it is the required attribution/license custody for the shipped binary.
+- Add exactly one normal-face `@font-face` in `src/styles/tokens.css` before `:root`. It must use `font-family: "Inter"`, `font-style: normal`, `font-weight: 100 900`, and `src: url("/ben-portfolio/fonts/InterVariable.woff2") format("woff2")`. Do not synthesize a different family, weight, style, or font asset. The existing `--font-display: Inter, ...` token remains unchanged.
+- Set `font-display: block` on that face. The screenshot contract must never capture system fallback or a swap/reflow: `block` prevents a fallback flash, and the visual suite must wait for the loaded face as specified below. Do not use `swap`, `fallback`, `optional`, or a timeout/polling workaround.
+- No italic face is required because PORT-020's approved display use is normal-only. Do not add preloads, external font CSS, JavaScript font loaders, npm packages, or changes outside the files necessary to ship this binary, its license, and the single face declaration.
+
+### Tester-owned acceptance and calibration additions
+
+The Tester extends PORT-020 acceptance coverage without weakening any current assertion:
+
+- Add a release-audit contract that requires both exact `public/fonts/` files; validates the sole normal `@font-face` values above, including the literal base-path URL and `font-display: block`; and rejects an external Inter import/URL, a dependency/lockfile change, or an alteration to `--font-display`.
+- Build the site and assert that the production output contains `fonts/InterVariable.woff2` and `fonts/OFL-1.1.txt`, that the WOFF2 response is non-empty with a font-compatible content type, and that an app page's computed display-family resolves to `Inter` rather than its fallback. Test both the static preview under `/ben-portfolio/` and the normal local base path.
+- In the four screenshot tests, explicitly await `document.fonts.ready` before each `toHaveScreenshot` assertion and assert `document.fonts.check('900 16px Inter')` (and the applicable current normal display weight) is true. This is a Tester-owned synchronization requirement, not permission to defer, retry, skip, or relax screenshots. Keep all four existing assertions, filenames, `animations: 'disabled'`, and every visual tolerance unchanged.
+- On macOS, rerun the no-update visual suite against the preserved Darwin set. It must pass with no baseline update and demonstrate that the self-hosted face did not alter accepted pixels.
+- Only after that local result is GREEN may the user-authorized Linux calibration be repeated. The expected first calibration failure remains exactly the four absent Linux baseline files; the actuals must be free of the listed clipping/reflow defects and undergo full-size inspection against their Darwin counterparts before any Linux baseline commit. Any font-load, asset, test, layout, or additional visual failure rejects the candidate.
+- The final exact-head Linux quality run, after the four inspected baselines are committed, must pass without snapshot-update mode. The Tester report must record the Inter source URL, release/tag, WOFF2 SHA-256, license file SHA-256, asset-bundling/loaded-face evidence, calibration run/artifact details, image checksums, inspection decision, and final successful run URL/SHA.
+
+### Additional acceptance criteria
+
+- [ ] A pinned official Inter 4.1 normal variable WOFF2 and complete OFL 1.1 attribution are shipped from `public/fonts/`; no runtime font dependency or network request is required.
+- [ ] The one face maps the existing `Inter` token to normal variable weights 100–900, serves from `/ben-portfolio/fonts/InterVariable.woff2`, uses `font-display: block`, and leaves the existing token/fallback list intact.
+- [ ] Production build evidence proves both files are published and the browser proves the intended Inter face is loaded before every visual assertion.
+- [ ] Darwin visual baselines still pass unchanged; the repeated Linux calibration contains only the four absent-baseline failures and produces four faithful, reviewed candidates before Linux baselines are accepted.
+
 ## Acceptance criteria
 
 - [ ] Shared WindowFrame content is labelled, sequentially keyboard-focusable, visibly focused for keyboard users, keyboard-scrollable when overflowing, and non-trapping/non-disruptive on mobile and non-overflowing content.
