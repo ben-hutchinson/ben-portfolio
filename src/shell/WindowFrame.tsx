@@ -119,7 +119,14 @@ export function WindowFrame({
           </button>
         </div>
       </div>
-      <div className={styles.content}>{children}</div>
+      <div
+        className={styles.content}
+        role="region"
+        aria-label={`${title} content`}
+        tabIndex={0}
+      >
+        {children}
+      </div>
     </section>
   );
 }

@@ -80,6 +80,11 @@
   overscroll-behavior: contain;
 }
 
+.content:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: calc(-1 * var(--focus-width));
+}
+
 @media (max-width: 767px), (pointer: coarse), (pointer: none) {
   .frame,
   .frame[data-maximized='true'] {
