@@ -1,6 +1,6 @@
 # PORT-019 Tester release-hardening report
 
-Status: **RED — implementation has not started.**
+Status: **PASS — final Tester release certification complete; ready for Product Owner acceptance.**
 
 ## Candidate and scope
 
@@ -55,3 +55,52 @@ PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.te
 ```
 
 Result: **5 files passed, 45 tests passed, 0 failed**. The Motion hook now initialises from the faithful `(prefers-reduced-motion)` mock rather than a stale module-level state; the assertion verifies the same reduced-motion output contract without weakening it.
+
+## Final exact-head GREEN certification
+
+- Exact tested code-and-tests head: `08aeb1d30ff1dd5c94f12bbe9f88814efde062e4` (`test: model Motion reduced motion`). This is the complete PORT-019 candidate before this evidence-only report commit.
+- Date: 2026-08-25. Toolchain: Node `v24.19.0` (`/opt/homebrew/opt/node@24/bin`), npm `11.17.0`, Vitest `4.1.10`, Playwright `1.62.1`.
+- Fresh ports: full browser matrix `4243`; axe `4244`; no-update visual comparison `4245`; Browser manual production preview `4246`. No baseline update command was used.
+
+| Command | Result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts tests/unit/windowGeometry.test.ts tests/unit/parseCommand.test.ts tests/component/CareerApp.test.tsx tests/component/ProjectsApp.test.tsx` | PASS — **5 files, 45 tests**, 0 failed. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` | PASS — exit 0. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run lint` | PASS — exit 0, zero warnings. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:coverage` | PASS — **22 files, 179 tests**, 0 failed. Statements **98.46%** (577/586), branches **91.29%** (430/471), functions **99.34%** (152/153), lines **99.60%** (510/512); all configured 91% thresholds met. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run build` | PASS — static Vite build. Initial CSS 31.19 kB (5.91 kB gzip), initial JS 309.09 kB (**99.22 kB gzip**). |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run check:bundle` | PASS — initial JS **97,959 gzip bytes** / 204,800 budget; initial images **118,529 bytes** / 1,048,576 budget; three deployable images, each below the non-hero budget. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4243 npm run test:e2e` | PASS — **53 passed, 172 intentional project skips, 0 failed** (225 total). |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4244 npm run test:e2e:a11y` | PASS — **3 passed, 12 intentional project skips, 0 failed**. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4245 npm run test:e2e:visual` | PASS — **4 passed, 16 intentional project skips, 0 failed**. Existing baselines were compared only; none were updated. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm audit --audit-level=high` | PASS — `found 0 vulnerabilities`. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm audit --omit=dev --audit-level=high` | PASS — `found 0 vulnerabilities`. |
+| `git merge-tree --write-tree master HEAD` | PASS — clean merged-tree object `f095db9ba6203479e5cd119934552053d112445e`; no conflict output. |
+| `git diff --check` | PASS — no whitespace errors. |
+
+### Browser/manual production-preview evidence
+
+The connected Browser inspected the built Vite preview under `http://127.0.0.1:4246/ben-portfolio/`, not the development server. The static GitHub Pages base path was retained in every result.
+
+| Viewport / flow | Evidence | Result |
+| --- | --- | --- |
+| 1440×1000 Desktop | `#desktop` displayed Ben Hutchinson and the permanent Micro terminal; no horizontal overflow or framework error overlay. Dock utilities were GitHub (`_blank`, `noopener noreferrer`), LinkedIn (`_blank`, `noopener noreferrer`), and base-safe CV download `/ben-portfolio/cv/ben-hutchinson-cv.pdf` with `download="ben-hutchinson-cv.pdf"`. | PASS |
+| Work and history | `#work` exposed the named Python Dependency Migration case-study action. Opening it produced exact `#work/uv-ruff-migration`, visible Back and approved outcome. Browser Back restored `#work`; Forward restored the exact detail hash. | PASS |
+| Work and Project maximize | Maximize then Restore retained exact Work detail hash and Back control. The Project Safelog sentinel retained exact `#projects/safelog` and heading through Maximize/Restore. | PASS |
+| Direct hashes | Desktop, Work catalogue/detail, Career, Projects/catalogue detail, and Contact each loaded directly under `/ben-portfolio/` with their expected heading/content. At 1024×768 Work detail reload preserved the direct hash and Back. | PASS |
+| 390×844 and 320×568 | Mobile direct Work detail and narrow Contact rendered with no horizontal overflow or error overlay. At 390×844 only focused Work was visible; switching via Career dock produced only focused Career. | PASS |
+| Keyboard, motion, terminal | At desktop width, Tab exposed solid 3px focus outlines on Close Work, Minimize Work, Maximize Work, and the named catalogue action. Career direct route omitted the Micro terminal; full E2E retained the reduced-motion regression. | PASS |
+
+The static-hosting browser suite independently covered same-origin resource failures, no runtime API requests, and browser history. The axe suite found no serious, critical, or contrast violation in its desktop, mobile, Work catalogue, and Work detail checks. No console error, page error, framework overlay, layout clipping, or visual-baseline regression was observed.
+
+### Release-boundary and local-artifact audit
+
+- `git diff --exit-code 151456d -- package.json package-lock.json index.html` returned no output: the dependency lock/manifest and HTML security metadata remain byte-for-byte unchanged.
+- Both workflows contain exactly the six required SHA pins with `# v4` comments, including `upload-pages-artifact` at its supplied v4 SHA. Triggers, permissions, jobs, artifact name/path, environment, and deploy guard remain covered by the release-audit test.
+- `git ls-files` contains no root `.DS_Store`, `.playwright-mcp/`, `.playwright-cli/`, named obsolete screenshot, or obsolete asset-document path. It retains the production CV, favicon, WebPs, four visual baselines, and both historical command-centre documents.
+- Local `.DS_Store` SHA-1 is `08c1372d09e6e56db51a532ba076b208269b556e`, matching the pre-index record. `.playwright-cli/` remains ignored and all 18 pre-recorded names/sizes/SHA-1 values match the Developer inventory. `.playwright-mcp/` remains a local ignored diagnostic directory with no tracked entry.
+- Immediately before this evidence-only report update, ordinary `git status --short` was clean. `git status --short --ignored` showed only expected ignored local artefacts/caches, including `.DS_Store`, `.playwright-cli/`, `.playwright-mcp/`, `.superpowers/`, build/test output, and local worktrees; no protected local artifact was staged.
+
+### Defects and disposition
+
+The initial test-only Motion media-query defect is corrected in `08aeb1d`; production was already correct. No production, dependency, CSP/referrer, deployment, visual-baseline, or protected-artifact drift was introduced. **No open PORT-019 defect remains.**
