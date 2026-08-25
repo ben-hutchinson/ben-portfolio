@@ -10,6 +10,8 @@
 
 **Spec:** docs/tasks/PORT-019-release-hardening.md
 
+**Status:** ACCEPTED — 2026-08-25 at Tester report commit `62f7efb` for exact code-and-tests candidate `43c1e6c6f646bebd58e7c0121fb559aa03fabf87`.
+
 ## Global Constraints
 
 - Pre-task authoritative head is `151456d`; `package.json`, `package-lock.json`, and `index.html` must remain byte-for-byte unchanged from it.
@@ -37,7 +39,7 @@
 - Consumes: accepted PORT-018 application interfaces; `CareerApp`'s Motion `useReducedMotion(): boolean | null`; `constrainWindowSize(size, workArea): WindowSize`; `clampWindowPosition(candidate, fallback, size, workArea): Point`; `CommandDefinition.name` and `execute(args): CommandResult`; existing workflow behavior.
 - Produces: the same runtime interfaces, except `CommandDefinition` becomes exactly `{ readonly name: string; execute(args: readonly string[]): CommandResult }`; `TITLE_BAR_HEIGHT` and `usePrefersReducedMotion` cease to be exported. Repository/docs/workflows satisfy every PORT-019 static contract.
 
-- [ ] **Step 1: Tester writes and commits focused RED release contracts**
+- [x] **Step 1: Tester writes and commits focused RED release contracts**
 
   Add a `PORT-019 release hardening` block to `tests/unit/release-audit.test.ts`. Use `execFile('git', ['ls-files'])` through `promisify`, `readFile`, and `stat`/ENOENT checks to assert:
 
@@ -55,7 +57,7 @@
 
   Expected RED is limited to the approved pre-hardening docs/tree/dead-code/workflow contracts. Commit Tester files only as `test: specify release hardening`.
 
-- [ ] **Step 2: Developer applies the bounded hardening implementation**
+- [x] **Step 2: Developer applies the bounded hardening implementation**
 
   Before index operations, record `shasum .DS_Store` and a name/size/checksum inventory of `.playwright-cli/` without changing its files. Then use `git rm --cached .DS_Store` and `git rm -r --cached .playwright-mcp`; do not delete either local artifact. Add `.playwright-cli/` to `.gitignore`. Use `git rm` for only the five root PNGs and four obsolete documents named in the spec.
 
@@ -63,17 +65,17 @@
 
   Replace each workflow Action value with the exact SHA plus `# v4`; make no other workflow edit. Confirm `upload-pages-artifact` moves from v3 to the supplied v4 SHA.
 
-- [ ] **Step 3: Developer verifies and commits**
+- [x] **Step 3: Developer verifies and commits**
 
   Run the focused command from Step 1, then typecheck, lint, build, bundle, and `git diff --check`. Verify no `usage`, `description`, `TITLE_BAR_HEIGHT`, `usePrefersReducedMotion`, named dead CSS, or `--duration-standard` remains; verify `styles.blurb`/`.blurb` remains; verify the local `.DS_Store` checksum and `.playwright-cli/` inventory match Step 2; verify `git diff 151456d -- package.json package-lock.json index.html` is empty. Commit only implementation/config/docs/deletions as `chore: harden portfolio release`.
 
-- [ ] **Step 4: Tester performs exact-head GREEN and release certification**
+- [x] **Step 4: Tester performs exact-head GREEN and release certification**
 
   Re-run focused tests, then run the full commands in the packet: typecheck, lint, coverage, build, bundle, full E2E on port 4243, axe on 4244, no-update visuals on 4245, both npm audits, `git merge-tree --write-tree master HEAD`, and `git diff --check`. Do not update baselines.
 
   Complete the four-viewport production-preview charter and all route/history/keyboard/maximize/reduced-motion/Micro-terminal/external-action checks. Record exact commits, versions, pass totals, coverage, bundle, audits, workflow pins, merge tree, unchanged files, local-artifact preservation, and `git status --short` clean; ignored output may contain only documented local caches/artifacts. Commit only Tester report/test maintenance as `test: certify release hardening`.
 
-- [ ] **Step 5: Product Owner accepts or issues one bounded change request**
+- [x] **Step 5: Product Owner accepts or issues one bounded change request**
 
   Compare the exact Tester head against every PORT-019 criterion. Accept only with a clean final review, no open defect, exact SHA pins, unchanged product/dependency/security-header behavior, clean ordinary status, and preserved ignored local artifacts. Mark packet/plan accepted and commit only PO docs as `docs: accept release hardening`; otherwise return an exact criterion-linked change request.
 
@@ -81,10 +83,11 @@
 
 | Decision | Rationale | Status |
 | --- | --- | --- |
-| One bounded task | All changes harden the same accepted release boundary and require one combined regression gate. | Approved by user |
-| Index-only `.DS_Store`/`.playwright-mcp/` removal | Removes machine artifacts from releases while preserving local evidence, especially `.DS_Store` bytes. | Locked |
-| Ignore but never touch `.playwright-cli/` | It is local tool output outside product/release scope. | Locked |
-| Keep Motion reduced-motion source | Career already uses Motion; removing the duplicate custom subscription avoids two listeners without changing behavior. | Approved |
-| Remove `TITLE_BAR_HEIGHT` and command metadata | Audit proves they are production/test coupling or unused data, not public behavior. | Approved |
-| Preserve Projects `.blurb` and historical command-centre docs | Both are verified useful: `.blurb` is live UI and the plan/spec are intentional history. | Locked |
-| Pin official Actions to supplied SHAs | Immutable references harden CI while comments retain readable version intent. | Approved |
+| One bounded task | All changes harden the same accepted release boundary and require one combined regression gate. | ACCEPTED |
+| Index-only `.DS_Store`/`.playwright-mcp/` removal | Removes machine artifacts from releases while preserving local evidence, especially `.DS_Store` bytes. | ACCEPTED |
+| Ignore but never touch `.playwright-cli/` | It is local tool output outside product/release scope. | ACCEPTED |
+| Keep Motion reduced-motion source | Career already uses Motion; removing the duplicate custom subscription avoids two listeners without changing behavior. | ACCEPTED |
+| Remove `TITLE_BAR_HEIGHT` and command metadata | Audit proves they are production/test coupling or unused data, not public behavior. | ACCEPTED |
+| Preserve Projects `.blurb` and historical command-centre docs | Both are verified useful: `.blurb` is live UI and the plan/spec are intentional history. | ACCEPTED |
+| Pin official Actions to supplied SHAs | Immutable references harden CI while comments retain readable version intent. | ACCEPTED |
+| Accept candidate `43c1e6c` at report `62f7efb` | All automated, manual, shallow-checkout, artifact-integrity, review, and clean-status gates are green with no open defect. | ACCEPTED |

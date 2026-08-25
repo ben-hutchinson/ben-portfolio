@@ -1,6 +1,6 @@
 # PORT-019 — Harden the accepted release and repository boundary
 
-Status: READY FOR TESTER RED
+Status: ACCEPTED — 2026-08-25 at Tester report commit `62f7efb` for exact code-and-tests candidate `43c1e6c6f646bebd58e7c0121fb559aa03fabf87`.
 
 Requirement links: accepted PORT-014–018 behavior; `docs/AGENTS.md` §§2–6, 15–20; user-approved 2026-08-23 release-hardening audit.
 
@@ -72,15 +72,15 @@ Do not change workflow triggers, permissions, jobs, commands, artifact names/pat
 
 ## Acceptance criteria
 
-- [ ] PRD and DESIGN accurately describe the accepted identity-only menu, five-app dock/utilities, Desktop-only Micro terminal, technology-free Work catalogue/detail, and Work hashes; obsolete descriptions listed above are absent.
-- [ ] `.DS_Store` and `.playwright-mcp/` are untracked and ignored; the local `.DS_Store` checksum is unchanged; `.playwright-cli/` is ignored and its local contents/checksum inventory is unchanged.
-- [ ] The five root screenshots, four obsolete asset documents, and all tracked `.playwright-mcp/` entries are absent from the release tree; protected production assets, visual baselines, and historical command-centre plan/spec remain.
-- [ ] Only the named dead code is removed. Career has one Motion reduced-motion subscription; window geometry behavior, command output/safety, and Projects `.blurb` are preserved.
-- [ ] Both workflows use exactly the six approved SHA pins/comments and otherwise retain their existing behavior; `upload-pages-artifact` is v4.
-- [ ] `package.json`, `package-lock.json`, and `index.html` are byte-for-byte unchanged from pre-task head `151456d`; therefore no dependency, CSP, or referrer change occurred.
-- [ ] Focused RED precedes implementation. Final typecheck, lint, coverage, build, bundle, full E2E, axe, and no-update visual gates pass at one exact Tester head; all four coverage dimensions remain above 90% with checked-in 91% thresholds.
-- [ ] `npm audit --audit-level=high` and `npm audit --omit=dev --audit-level=high` pass, `git merge-tree --write-tree master HEAD` reports no conflict, and no push/PR/merge/deploy occurs.
-- [ ] Final `git status --short` is clean. `git status --short --ignored` may show only intentionally preserved ignored local artifacts/caches documented by the Tester; no protected local artifact was staged.
+- [x] PRD and DESIGN accurately describe the accepted identity-only menu, five-app dock/utilities, Desktop-only Micro terminal, technology-free Work catalogue/detail, and Work hashes; obsolete descriptions listed above are absent.
+- [x] `.DS_Store` and `.playwright-mcp/` are untracked and ignored; the local `.DS_Store` checksum is unchanged; `.playwright-cli/` is ignored and its local contents/checksum inventory is unchanged.
+- [x] The five root screenshots, four obsolete asset documents, and all tracked `.playwright-mcp/` entries are absent from the release tree; protected production assets, visual baselines, and historical command-centre plan/spec remain.
+- [x] Only the named dead code is removed. Career has one Motion reduced-motion subscription; window geometry behavior, command output/safety, and Projects `.blurb` are preserved.
+- [x] Both workflows use exactly the six approved SHA pins/comments and otherwise retain their existing behavior; `upload-pages-artifact` is v4.
+- [x] `package.json`, `package-lock.json`, and `index.html` are byte-for-byte unchanged from pre-task head `151456d`; therefore no dependency, CSP, or referrer change occurred.
+- [x] Focused RED precedes implementation. Final typecheck, lint, coverage, build, bundle, full E2E, axe, and no-update visual gates pass at one exact Tester head; all four coverage dimensions remain above 90% with checked-in 91% thresholds.
+- [x] `npm audit --audit-level=high` and `npm audit --omit=dev --audit-level=high` pass, `git merge-tree --write-tree master HEAD` reports no conflict, and no push/PR/merge/deploy occurs.
+- [x] Final `git status --short` is clean. `git status --short --ignored` may show only intentionally preserved ignored local artifacts/caches documented by the Tester; no protected local artifact was staged.
 
 ## Evidence contracts
 
@@ -127,3 +127,15 @@ Do not update snapshots. Manually verify the production preview under `/ben-port
 ## Product Owner acceptance
 
 Accept only if every checklist item has exact-head Tester evidence, the final whole-change review is clean, the repository status contract is met, and the task contains no product/dependency/security-header/deployment drift.
+
+### Decision — 2026-08-25
+
+**Verdict: ACCEPTED.** PORT-019 is accepted at Tester report commit `62f7efb` for exact code-and-tests candidate `43c1e6c6f646bebd58e7c0121fb559aa03fabf87`. Tester RED is `f37da80`; bounded production/config/documentation hardening is `81f1a91`; the Motion test harness and authoritative DESIGN corrections are `08aeb1d`/`238880a`. The final whole-branch Critical shallow-checkout blocker and two approved Minor cleanups were resolved by `70d4dda`, `9e5516c`, and `43c1e6c`; the scoped final re-review approved all three findings with no new finding or open defect.
+
+Every release-boundary criterion is satisfied. PRD, DESIGN, and AGENTS describe the accepted five-app/Micro-terminal/Work architecture. Forbidden Finder, Playwright, screenshot, and obsolete asset-document paths are absent from the index; the production CV/assets, all four visual baselines, Projects `.blurb`, and both historical command-centre documents remain. The final Minor removal affected only the separately verified unused Projects `.srOnly`, not `.blurb`, and was explicitly ruled in-scope before final recertification.
+
+Both workflows contain exactly the six supplied 40-character official Action pins with `# v4` comments, including `upload-pages-artifact` v4; their triggers, permissions, jobs, commands, artifact contract, environment, and deploy guard are unchanged. The shallow-safe release audit passes in a depth-one checkout and protects raw bytes using the accepted SHA-256 values. `package.json`, `package-lock.json`, and `index.html` remain byte-identical to `151456d`, so no dependency, CSP, or referrer change occurred.
+
+Exact-head evidence under Node `v24.19.0`/npm `11.17.0` is green: focused **45/45**; coverage **179/179** at statements **98.46%**, branches **91.29%**, functions **99.34%**, and lines **99.60%**; E2E **53 passed / 172 intentional skips**; axe **3/12**; no-update visuals **4/16** with unchanged baselines; typecheck, lint, build, bundle, both zero-vulnerability npm audits, `git diff --check`, and conflict-free merge tree `96572dee796eaf1f53471a31b7c7e94bcbbbbbb5` passed. The four-viewport Browser preview passed direct hashes/history, keyboard/focus/maximize, reduced motion, Desktop-only Micro terminal, external actions, static base path, and no-overflow checks.
+
+The local `.DS_Store` SHA-1 remains `08c1372d09e6e56db51a532ba076b208269b556e`; all 18 `.playwright-cli/` name/size/SHA-1 records match the pre-change inventory; `.playwright-mcp/` is ignored and untracked. Ordinary `git status --short` was clean at certification and acceptance review. No protected artifact was staged or changed, no push/PR/merge/deploy occurred, and no product, dependency, security-header, visual-baseline, or deployment-behavior drift remains.
