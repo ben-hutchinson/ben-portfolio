@@ -5,6 +5,7 @@ import { promisify } from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import playwrightConfig from '../../playwright.config';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const execFileAsync = promisify(execFile);
@@ -13,6 +14,20 @@ const releaseInputSha256 = {
   'package-lock.json': '9673b4caf416cde42bcfc5e87635381c279d81f4fe54695151ff70aa559f5f00',
   'index.html': 'a3c6b6a4c021ff9480dc4effafc4fb581ea6d875088cce8039b6077ee47c210d',
 } as const;
+const darwinVisualBaselines = {
+  'career-1440x1000.png': 'c151b736c0f6252985eac25bd9e24a21dd680956b58b7b3d3a3a15e9539b2c05',
+  'career-390x844.png': 'a85282d027c421af4a511208a146762866fefb24962e050dd400fd7023d3f41a',
+  'desktop-1440x1000.png': '7b71e9ddffc335c79177b8820a471c7649d1c2d58f80837a61e958dfcc3cd194',
+  'desktop-390x844.png': 'fdeae2f4763ac7095dd780534a650cf1c55d6934c8050f93b5dd6e41af42f922',
+} as const;
+const approvedActionPins = [
+  'actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4',
+  'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4',
+  'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4',
+  'actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4',
+  'actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4',
+  'actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4',
+] as const;
 
 async function trackedFiles(): Promise<readonly string[]> {
   const { stdout } = await execFileAsync('git', ['ls-files'], { cwd: repositoryRoot });
@@ -225,10 +240,10 @@ describe('PORT-019 release hardening', () => {
       'public/favicon.svg',
       'public/assets/ui/project-pokeleximon.webp',
       'public/assets/ui/project-safelog.webp',
-      'tests/e2e/visual.spec.ts-snapshots/desktop-1440x1000.png',
-      'tests/e2e/visual.spec.ts-snapshots/desktop-390x844.png',
-      'tests/e2e/visual.spec.ts-snapshots/career-1440x1000.png',
-      'tests/e2e/visual.spec.ts-snapshots/career-390x844.png',
+      'tests/e2e/visual.spec.ts-snapshots/darwin/desktop-1440x1000.png',
+      'tests/e2e/visual.spec.ts-snapshots/darwin/desktop-390x844.png',
+      'tests/e2e/visual.spec.ts-snapshots/darwin/career-1440x1000.png',
+      'tests/e2e/visual.spec.ts-snapshots/darwin/career-390x844.png',
       'docs/superpowers/plans/2026-07-28-command-centre-portfolio-redesign.md',
       'docs/superpowers/specs/2026-07-28-command-centre-portfolio-redesign-design.md',
     ]) {
@@ -292,5 +307,75 @@ describe('PORT-019 release hardening', () => {
     expect(sha256(packageManifest)).toBe(releaseInputSha256['package.json']);
     expect(sha256(packageLock)).toBe(releaseInputSha256['package-lock.json']);
     expect(sha256(html)).toBe(releaseInputSha256['index.html']);
+  });
+});
+
+describe('PORT-020 CI portability', () => {
+  it('selects the exact platform-specific visual snapshot tree', () => {
+    expect(playwrightConfig.snapshotPathTemplate).toBe(
+      '{testDir}/{testFilePath}-snapshots/{platform}/{arg}{ext}',
+    );
+  });
+
+  it('preserves the accepted Darwin baselines byte-for-byte and keeps tracked source portable', async () => {
+    const tracked = await trackedFiles();
+    const baselineRoot = path.join(repositoryRoot, 'tests/e2e/visual.spec.ts-snapshots/darwin');
+    const baselineNames = Object.keys(darwinVisualBaselines).sort();
+    const privateTemporaryRoot = ['', 'private', 'tmp'].join('/');
+    const portableSource = tracked.filter((relativePath) => (
+      relativePath === 'playwright.config.ts'
+      || relativePath.startsWith('src/')
+      || relativePath.startsWith('tests/')
+    ) && /\.(?:[cm]?[jt]sx?|css)$/.test(relativePath));
+    const nonPortableSource = (await Promise.all(portableSource.map(async (relativePath) => ({
+      relativePath,
+      contents: await readFile(path.join(repositoryRoot, relativePath), 'utf8'),
+    })))).filter(({ contents }) => contents.includes(privateTemporaryRoot));
+
+    expect((await readdir(baselineRoot)).sort()).toEqual(baselineNames);
+    for (const baselineName of baselineNames) {
+      const relativePath = `tests/e2e/visual.spec.ts-snapshots/darwin/${baselineName}`;
+      expect(tracked).toContain(relativePath);
+      expect(sha256(await readFile(path.join(repositoryRoot, relativePath))))
+        .toBe(darwinVisualBaselines[baselineName as keyof typeof darwinVisualBaselines]);
+    }
+    expect(nonPortableSource.map(({ relativePath }) => relativePath)).toEqual([]);
+  });
+
+  it('retains concise console output while writing the inspectable HTML report', () => {
+    expect(playwrightConfig.reporter).toEqual([
+      ['list'],
+      ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ]);
+  });
+
+  it('uploads the exact Linux Playwright evidence only when browser verification fails', async () => {
+    const qualityWorkflow = await readFile(path.join(repositoryRoot, '.github/workflows/quality.yml'), 'utf8');
+    const exactFailureEvidenceStep = `      - name: Upload Playwright failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-failure-evidence-linux
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: warn`;
+
+    expect(qualityWorkflow).toContain(exactFailureEvidenceStep);
+  });
+
+  it('uses only the six approved immutable official Action references', async () => {
+    const [qualityWorkflow, pagesWorkflow] = await Promise.all([
+      readFile(path.join(repositoryRoot, '.github/workflows/quality.yml'), 'utf8'),
+      readFile(path.join(repositoryRoot, '.github/workflows/gh-pages.yml'), 'utf8'),
+    ]);
+    const workflows = `${qualityWorkflow}\n${pagesWorkflow}`;
+    const officialActionReferences = [...workflows.matchAll(/uses:\s+(actions\/[^\s]+\s+#\s+v\d+)/g)]
+      .map(([, reference]) => reference);
+
+    expect(new Set(officialActionReferences)).toEqual(new Set(approvedActionPins));
+    expect(officialActionReferences.every((reference) => approvedActionPins.includes(
+      reference as typeof approvedActionPins[number],
+    ))).toBe(true);
   });
 });

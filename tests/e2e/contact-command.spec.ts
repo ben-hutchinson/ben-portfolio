@@ -11,7 +11,7 @@ test.describe('Contact and optional Micro terminal paths', () => {
     await expect(contact.getByRole('link', { name: 'LinkedIn' })).toHaveAttribute('target', '_blank');
     await expect(contact.getByRole('link', { name: 'GitHub' })).toHaveAttribute('rel', 'noreferrer noopener');
     await expect(contact.getByRole('link', { name: 'Download CV' })).toHaveAttribute('download', 'ben-hutchinson-cv.pdf');
-    await page.screenshot({ path: '/private/tmp/portfolio-os-task10-contact-desktop.png', fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('portfolio-os-task10-contact-desktop.png'), fullPage: true });
   });
 
   test('keeps one bounded Micro terminal optional, inert, and connected to shared navigation', async ({ page }, testInfo) => {

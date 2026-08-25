@@ -50,7 +50,7 @@ test.describe('Work.app', () => {
     }
   });
 
-  test('opens directly with a keyboard-readable case outline and CV exit', async ({ page }) => {
+  test('opens directly with a keyboard-readable case outline and CV exit', async ({ page }, testInfo) => {
     await page.goto('./#work');
     await expect(page).toHaveURL(/#work$/);
     const frame = page.locator(workFrame);
@@ -85,20 +85,20 @@ test.describe('Work.app', () => {
     await expect(frame.getByText('ruff', { exact: true })).toHaveCount(0);
     await page.keyboard.press('Tab');
     await expect(page.getByRole('link', { name: 'Download CV' })).toHaveAttribute('download', 'ben-hutchinson-cv.pdf');
-    if (test.info().project.name === 'Chromium') {
-      await page.screenshot({ path: '/private/tmp/portfolio-os-task8-desktop.png', fullPage: true });
+    if (testInfo.project.name === 'Chromium') {
+      await page.screenshot({ path: testInfo.outputPath('portfolio-os-task8-desktop.png'), fullPage: true });
     }
   });
 
-  test('keeps the complete case readable without horizontal overflow on narrow screens', async ({ page }) => {
+  test('keeps the complete case readable without horizontal overflow on narrow screens', async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('./#work');
     await expect(page.getByText('The work is internal, so no public repository or implementation detail is published.')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.getByRole('link', { name: 'Download CV' }).scrollIntoViewIfNeeded();
     await expect(page.getByRole('link', { name: 'Download CV' })).toBeVisible();
-    if (test.info().project.name === 'mobile-Chrome') {
-      await page.screenshot({ path: '/private/tmp/portfolio-os-task8-mobile.png', fullPage: true });
+    if (testInfo.project.name === 'mobile-Chrome') {
+      await page.screenshot({ path: testInfo.outputPath('portfolio-os-task8-mobile.png'), fullPage: true });
     }
   });
 });

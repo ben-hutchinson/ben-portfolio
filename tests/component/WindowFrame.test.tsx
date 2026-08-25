@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import type { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { WindowFrame } from '../../src/shell/WindowFrame';
@@ -92,14 +94,31 @@ describe('WindowFrame', () => {
     expect(document.querySelectorAll('[data-titlebar="work"]')).toHaveLength(1);
   });
 
-  it('keeps window controls and interactive body content in ordinary keyboard focus order', async () => {
+  it('places a labelled content region between window controls and interactive body content in keyboard order', async () => {
     const user = userEvent.setup();
     renderFrame();
+    const content = screen.getByRole('region', { name: 'Work content' });
 
-    for (const name of ['Close Work', 'Minimize Work', 'Maximize Work', 'Body action']) {
+    expect(content).toHaveAttribute('tabindex', '0');
+    for (const name of ['Close Work', 'Minimize Work', 'Maximize Work']) {
       await user.tab();
       expect(screen.getByRole('button', { name })).toHaveFocus();
     }
+    await user.tab();
+    expect(content).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'Body action' })).toHaveFocus();
+  });
+
+  it('keeps the content keyboard outline inside the clipped window boundary', async () => {
+    const windowFrameStyles = await readFile(
+      path.resolve(process.cwd(), 'src/shell/WindowFrame.module.css'),
+      'utf8',
+    );
+
+    expect(windowFrameStyles).toMatch(
+      /\.content:focus-visible\s*\{[^}]*outline:\s*var\(--focus-width\)\s+solid\s+var\(--color-focus\);[^}]*outline-offset:\s*calc\(-1\s*\*\s*var\(--focus-width\)\);[^}]*\}/s,
+    );
   });
 
   it('releases capture on cancellation and removes the fallback document listeners on unmount', () => {

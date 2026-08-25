@@ -49,7 +49,7 @@ test.describe('Projects application', () => {
     const projects = page.locator(frame);
     await expect(projects.getByRole('heading', { level: 1, name: 'Engineering projects' })).toBeVisible();
     await expect(projects.getByTestId('project-entry-pokeleximon')).toHaveAttribute('data-featured', 'true');
-    await page.screenshot({ path: '/private/tmp/portfolio-os-task9-desktop.png', fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('portfolio-os-task9-desktop.png'), fullPage: true });
 
     await projects.getByRole('button', { name: 'Open Pokeleximon Daily case study' }).click();
     await expect(page).toHaveURL(/#projects\/pokeleximon$/);
@@ -62,7 +62,7 @@ test.describe('Projects application', () => {
     await expect(overview).toHaveAttribute('rel', 'noreferrer noopener');
     await expect(links.getByRole('link', { name: 'Live' })).toHaveCount(0);
     expect(await links.locator('a').evaluateAll((anchors) => new Set(anchors.map((anchor) => (anchor as HTMLAnchorElement).href)).size)).toBe(1);
-    await page.screenshot({ path: '/private/tmp/portfolio-os-task9-pokeleximon.png', fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('portfolio-os-task9-pokeleximon.png'), fullPage: true });
 
     await page.goto('./#projects/safelog');
     await expect(projects.getByRole('heading', { level: 1, name: 'Safelog' })).toBeVisible();
@@ -95,7 +95,7 @@ test.describe('Projects application', () => {
     await page.getByRole('button', { name: 'Open Pokeleximon Daily case study' }).click();
     await expect(page).toHaveURL(/#projects\/pokeleximon$/);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    await page.screenshot({ path: '/private/tmp/portfolio-os-task9-mobile.png', fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath('portfolio-os-task9-mobile.png'), fullPage: true });
   });
 
   test('keeps featured Pokeleximon copy and complete media within their row at every required size', async ({ page }, testInfo) => {
@@ -146,7 +146,7 @@ test.describe('Projects application', () => {
       expect(isContainedBy(measurement.copy, measurement.row), `${scenario.name}: copy escapes featured row`).toBe(true);
       expect(isContainedBy(measurement.media, measurement.row), `${scenario.name}: media escapes featured row`).toBe(true);
       expect(measurement.image.height, `${scenario.name}: image has positive height`).toBeGreaterThan(0);
-      await page.screenshot({ path: `/private/tmp/portfolio-os-port-017-${scenario.name}.png`, fullPage: true });
+      await page.screenshot({ path: testInfo.outputPath(`portfolio-os-port-017-${scenario.name}.png`), fullPage: true });
       expect(Math.abs(measurement.mediaContentHeight - measurement.imageContentHeight), `${scenario.name}: media has empty Ink below image`).toBeLessThanOrEqual(2);
       expect(
         Math.abs((measurement.image.width / measurement.image.height) / (measurement.imageNaturalWidth / measurement.imageNaturalHeight) - 1),
