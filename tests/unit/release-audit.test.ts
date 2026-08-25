@@ -20,6 +20,12 @@ const darwinVisualBaselines = {
   'desktop-1440x1000.png': '1af2a4174ff0afc2ba5f6ab3d2a44df0018c9548cdac3d360da3e0da641f8d28',
   'desktop-390x844.png': '0920132148245ebb7a0cc3ca6c02549cb966ff0649715b88ba2a74230e5b4544',
 } as const;
+const linuxVisualBaselines = {
+  'career-1440x1000.png': '28266bc85a64606c805339cdb79d194fb27956f6e0c9045b84ad117a3a409486',
+  'career-390x844.png': '5498cfae3f9a4efa33147a8d04abb178fd2f323a74011b6e24e5e47a29a195e8',
+  'desktop-1440x1000.png': 'cbb687bcc23b1d388f575b3edc37cea06be4c980b47acf7f830f50a9030aae4c',
+  'desktop-390x844.png': 'fa8c11d76b765434c7bb2539cdf07043ed5005a64621af24cb99eccad606e9c8',
+} as const;
 const approvedActionPins = [
   'actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4',
   'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4',
@@ -344,6 +350,20 @@ describe('PORT-020 CI portability', () => {
         .toBe(darwinVisualBaselines[baselineName as keyof typeof darwinVisualBaselines]);
     }
     expect(nonPortableSource.map(({ relativePath }) => relativePath)).toEqual([]);
+  });
+
+  it('preserves exactly the four inspected deterministic Inter Linux baselines', async () => {
+    const tracked = await trackedFiles();
+    const baselineRoot = path.join(repositoryRoot, 'tests/e2e/visual.spec.ts-snapshots/linux');
+    const baselineNames = Object.keys(linuxVisualBaselines).sort();
+
+    expect((await readdir(baselineRoot)).sort()).toEqual(baselineNames);
+    for (const baselineName of baselineNames) {
+      const relativePath = `tests/e2e/visual.spec.ts-snapshots/linux/${baselineName}`;
+      expect(tracked).toContain(relativePath);
+      expect(sha256(await readFile(path.join(repositoryRoot, relativePath))))
+        .toBe(linuxVisualBaselines[baselineName as keyof typeof linuxVisualBaselines]);
+    }
   });
 
   it('retains concise console output while writing the inspectable HTML report', () => {

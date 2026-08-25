@@ -165,3 +165,54 @@ Recertification gates:
 | `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4260 npm run test:e2e:visual` | PASS in normal no-update mode — **4 passed / 16 intentional project skips**, 0 failed. All four recertified Darwin comparisons are exact. |
 
 Custody disposition: the four fallback Darwin hashes are retired under the PO exception; the four Inter-loaded hashes above are the only approved Darwin set. The git commit containing this section, the updated checksum contract, and exactly those four PNG replacements is the recertification custody commit; its immutable SHA is reported in the Tester handoff because a commit cannot contain its own hash.
+
+## Repeated Linux calibration — deterministic Inter baseline custody
+
+- GitHub quality run: [32832858737](https://github.com/ben-hutchinson/ben-portfolio/actions/runs/32832858737), exact candidate `f6c9d750c72a02e6d881db350c1ee5bb593e5609`.
+- Run result: **230 tests — 50 passed, 176 intentional skips, exactly 4 failed**. Each failure was solely the expected absence of one Linux baseline; all nonvisual checks, the loaded-face/browser contract, and the failure-evidence upload passed.
+- Artifact: `playwright-failure-evidence-linux`, downloaded intact to `/tmp/portfolio-port020-32832858737.eFrdiE` for Tester custody. The four `error-context.md` records show execution reached the unchanged `toHaveScreenshot` call after `document.fonts.ready`, `document.fonts.check('900 16px Inter')`, and `expectLoadedInterDisplayFace`; there was no font-load or other precondition failure.
+
+Each CI actual was compared at full size with its recertified deterministic-Inter Darwin counterpart:
+
+| Exact artifact source | Linux SHA-256 | Inspection finding | Decision |
+| --- | --- | --- | --- |
+| `/tmp/portfolio-port020-32832858737.eFrdiE/test-results/visual-PORT-012-approved-v-096fd-ed-Portfolio-OS-composition-Chromium/desktop-1440x1000-actual.png` | `cbb687bcc23b1d388f575b3edc37cea06be4c980b47acf7f830f50a9030aae4c` | Complete About and Work copy remains contained; window, shortcut, terminal, dock, and action geometry is unchanged. Linux rasterization introduces only safe line wrapping, with none of the rejected fallback clipping. | ACCEPT |
+| `/tmp/portfolio-port020-32832858737.eFrdiE/test-results/visual-PORT-012-approved-v-c6c49-ed-Portfolio-OS-composition-Chromium/desktop-390x844-actual.png` | `fa8c11d76b765434c7bb2539cdf07043ed5005a64621af24cb99eccad606e9c8` | Ben's name, full role/summary/opportunity copy, controls, terminal, reset action, and dock remain readable and inside the same responsive frame. The summary wraps to additional safe lines without collision, clipping, or horizontal overflow. | ACCEPT |
+| `/tmp/portfolio-port020-32832858737.eFrdiE/test-results/visual-PORT-012-approved-v-5e8e3-ed-Portfolio-OS-composition-Chromium/career-1440x1000-actual.png` | `28266bc85a64606c805339cdb79d194fb27956f6e0c9045b84ad117a3a409486` | Stage, year, complete headline, evidence, slider, direct controls, window bounds, and background composition are preserved. Differences are platform rasterization only; no missing copy, altered affordance, clipping, or overflow. | ACCEPT |
+| `/tmp/portfolio-port020-32832858737.eFrdiE/test-results/visual-PORT-012-approved-v-52a1c-ed-Portfolio-OS-composition-Chromium/career-390x844-actual.png` | `5498cfae3f9a4efa33147a8d04abb178fd2f323a74011b6e24e5e47a29a195e8` | The narrow stage/headline/evidence composition and scroll continuation remain intact. Safe evidence wrapping exposes at least as much readable content in the viewport, with no collision, horizontal overflow, or prior fallback defect. | ACCEPT |
+
+The Tester manually copied only these reviewed actuals to the same four filenames under `tests/e2e/visual.spec.ts-snapshots/linux/`. No snapshot-update command, tolerance, assertion option, filename, production, configuration, workflow, or task-document change was used. The release audit now enforces exactly this four-file Linux set alongside the unchanged four-file Darwin, font-custody, static-path, package-integrity, and Action-pin contracts.
+
+Final eight-platform checksum custody:
+
+| Platform | Filename | SHA-256 |
+| --- | --- | --- |
+| Darwin | `desktop-1440x1000.png` | `1af2a4174ff0afc2ba5f6ab3d2a44df0018c9548cdac3d360da3e0da641f8d28` |
+| Darwin | `desktop-390x844.png` | `0920132148245ebb7a0cc3ca6c02549cb966ff0649715b88ba2a74230e5b4544` |
+| Darwin | `career-1440x1000.png` | `fc956593d39fcfccde07264879d4bcee12c559435796b2274c117c7660bae8dc` |
+| Darwin | `career-390x844.png` | `c234b733fb60f44f3e8dc8e99795554e9e6328b627d28fa1506dde91623568fb` |
+| Linux | `desktop-1440x1000.png` | `cbb687bcc23b1d388f575b3edc37cea06be4c980b47acf7f830f50a9030aae4c` |
+| Linux | `desktop-390x844.png` | `fa8c11d76b765434c7bb2539cdf07043ed5005a64621af24cb99eccad606e9c8` |
+| Linux | `career-1440x1000.png` | `28266bc85a64606c805339cdb79d194fb27956f6e0c9045b84ad117a3a409486` |
+| Linux | `career-390x844.png` | `5498cfae3f9a4efa33147a8d04abb178fd2f323a74011b6e24e5e47a29a195e8` |
+
+Linux-custody checkpoint gates:
+
+| Command | Result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts` | PASS — **1 file, 15 tests**, 0 failed. Exact Darwin and Linux names/checksums remain enforced. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` | PASS. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run lint` | PASS — zero warnings. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run test:coverage` | PASS — **22 files, 188 tests**, 0 failed. Statements **98.46%** (577/586), branches **91.29%** (430/471), functions **99.34%** (152/153), lines **99.60%** (510/512). |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run build` | PASS — Vite 8.2.1 built 475 modules; CSS 31.36 kB / 5.97 kB gzip and JS 309.12 kB / 99.22 kB gzip. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run check:bundle` | PASS — initial JavaScript **97,961 gzip bytes** against 204,800-byte budget; initial images **118,529 bytes** against 1,048,576-byte budget. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4261 npm run test:e2e` | PASS — **54 passed / 176 intentional skips**, 0 failed across 230 tests. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4262 npm run test:e2e:a11y` | PASS — **3 passed / 12 intentional skips**, 0 failed. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4263 npm run test:e2e -- tests/e2e/github-pages.spec.ts` | PASS — **3 passed / 12 intentional skips**, 0 failed; both pinned font resources, static/relative base paths, loaded face/resource/computed family, and history passed. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4264 npm run test:e2e:visual` | PASS in normal no-update mode — **4 passed / 16 intentional skips**, 0 failed against recertified Darwin. |
+| `rg -n '/private/tmp' src tests playwright.config.ts` | PASS — no match; all tracked production/test/config paths are platform-portable. |
+| Workflow Action-reference audit | PASS — only the six approved immutable SHA pins/comments remain; the approved upload-artifact pin is reused for build and failure evidence. |
+| Font and platform-baseline checksum/set audit | PASS — exact official WOFF2/OFL hashes, sole face/token contract, exactly four Darwin files, exactly four Linux files, and all eight recorded hashes match. |
+| `git diff --check` and staged diff check | PASS. Pre-commit scope is only the four Linux PNGs, release-audit test, and this report; `.DS_Store` and `.playwright-cli/` have no status entry. |
+
+The full local gates above completed before the controller's subsequent usage-saving instruction arrived; no further duplicate execution was performed. The exact-head GitHub quality run after this custody commit remains the authoritative Linux no-update verification and must pass before final PORT-020 acceptance.
