@@ -128,3 +128,40 @@ RED executed against Product Owner candidate `58e0ddd` with no production, confi
 The focused browser result demonstrates why `document.fonts.check('900 16px Inter')` is insufficient alone: on this macOS host it returns true for the locally installed face, while `document.fonts` contains no page-defined loaded Inter face and the WOFF2 resource is absent. The additional face/resource/computed-family contract fails deterministically before any screenshot comparison and will require the shipped face to be genuinely loaded.
 
 All prior release assertions remain green. The unchanged visual assertion still has the same four filenames and `{ animations: 'disabled' }`; no tolerance or snapshot-update setting exists. These failures are solely the missing approved font custody, declaration, production publication, and browser-load behavior requested by the bounded change.
+
+## Deterministic Inter Darwin baseline recertification
+
+Product Owner ruling `950134c` authorized one manual replacement of the four fallback-font Darwin baselines. Tester reviewed the fresh no-update actuals produced from exact Developer candidate `d3dce89e2dc20b957ec24bdf6262ee8797607d6a` on macOS 26.5.2 (Build 25F84), Apple Silicon, Playwright 1.62.1, and Chrome for Testing 151.0.7922.34. The visual test contract awaited `document.fonts.ready`, passed `document.fonts.check('900 16px Inter')`, and required the one loaded normal `Inter` variable `FontFace`, computed `Inter` display family, and `/ben-portfolio/fonts/InterVariable.woff2` performance resource before each capture.
+
+Retired fallback Darwin custody:
+
+| Exact baseline path | Retired SHA-256 |
+| --- | --- |
+| `tests/e2e/visual.spec.ts-snapshots/darwin/desktop-1440x1000.png` | `7b71e9ddffc335c79177b8820a471c7649d1c2d58f80837a61e958dfcc3cd194` |
+| `tests/e2e/visual.spec.ts-snapshots/darwin/desktop-390x844.png` | `fdeae2f4763ac7095dd780534a650cf1c55d6934c8050f93b5dd6e41af42f922` |
+| `tests/e2e/visual.spec.ts-snapshots/darwin/career-1440x1000.png` | `c151b736c0f6252985eac25bd9e24a21dd680956b58b7b3d3a3a15e9539b2c05` |
+| `tests/e2e/visual.spec.ts-snapshots/darwin/career-390x844.png` | `a85282d027c421af4a511208a146762866fefb24962e050dd400fd7023d3f41a` |
+
+Reviewed Inter actual and replacement custody:
+
+| Actual source path | Recertified SHA-256 | Full-size inspection decision |
+| --- | --- | --- |
+| `test-results/visual-PORT-012-approved-v-096fd-ed-Portfolio-OS-composition-Chromium/desktop-1440x1000-actual.png` | `1af2a4174ff0afc2ba5f6ab3d2a44df0018c9548cdac3d360da3e0da641f8d28` | ACCEPT — only intended Inter glyph metrics/rasterization changed. About and Work retain exact window geometry, complete copy, hierarchy, controls, action visibility, spacing relationships, and clipping/overflow state. |
+| `test-results/visual-PORT-012-approved-v-c6c49-ed-Portfolio-OS-composition-Chromium/desktop-390x844-actual.png` | `0920132148245ebb7a0cc3ca6c02549cb966ff0649715b88ba2a74230e5b4544` | ACCEPT — Ben's name, role, summary, opportunity copy, frame controls, Micro terminal, reset action, and dock remain visible in the same responsive composition with no new edge collision, clipping, or horizontal overflow. |
+| `test-results/visual-PORT-012-approved-v-5e8e3-ed-Portfolio-OS-composition-Chromium/career-1440x1000-actual.png` | `fc956593d39fcfccde07264879d4bcee12c559435796b2274c117c7660bae8dc` | ACCEPT — stage year, headline, evidence card, slider, direct-stage controls, window bounds, and background geometry remain in place; all copy and affordances retain their approved visibility with no overflow or clipping regression. |
+| `test-results/visual-PORT-012-approved-v-52a1c-ed-Portfolio-OS-composition-Chromium/career-390x844-actual.png` | `c234b733fb60f44f3e8dc8e99795554e9e6328b627d28fa1506dde91623568fb` | ACCEPT — the approved narrow composition, headline wrapping, evidence-card viewport continuation, frame chrome, and scrollable-content boundary are unchanged apart from Inter rasterization; no new clipping, collision, or horizontal overflow is present. |
+
+Each reviewed actual was copied manually to its exact same-named Darwin baseline path. No snapshot-update command, CI update, tolerance, filename, assertion option, copy, layout, route, or production change was used. The directory still contains exactly the four approved names, and the release audit now binds those names to the recertified hashes above. The rejected Linux candidates remain retired and were not copied.
+
+Recertification gates:
+
+| Command | Result |
+| --- | --- |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm test -- tests/unit/release-audit.test.ts` | PASS — **1 file, 14 tests**, 0 failed. Exact Darwin set/checksums and deterministic-font custody remain enforced. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run typecheck` | PASS. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run lint` | PASS — zero warnings. |
+| `PATH=/opt/homebrew/opt/node@24/bin:$PATH npm run build` | PASS — Vite 8.2.1 built 475 modules; CSS 31.36 kB / 5.97 kB gzip and JS 309.12 kB / 99.22 kB gzip. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4259 npm run test:e2e -- tests/e2e/github-pages.spec.ts` | PASS — **3 passed / 12 intentional project skips**, 0 failed. The pinned WOFF2/OFL response digests, font-compatible response, static and relative base paths, loaded `FontFace`, resource, and computed display family all passed. |
+| `CI=1 PATH=/opt/homebrew/opt/node@24/bin:$PATH PLAYWRIGHT_PORT=4260 npm run test:e2e:visual` | PASS in normal no-update mode — **4 passed / 16 intentional project skips**, 0 failed. All four recertified Darwin comparisons are exact. |
+
+Custody disposition: the four fallback Darwin hashes are retired under the PO exception; the four Inter-loaded hashes above are the only approved Darwin set. The git commit containing this section, the updated checksum contract, and exactly those four PNG replacements is the recertification custody commit; its immutable SHA is reported in the Tester handoff because a commit cannot contain its own hash.

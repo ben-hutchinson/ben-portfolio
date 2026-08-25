@@ -15,10 +15,10 @@ const releaseInputSha256 = {
   'index.html': 'a3c6b6a4c021ff9480dc4effafc4fb581ea6d875088cce8039b6077ee47c210d',
 } as const;
 const darwinVisualBaselines = {
-  'career-1440x1000.png': 'c151b736c0f6252985eac25bd9e24a21dd680956b58b7b3d3a3a15e9539b2c05',
-  'career-390x844.png': 'a85282d027c421af4a511208a146762866fefb24962e050dd400fd7023d3f41a',
-  'desktop-1440x1000.png': '7b71e9ddffc335c79177b8820a471c7649d1c2d58f80837a61e958dfcc3cd194',
-  'desktop-390x844.png': 'fdeae2f4763ac7095dd780534a650cf1c55d6934c8050f93b5dd6e41af42f922',
+  'career-1440x1000.png': 'fc956593d39fcfccde07264879d4bcee12c559435796b2274c117c7660bae8dc',
+  'career-390x844.png': 'c234b733fb60f44f3e8dc8e99795554e9e6328b627d28fa1506dde91623568fb',
+  'desktop-1440x1000.png': '1af2a4174ff0afc2ba5f6ab3d2a44df0018c9548cdac3d360da3e0da641f8d28',
+  'desktop-390x844.png': '0920132148245ebb7a0cc3ca6c02549cb966ff0649715b88ba2a74230e5b4544',
 } as const;
 const approvedActionPins = [
   'actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4',
