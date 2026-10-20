@@ -42,6 +42,99 @@ function isContainedBy(child: DOMRect, parent: DOMRect): boolean {
 }
 
 test.describe('Projects application', () => {
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+    test(`defers trailer transfer until explicit play and stops it on departure at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name !== 'Chromium', 'Focused native trailer acceptance runs in Chromium.');
+      await page.setViewportSize(viewport);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      const trailerRequests: string[] = [];
+      page.on('request', (request) => {
+        if (new URL(request.url()).pathname.endsWith('/assets/video/trivialise-trailer.mp4')) trailerRequests.push(request.url());
+      });
+      await page.goto('./#desktop');
+      await expect(page.getByRole('button', { name: 'Projects', exact: true })).toBeVisible();
+      expect(trailerRequests).toEqual([]);
+      await page.getByRole('button', { name: 'Projects', exact: true }).click();
+      await expect(page.locator(frame).getByRole('heading', { level: 1, name: 'Engineering projects' })).toBeVisible();
+      expect(await page.locator(frame).locator('video').count()).toBe(0);
+      expect(trailerRequests).toEqual([]);
+      await page.getByRole('button', { name: 'Open TRIVIALISE! case study' }).click();
+      const video = page.locator(frame).locator('video');
+      await expect(video).toHaveCount(1);
+      await expect(video).toHaveAccessibleName(/trivialise.*trailer/i);
+      await expect(video).toHaveAttribute('preload', 'none');
+      await expect(video).toHaveAttribute('poster', '/ben-portfolio/assets/ui/project-trivialise-trailer-poster.webp');
+      await expect(video).toHaveJSProperty('paused', true);
+      await expect(video).toHaveJSProperty('readyState', 0);
+      expect(trailerRequests).toEqual([]);
+      await video.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: testInfo.outputPath(`trailer-paused-${viewport.width}.png`) });
+      expect(trailerRequests).toEqual([]);
+      await expect(video).toHaveJSProperty('readyState', 0);
+      const mediaResponse = page.waitForResponse((response) => new URL(response.url()).pathname.endsWith('/assets/video/trivialise-trailer.mp4'));
+      await video.focus();
+      await page.keyboard.press('Space');
+      expect([200, 206]).toContain((await mediaResponse).status());
+      await expect(video).toHaveJSProperty('paused', false);
+      await expect.poll(async () => video.evaluate((element) => (element as HTMLVideoElement).currentTime)).toBeGreaterThan(0);
+      expect(trailerRequests.length).toBeGreaterThan(0);
+      expect(trailerRequests.every((url) => new URL(url).pathname === '/ben-portfolio/assets/video/trivialise-trailer.mp4')).toBe(true);
+      await page.keyboard.press('Space');
+      await expect(video).toHaveJSProperty('paused', true);
+
+      await video.evaluate(async (element) => {
+        const player = element as HTMLVideoElement;
+        const seeked = new Promise<void>((resolve) => player.addEventListener('seeked', () => resolve(), { once: true }));
+        player.currentTime = 10;
+        await seeked;
+        player.muted = true;
+        player.volume = 0.5;
+        player.textTracks[0].mode = 'showing';
+      });
+      await expect(video).toHaveJSProperty('currentTime', 10);
+      await expect(video).toHaveJSProperty('videoWidth', 1920);
+      await expect(video).toHaveJSProperty('muted', true);
+      await expect(video).toHaveJSProperty('volume', 0.5);
+      await expect.poll(async () => video.evaluate((element) => {
+        const track = (element as HTMLVideoElement).textTracks[0];
+        return { label: track.label, language: track.language, text: [...(track.activeCues ?? [])].map((cue) => (cue as VTTCue).text).join(' ') };
+      })).toMatchObject({ label: 'English', language: 'en', text: expect.stringContaining('Trivia earns progress') });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+      const previousVideo = await video.elementHandle();
+      await video.evaluate((element) => (element as HTMLVideoElement).play());
+      await expect(video).toHaveJSProperty('paused', false);
+      await page.locator(frame).getByRole('button', { name: 'Back to projects' }).click();
+      await expect(page).toHaveURL(/#projects$/);
+      await expect.poll(async () => previousVideo!.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
+      await expect(page.locator(frame).locator('video')).toHaveCount(0);
+    });
+
+    test(`retains useful detail and transcript when trailer loading fails at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name !== 'Chromium', 'Focused trailer failure acceptance runs in Chromium.');
+      await page.setViewportSize(viewport);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.route('**/assets/video/trivialise-trailer.mp4', (route) => route.abort());
+      await page.goto('./#projects/trivialise');
+      const detail = page.locator(frame);
+      const video = detail.locator('video');
+      await expect(video).toHaveCount(1);
+      await video.scrollIntoViewIfNeeded();
+      await video.focus();
+      await page.keyboard.press('Space');
+      await expect(detail.getByText(/(trailer|video).*(unavailable|could not|failed)/i)).toBeVisible();
+      await expect(detail.getByRole('img', { name: 'TRIVIALISE! project interface' })).toBeVisible();
+      await expect(detail.getByText(/Upbeat instrumental music accompanies this 20-second animated trailer/)).toBeVisible();
+      await expect(detail.getByText(/A shared display and private phone controllers/)).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await page.screenshot({ path: testInfo.outputPath(`trailer-failed-${viewport.width}.png`) });
+      await detail.getByRole('button', { name: 'Back to projects' }).click();
+      await expect(page).toHaveURL(/#projects$/);
+      await detail.getByRole('button', { name: 'Open Taskmon case study' }).click();
+      await expect(detail.getByRole('heading', { level: 1, name: 'Taskmon' })).toBeInViewport();
+    });
+  }
+
   for (const project of [
     { id: 'trivialise', title: 'TRIVIALISE!' },
     { id: 'taskmon', title: 'Taskmon' },
