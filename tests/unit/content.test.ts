@@ -2,7 +2,7 @@ import { careerStages } from '../../src/data/career';
 import { externalLinks } from '../../src/data/externalLinks';
 import type { AppId, CareerStage, CareerStageId, ProjectId } from '../../src/data/models';
 import { profile } from '../../src/data/profile';
-import { projects } from '../../src/data/projects';
+import * as projectData from '../../src/data/projects';
 import * as workData from '../../src/data/work';
 import { WINDOW_APP_ORDER } from '../../src/shell/WindowLayer';
 import { describe, expect, it } from 'vitest';
@@ -12,9 +12,36 @@ const canonicalMigrationSentence =
 
 const supportedAppIds: readonly AppId[] = ['about', 'work', 'career', 'projects', 'contact'];
 const expectedCareerIds: readonly CareerStageId[] = ['graduate', 'observability', 'associate', 'skao'];
-const expectedProjectIds: readonly ProjectId[] = ['pokeleximon', 'safelog'];
+const expectedProjectIds = ['pokeleximon', 'safelog', 'trivialise', 'taskmon'];
 const allowedCareerAccents = ['orange', 'yellow', 'blue', 'mint'];
-const supportedProjectHashes = ['#projects/pokeleximon', '#projects/safelog'];
+const supportedProjectHashes = [
+  '#projects/pokeleximon',
+  '#projects/safelog',
+  '#projects/trivialise',
+  '#projects/taskmon',
+];
+
+type ProjectRecord = (typeof projectData.projects)[number] & {
+  readonly category?: string;
+  readonly trailer?: {
+    readonly src: string;
+    readonly poster: string;
+    readonly captions: string;
+    readonly description: string;
+  };
+};
+
+const projects: readonly ProjectRecord[] = projectData.projects;
+const projectCatalogue = projectData as typeof projectData & {
+  readonly projectIds?: readonly string[];
+  readonly isProjectId?: (value: string) => boolean;
+};
+
+const addedProjectImages = [
+  'assets/ui/project-trivialise.webp',
+  'assets/ui/project-taskmon.webp',
+  'assets/ui/project-trivialise-trailer-poster.webp',
+];
 
 type WorkRecord = {
   readonly id: string;
@@ -70,7 +97,7 @@ describe('canonical portfolio content', () => {
     expect(supportedAppIds).toEqual(['about', 'work', 'career', 'projects', 'contact']);
     expect(WINDOW_APP_ORDER).toEqual(['about', 'work', 'career', 'projects', 'contact']);
     expect(expectedCareerIds).toEqual(['graduate', 'observability', 'associate', 'skao']);
-    expect(expectedProjectIds).toEqual(['pokeleximon', 'safelog']);
+    expect(expectedProjectIds).toEqual(['pokeleximon', 'safelog', 'trivialise', 'taskmon']);
   });
 
   it('keeps career stages unique, ordered, and complete', () => {
@@ -100,8 +127,108 @@ describe('canonical portfolio content', () => {
 
   it('uses base-safe project asset paths for the configured Vite deployment base', () => {
     for (const project of projects) {
-      expect(project.image).not.toMatch(/^\//);
+      for (const asset of [
+        project.image,
+        ...(project.trailer
+          ? [project.trailer.src, project.trailer.poster, project.trailer.captions]
+          : []),
+      ]) {
+        expect(asset).toMatch(/^assets\//);
+        expect(asset).not.toMatch(/(^\/|\.\.|https?:)/);
+      }
     }
+  });
+
+  it('exports runtime project IDs that match the canonical catalogue', () => {
+    expect(projectCatalogue.projectIds).toEqual(expectedProjectIds);
+    expect(projectCatalogue.projectIds).toEqual(projects.map(({ id }) => id));
+    expect(projectCatalogue.isProjectId).toBeTypeOf('function');
+    for (const id of expectedProjectIds) {
+      expect(projectCatalogue.isProjectId?.(id), id).toBe(true);
+    }
+  });
+
+  it.each([
+    '', 'unknown', 'TRIVIALISE!', 'Trivialise', 'Taskmon', 'Pokeleximon Daily',
+    'project trivialise', '#projects/taskmon', 'trivialise/extra', ' taskmon', 'taskmon ',
+  ])('rejects non-canonical project identifier %j', (id) => {
+    expect(projectCatalogue.isProjectId?.(id)).toBe(false);
+  });
+
+  it('gives every project its own data-backed catalogue category', () => {
+    expect(projects.map(({ category }) => category)).toEqual([
+      'Featured build', 'Focused utility', 'Realtime board game', 'Mini project',
+    ]);
+  });
+
+  it('preserves the original featured and utility project records', () => {
+    expect(projects.slice(0, 2)).toMatchObject([
+      {
+        id: 'pokeleximon', title: 'Pokeleximon Daily', kind: 'personal',
+        image: 'assets/ui/project-pokeleximon.webp',
+        tags: ['React', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
+        links: [{ label: 'Overview', href: 'https://github.com/ben-hutchinson/pokeleximon' }],
+      },
+      {
+        id: 'safelog', title: 'Safelog', kind: 'personal',
+        image: 'assets/ui/project-safelog.webp',
+        tags: ['Python', 'CLI', 'Privacy', 'Log Analysis'],
+        links: [{ label: 'GitHub', href: 'https://github.com/ben-hutchinson/safelog' }],
+      },
+    ]);
+  });
+
+  it('provides the new projects with screenshots and verified public actions only', () => {
+    const trivialise = projects.find(({ id }) => String(id) === 'trivialise');
+    const taskmon = projects.find(({ id }) => String(id) === 'taskmon');
+
+    expect(trivialise).toMatchObject({
+      title: 'TRIVIALISE!', image: 'assets/ui/project-trivialise.webp', links: [],
+    });
+    expect(taskmon).toMatchObject({
+      title: 'Taskmon', category: 'Mini project', image: 'assets/ui/project-taskmon.webp',
+    });
+    expect(collectHrefs(taskmon)).toEqual(['https://taskmon.pages.dev']);
+  });
+
+  it('attaches a local captioned trailer and descriptive transcript only to TRIVIALISE!', () => {
+    expect(projects.filter(({ trailer }) => trailer).map(({ id }) => id)).toEqual(['trivialise']);
+    const trailer = projects.find(({ id }) => String(id) === 'trivialise')?.trailer;
+
+    expect(trailer).toMatchObject({
+      src: 'assets/video/trivialise-trailer.mp4',
+      poster: 'assets/ui/project-trivialise-trailer-poster.webp',
+      captions: 'assets/video/trivialise-trailer.en.vtt',
+      description: expect.any(String),
+    });
+    expect(trailer?.description.trim().length).toBeGreaterThan(0);
+  });
+
+  it.each(addedProjectImages)('ships %s as a non-empty WebP below the per-image budget', (asset) => {
+    const path = resolve('public', asset);
+
+    expect(existsSync(path), asset).toBe(true);
+    expect(statSync(path).size).toBeGreaterThan(0);
+    expect(statSync(path).size).toBeLessThan(358400);
+    const bytes = readFileSync(path);
+    expect(bytes.subarray(0, 4).toString()).toBe('RIFF');
+    expect(bytes.subarray(8, 12).toString()).toBe('WEBP');
+  });
+
+  it('ships the original 4,443,726-byte trailer locally', () => {
+    const path = resolve('public/assets/video/trivialise-trailer.mp4');
+
+    expect(existsSync(path)).toBe(true);
+    expect(statSync(path).size).toBe(4443726);
+  });
+
+  it('ships a non-empty WebVTT caption track for the trailer', () => {
+    const path = resolve('public/assets/video/trivialise-trailer.en.vtt');
+
+    expect(existsSync(path)).toBe(true);
+    const captions = readFileSync(path, 'utf8');
+    expect(captions).toMatch(/^WEBVTT\b/);
+    expect(captions).toMatch(/\d{2}:\d{2}\.\d{3} --> \d{2}:\d{2}\.\d{3}\s+\S/);
   });
 
   it('exposes one exact Pokeleximon repository Overview action', () => {
@@ -177,3 +304,5 @@ describe('canonical portfolio content', () => {
     expect(workCatalogue.isWorkId?.('Python Dependency Migration')).toBe(false);
   });
 });
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import { resolve } from 'node:path';
