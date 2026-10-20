@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, type JSX } from 'react';
 import { usePortfolio } from '../../app/PortfolioContext';
 import { ProjectMedia } from '../../components/ProjectMedia';
+import { ProjectTrailer } from '../../components/ProjectTrailer';
 import { projects } from '../../data/projects';
 import styles from './ProjectDetailApp.module.css';
 
@@ -23,6 +24,7 @@ export function ProjectDetailApp(): JSX.Element | null {
         <h1 id="project-detail-title">{project.title}</h1>
       </header>
       <ProjectMedia key={project.id} project={project} />
+      <ProjectTrailer key={`${project.id}-trailer`} project={project} />
       <div className={styles.evidence}>
         <section>
           <h2>Purpose &amp; system shape</h2>
