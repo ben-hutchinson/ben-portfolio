@@ -2,7 +2,7 @@ export type AppId = 'about' | 'work' | 'career' | 'projects' | 'contact';
 
 export type CareerStageId = 'graduate' | 'observability' | 'associate' | 'skao';
 
-export type ProjectId = 'pokeleximon' | 'safelog';
+export type ProjectId = 'pokeleximon' | 'safelog' | 'trivialise' | 'taskmon';
 
 export interface CareerStage {
   id: CareerStageId;
@@ -22,11 +22,18 @@ export interface ExternalLink {
 export interface Project {
   id: ProjectId;
   kind: 'personal';
+  category: string;
   title: string;
   blurb: string;
   image: string;
   tags: readonly string[];
   links: readonly ExternalLink[];
+  trailer?: {
+    readonly src: string;
+    readonly poster: string;
+    readonly captions: string;
+    readonly description: string;
+  };
 }
 
 export interface WorkCaseStudy {
