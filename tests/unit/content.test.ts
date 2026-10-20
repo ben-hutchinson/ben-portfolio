@@ -161,7 +161,7 @@ describe('canonical portfolio content', () => {
   it('derives the professional Work catalogue and accepted IDs from the single typed collection', () => {
     const items = workItems();
 
-    expect(items).toHaveLength(1);
+    expect(items).toHaveLength(2);
     expect(items[0]).toMatchObject({
       id: 'uv-ruff-migration',
       outcome: 'The shared developer workflow became faster across the migrated repositories.',
@@ -169,9 +169,11 @@ describe('canonical portfolio content', () => {
     });
     expect(flagshipWork()).toBe(items[0]);
     expect(workCatalogue.workIds).toEqual(items.map(({ id }) => id));
-    expect(workCatalogue.workIds).toEqual(['uv-ruff-migration']);
-    expect(workCatalogue.isWorkId?.('uv-ruff-migration')).toBe(true);
+    expect(workCatalogue.workIds).toEqual(['uv-ruff-migration', 'skao-software-catalogue']);
+    for (const item of items) {
+      expect(workCatalogue.isWorkId?.(item.id)).toBe(true);
+      expect(item).not.toHaveProperty('technologies');
+    }
     expect(workCatalogue.isWorkId?.('Python Dependency Migration')).toBe(false);
-    expect(items[0]).not.toHaveProperty('technologies');
   });
 });

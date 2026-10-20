@@ -27,6 +27,19 @@ afterEach(() => {
 });
 
 describe('Work.app', () => {
+  it('opens the catalogue case study at the start after scrolling down the Work catalogue', async () => {
+    const user = userEvent.setup();
+    renderWork();
+    const content = within(workFrame()).getByRole('region', { name: 'Work content' });
+    content.scrollTop = 900;
+
+    await user.click(within(workFrame()).getByRole('button', { name: 'Open SKAO Software Catalogue case study' }));
+
+    expect(window.location.hash).toBe('#work/skao-software-catalogue');
+    expect(content.scrollTop).toBe(0);
+    expect(within(workFrame()).getByRole('heading', { level: 1, name: 'SKAO Software Catalogue' })).toBeVisible();
+  });
+
   it('maps a featured catalogue entry to a named direct case-study route and supports keyboard return', async () => {
     const user = userEvent.setup();
     renderWork();
@@ -52,7 +65,8 @@ describe('Work.app', () => {
     expect(within(frame).getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(within(frame).getByRole('heading', { level: 1 })).toHaveTextContent(flagshipWork.title);
     expect(frame.querySelector('[data-window-title]')).toHaveTextContent('Work');
-    expect(within(frame).getAllByRole('heading', { level: 2 }).map(({ textContent }) => textContent)).toEqual([
+    const featured = within(frame).getByTestId(`work-entry-${flagshipWork.id}`);
+    expect(within(featured).getAllByRole('heading', { level: 2 }).map(({ textContent }) => textContent)).toEqual([
       'Problem', 'Ownership', 'Approach', 'Rollout', 'Outcome', 'Public detail',
     ]);
   });
