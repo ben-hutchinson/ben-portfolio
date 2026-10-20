@@ -310,7 +310,7 @@ Use diagrams only when they can be truthful without exposing confidential detail
 
 ### Projects
 
-Projects opens a catalogue view with Pokeleximon and Safelog. Selecting a project opens a focused project window or replaces the application content. Project screenshots should feel like artefacts inside the OS, not generic marketing cards.
+Projects opens a catalogue in this order: Pokeleximon Daily (Featured build), Safelog (Focused utility), TRIVIALISE! (Realtime board game), and Taskmon (Mini project). Pokeleximon alone has the dominant featured layout; the remaining entries are compact. Categories and the displayed count come from typed project data. Selecting an entry opens its exact detail hash and resets desktop content scrolling and mobile document scrolling so the title and Back control are in view. A direct project switch starts with independent screenshot error state. Project screenshots should feel like artefacts inside the OS, not generic marketing cards. Exact project hashes, selection actions, and optional project commands validate against the canonical catalogue; extra command arguments do not execute.
 
 ### Contact
 
@@ -481,6 +481,8 @@ Map supported hashes to application state:
 - #projects
 - #projects/pokeleximon
 - #projects/safelog
+- #projects/trivialise
+- #projects/taskmon
 - #contact
 
 Unknown hashes fall back to Desktop and may show a non-blocking message.

@@ -11,7 +11,7 @@ export function ProjectsApp(): JSX.Element {
   return (
     <article className={styles.catalogue} aria-labelledby="projects-title">
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Personal systems / 02</p>
+        <p className={styles.eyebrow}>Personal systems / {String(projects.length).padStart(2, '0')}</p>
         <RouteHeading id="projects-title">Engineering projects</RouteHeading>
         <p>Working software, shaped around delivery, operations, and the people using it.</p>
       </header>
@@ -26,7 +26,7 @@ export function ProjectsApp(): JSX.Element {
               key={project.id}
             >
               <div className={styles.copy}>
-                <p className={styles.index}>0{index + 1} / {featured ? 'Featured build' : 'Focused utility'}</p>
+                <p className={styles.index}>{String(index + 1).padStart(2, '0')} / {project.category}</p>
                 <h2>{project.title}</h2>
                 <p className={styles.blurb}>{project.blurb}</p>
                 <ul className={styles.tags} aria-label={`${project.title} technologies`}>

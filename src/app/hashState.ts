@@ -1,4 +1,5 @@
 import type { PortfolioRoute } from './portfolioState';
+import { isProjectId } from '../data/projects';
 import { isWorkId } from '../data/work';
 
 export interface HashParseResult {
@@ -11,12 +12,16 @@ const HASH_ROUTES: Readonly<Record<string, PortfolioRoute>> = {
   '#work': { kind: 'work' },
   '#career': { kind: 'career' },
   '#projects': { kind: 'projects' },
-  '#projects/pokeleximon': { kind: 'project', projectId: 'pokeleximon' },
-  '#projects/safelog': { kind: 'project', projectId: 'safelog' },
   '#contact': { kind: 'contact' },
 };
 
 export function parseHash(hash: string): HashParseResult {
+  if (hash.startsWith('#projects/')) {
+    const projectId = hash.slice('#projects/'.length);
+    return isProjectId(projectId)
+      ? { route: { kind: 'project', projectId }, isKnown: true }
+      : { route: { kind: 'desktop' }, isKnown: false };
+  }
   if (hash.startsWith('#work/')) {
     const workId = hash.slice('#work/'.length);
     return isWorkId(workId)

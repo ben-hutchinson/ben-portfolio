@@ -1,4 +1,5 @@
 import type { AppId, CareerStageId, ProjectId } from '../data/models';
+import { isProjectId } from '../data/projects';
 import { isWorkId, type WorkId } from '../data/work';
 import {
   createInitialPortfolioState,
@@ -8,7 +9,6 @@ import {
 } from './portfolioState';
 
 const CAREER_STAGE_IDS: readonly CareerStageId[] = ['graduate', 'observability', 'associate', 'skao'];
-const PROJECT_IDS: readonly ProjectId[] = ['pokeleximon', 'safelog'];
 
 export type PortfolioAction =
   | { type: 'NAVIGATE'; route: PortfolioRoute }
@@ -234,7 +234,7 @@ export function portfolioReducer(state: PortfolioState, action: PortfolioAction)
       return { ...next, activeCareerStageId: action.stageId };
     }
     case 'SELECT_PROJECT':
-      if (!PROJECT_IDS.includes(action.projectId)) return state;
+      if (!isProjectId(action.projectId)) return state;
       return openAndFocus(
         state,
         'projects',

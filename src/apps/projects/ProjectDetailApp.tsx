@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import { useLayoutEffect, useRef, type JSX } from 'react';
 import { usePortfolio } from '../../app/PortfolioContext';
 import { ProjectMedia } from '../../components/ProjectMedia';
 import { projects } from '../../data/projects';
@@ -6,17 +6,23 @@ import styles from './ProjectDetailApp.module.css';
 
 export function ProjectDetailApp(): JSX.Element | null {
   const { state, dispatch } = usePortfolio();
+  const detailRef = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const content = detailRef.current?.parentElement;
+    detailRef.current?.scrollIntoView?.({ block: 'start' });
+    if (content) content.scrollTop = 0;
+  }, [state.activeProjectId]);
   const project = projects.find(({ id }) => id === state.activeProjectId);
   if (project === undefined) return null;
 
   return (
-    <article className={styles.detail} aria-labelledby="project-detail-title" data-project-detail={project.id}>
+    <article ref={detailRef} className={styles.detail} aria-labelledby="project-detail-title" data-project-detail={project.id}>
       <button className={styles.back} type="button" aria-label="Back to projects" onClick={() => dispatch({ type: 'OPEN_APP', appId: 'projects' })}>← Back to projects</button>
       <header className={styles.header}>
         <p>Personal project / {project.id}</p>
         <h1 id="project-detail-title">{project.title}</h1>
       </header>
-      <ProjectMedia project={project} />
+      <ProjectMedia key={project.id} project={project} />
       <div className={styles.evidence}>
         <section>
           <h2>Purpose &amp; system shape</h2>

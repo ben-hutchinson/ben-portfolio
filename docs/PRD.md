@@ -150,10 +150,14 @@ Each stage changes:
 
 Projects presents personal projects as engineering case studies, not equal generic cards.
 
-Initial featured projects:
+The catalogue keeps this order and displays a category for each entry:
 
-- Pokeleximon Daily
-- Safelog
+- Pokeleximon Daily — Featured build
+- Safelog — Focused utility
+- TRIVIALISE! — Realtime board game
+- Taskmon — Mini project
+
+Pokeleximon retains the dominant featured layout; the other entries remain compact. The visible project count comes from the catalogue. Every entry opens by button or exact `#projects/<project-id>` hash, and the optional `project <project-id>` command accepts the same canonical IDs. Unknown IDs and surplus command arguments never navigate. Opening a detail places its title and Back control in view on desktop and mobile, including after catalogue scrolling. Switching directly between projects resets screenshot error state. Public actions appear only where verified; TRIVIALISE! has no invented live or source link.
 
 Each case study includes:
 

@@ -1,5 +1,5 @@
 import type { PortfolioAction } from '../../app/portfolioReducer';
-import type { ProjectId } from '../../data/models';
+import { isProjectId, projectIds } from '../../data/projects';
 import { isWorkId, workIds } from '../../data/work';
 
 export type CommandResult =
@@ -19,14 +19,12 @@ const route = (kind: 'work' | 'career' | 'projects' | 'contact'): CommandDefinit
   action: { type: 'NAVIGATE', route: { kind } },
 });
 
-const projectIds: readonly ProjectId[] = ['pokeleximon', 'safelog'];
-
 export const commandRegistry: readonly CommandDefinition[] = [
   {
     name: 'help',
     execute: () => ({
       kind: 'message',
-      output: `Try: help, about, work, work <${workIds.join(', ')}>, career, projects, project <pokeleximon|safelog>, contact, cv, reset, clear.`,
+      output: `Try: help, about, work, work <${workIds.join(', ')}>, career, projects, project <${projectIds.join('|')}>, contact, cv, reset, clear.`,
     }),
   },
   {
@@ -54,12 +52,14 @@ export const commandRegistry: readonly CommandDefinition[] = [
     name: 'project',
     execute: (args) => {
       const projectId = args[0];
-      if (projectId === undefined) return { kind: 'message', output: 'Choose a project: pokeleximon or safelog.' };
-      if (!projectIds.includes(projectId as ProjectId)) return { kind: 'message', output: `Unknown project “${projectId}”. Try pokeleximon or safelog.` };
+      if (projectId === undefined) return { kind: 'message', output: `Choose a project: ${projectIds.join(', ')}.` };
+      if (args.length !== 1 || !isProjectId(projectId)) {
+        return { kind: 'message', output: `Unknown project “${projectId}”. Try: ${projectIds.join(', ')}.` };
+      }
       return {
         kind: 'action',
         output: `Opening ${projectId}.`,
-        action: { type: 'SELECT_PROJECT', projectId: projectId as ProjectId },
+        action: { type: 'SELECT_PROJECT', projectId },
       };
     },
   },
