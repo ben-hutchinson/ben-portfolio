@@ -42,6 +42,76 @@ function isContainedBy(child: DOMRect, parent: DOMRect): boolean {
 }
 
 test.describe('Projects application', () => {
+  for (const project of [
+    { id: 'trivialise', title: 'TRIVIALISE!' },
+    { id: 'taskmon', title: 'Taskmon' },
+  ]) {
+    test(`shares, reloads and restores ${project.id} through browser history at desktop and mobile sizes`, async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name !== 'Chromium', 'Focused new-project acceptance runs in Chromium.');
+      for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+        await page.setViewportSize(viewport);
+        await page.goto(`./#projects/${project.id}`);
+        const detail = page.locator(frame);
+        const heading = detail.getByRole('heading', { level: 1, name: project.title });
+        const back = detail.getByRole('button', { name: 'Back to projects' });
+        await expect(page).toHaveURL(new RegExp(`#projects/${project.id}$`));
+        await expect(heading).toBeInViewport();
+        await expect(back).toBeInViewport();
+        await page.reload();
+        await expect(heading).toBeInViewport();
+        await expect(back).toBeInViewport();
+
+        await back.click();
+        await expect(page).toHaveURL(/#projects$/);
+        await detail.getByRole('button', { name: `Open ${project.title} case study` }).click();
+        await expect(page).toHaveURL(new RegExp(`#projects/${project.id}$`));
+        await expect(heading).toBeInViewport();
+        await back.click();
+        await expect(page).toHaveURL(/#projects$/);
+        await page.goBack();
+        await expect(page).toHaveURL(new RegExp(`#projects/${project.id}$`));
+        await expect(heading).toBeInViewport();
+        await expect(back).toBeInViewport();
+        await page.goForward();
+        await expect(page).toHaveURL(/#projects$/);
+        await expect(detail.getByRole('heading', { level: 1, name: 'Engineering projects' })).toBeVisible();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      }
+    });
+  }
+
+  for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+    for (const project of [
+      { id: 'safelog', title: 'Safelog' },
+      { id: 'taskmon', title: 'Taskmon' },
+    ]) {
+      test(`opens ${project.id} at its title and Back control after catalogue scrolling at ${viewport.width}x${viewport.height}`, async ({ page }, testInfo) => {
+        test.skip(testInfo.project.name !== 'Chromium', 'Real viewport scrolling acceptance runs in Chromium.');
+        await page.setViewportSize(viewport);
+        await page.goto('./#projects');
+        const projects = page.locator(frame);
+        const content = projects.getByRole('region', { name: 'Projects content' });
+        const open = projects.getByRole('button', { name: `Open ${project.title} case study` });
+        await content.evaluate((element) => { element.scrollTop = element.scrollHeight; });
+        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+        await open.scrollIntoViewIfNeeded();
+        await expect.poll(async () => page.evaluate(() => {
+          const content = document.querySelector('[aria-label="Projects content"]');
+          return Math.max(content?.scrollTop ?? 0, window.scrollY);
+        })).toBeGreaterThan(0);
+        await expect(projects.getByRole('heading', { level: 1, name: 'Engineering projects' })).not.toBeInViewport();
+
+        await open.click();
+        await page.screenshot({ path: testInfo.outputPath(`detail-scroll-${project.id}-${viewport.width}.png`) });
+        await expect(page).toHaveURL(new RegExp(`#projects/${project.id}$`));
+        // Do not scroll or focus another element before checking real viewport intersection.
+        await expect.soft(projects.getByRole('heading', { level: 1, name: project.title })).toBeInViewport();
+        await expect.soft(projects.getByRole('button', { name: 'Back to projects' })).toBeInViewport();
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      });
+    }
+  }
+
   test('selects canonical IDs, supports direct hashes and browser history, and keeps external actions safe', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Desktop Projects journey runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });
@@ -83,6 +153,13 @@ test.describe('Projects application', () => {
     await expect(page.getByRole('img', { name: 'Safelog project preview unavailable' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 1, name: 'Safelog' })).toBeVisible();
     await expect(page.locator(frame).getByRole('link', { name: 'GitHub' })).toBeVisible();
+    await page.evaluate(() => { window.location.hash = '#projects/pokeleximon'; });
+    await expect(page).toHaveURL(/#projects\/pokeleximon$/);
+    await expect(page.locator(frame).getByRole('heading', { level: 1, name: 'Pokeleximon Daily' })).toBeVisible();
+    const nextImage = page.locator(frame).getByRole('img', { name: 'Pokeleximon Daily project interface' });
+    await expect(nextImage).toBeVisible();
+    await expect.poll(async () => nextImage.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    await expect(page.locator(frame).getByRole('img', { name: /preview unavailable/ })).toHaveCount(0);
   });
 
   test('switches projects on mobile without horizontal overflow', async ({ page }, testInfo) => {

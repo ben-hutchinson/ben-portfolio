@@ -12,6 +12,8 @@ const exactRoutes: readonly [string, PortfolioRoute][] = [
   ['#projects', { kind: 'projects' }],
   ['#projects/pokeleximon', { kind: 'project', projectId: 'pokeleximon' }],
   ['#projects/safelog', { kind: 'project', projectId: 'safelog' }],
+  ['#projects/trivialise', { kind: 'project', projectId: 'trivialise' }],
+  ['#projects/taskmon', { kind: 'project', projectId: 'taskmon' }],
   ['#contact', { kind: 'contact' }],
 ];
 
@@ -25,6 +27,10 @@ describe('hash state', () => {
     '', '#WORK', '#projects/', '#projects/Pokeleximon', '#projects/safelog/more', '#contact?hello=true', '#about',
     '#work/', '#work/UV-RUFF-MIGRATION', '#work/uv-ruff-migration/', '#work/unknown',
     '#work/uv-ruff-migration/extra', '#work/uv-ruff-migration?x=1',
+    '#projects/unknown', '#projects/TRIVIALISE', '#projects/Taskmon',
+    '#projects/trivialise/', '#projects/taskmon/',
+    '#projects/trivialise?x=1', '#projects/taskmon?x=1',
+    '#projects/trivialise/extra', '#projects/taskmon/extra',
   ])(
     'recovers invalid hash %s to desktop without accepting it',
     (hash) => expect(parseHash(hash)).toEqual({ route: { kind: 'desktop' }, isKnown: false }),

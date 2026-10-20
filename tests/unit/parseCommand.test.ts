@@ -1,8 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import { parseCommand } from '../../src/apps/command/parseCommand';
 import { workIds } from '../../src/data/work';
+import { projectIds } from '../../src/data/projects';
 
 describe('parseCommand', () => {
+  it.each(projectIds)('selects canonical project %s with an exact shared action', (projectId) => {
+    expect(parseCommand(`project ${projectId}`)).toMatchObject({
+      kind: 'action', action: { type: 'SELECT_PROJECT', projectId },
+    });
+    expect(parseCommand(`  PROJECT   ${projectId.toUpperCase()}  `)).toMatchObject({
+      kind: 'action', action: { type: 'SELECT_PROJECT', projectId },
+    });
+  });
+
+  it.each(['help', 'project', 'project unknown'])('offers every canonical project in %j recovery choices', (input) => {
+    const result = parseCommand(input);
+    expect(result.kind).toBe('message');
+    if (result.kind !== 'message') throw new Error('Expected project discovery message');
+    for (const projectId of projectIds) expect(result.output).toContain(projectId);
+  });
+
+  it.each([
+    'project pokeleximon extra', 'project safelog extra',
+    'project trivialise extra', 'project taskmon extra',
+    'project taskmon trivialise', 'project trivialise/extra', 'project unknown',
+  ])('rejects surplus or invalid project arguments without an action: %s', (input) => {
+    expect(parseCommand(input)).toMatchObject({ kind: 'message', output: expect.stringMatching(/unknown project/i) });
+  });
+
   it.each([
     ['  WoRK  ', 'action', 'NAVIGATE'],
     ['work uv-ruff-migration', 'action', 'SELECT_WORK'],
