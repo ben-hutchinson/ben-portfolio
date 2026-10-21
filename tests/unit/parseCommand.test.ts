@@ -4,6 +4,14 @@ import { workIds } from '../../src/data/work';
 import { projectIds } from '../../src/data/projects';
 
 describe('parseCommand', () => {
+  it.each(['carear', 'carrer'])('keeps unselected typo %j as a correction message rather than executing it', (input) => {
+    expect(parseCommand(input)).toMatchObject({ kind: 'message', output: expect.stringMatching(/did you mean.*career/i) });
+  });
+
+  it.each(['project triv', 'work catalog'])('requires an accepted canonical completion before executing %j', (input) => {
+    expect(parseCommand(input)).toMatchObject({ kind: 'message', output: expect.stringMatching(/unknown (project|work)/i) });
+  });
+
   it.each(projectIds)('selects canonical project %s with an exact shared action', (projectId) => {
     expect(parseCommand(`project ${projectId}`)).toMatchObject({
       kind: 'action', action: { type: 'SELECT_PROJECT', projectId },
