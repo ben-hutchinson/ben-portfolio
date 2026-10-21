@@ -1,5 +1,52 @@
 import { expect, test } from '@playwright/test';
 
+for (const zoom of [1, 2]) {
+  test(`keeps selected mobile command options and hint unobscured at zoom ${zoom}`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Mobile popup hit testing runs in Chromium.');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('./#desktop');
+    if (zoom !== 1) await page.locator('body').evaluate((body, scale) => { body.style.zoom = String(scale); }, zoom);
+    const terminal = page.getByTestId('micro-terminal');
+    const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
+    await input.fill('project ');
+    await input.press('ArrowUp');
+    const option = terminal.getByRole('option', { name: /project taskmon/i });
+    const hint = terminal.getByText(/Enter.*Esc/i);
+    await expect(option).toHaveAttribute('aria-selected', 'true');
+    await expect(option).toBeInViewport();
+    await expect(hint).toBeInViewport({ ratio: 1 });
+    await page.screenshot({ path: testInfo.outputPath(`mobile-hit-target-zoom-${zoom}.png`) });
+
+    for (const target of [option, hint]) {
+      const blockers = await target.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        const clip = element.closest('[role="listbox"]')?.getBoundingClientRect();
+        const left = Math.max(0, bounds.left, clip?.left ?? 0);
+        const right = Math.min(innerWidth, bounds.right, clip?.right ?? innerWidth);
+        const top = Math.max(0, bounds.top, clip?.top ?? 0);
+        const bottom = Math.min(innerHeight, bounds.bottom, clip?.bottom ?? innerHeight);
+        const blocked: string[] = [];
+        for (const xRatio of [0.25, 0.5, 0.75]) {
+          for (const yRatio of [0.25, 0.5, 0.75]) {
+            const hit = document.elementFromPoint(left + (right - left) * xRatio, top + (bottom - top) * yRatio);
+            if (hit === null || !element.contains(hit)) blocked.push(hit?.textContent?.trim() || 'No hit target');
+          }
+        }
+        return [...new Set(blocked)];
+      });
+      expect(blockers, `zoom ${zoom}: the selected option and keyboard hint must receive pointer hits`).toEqual([]);
+    }
+
+    await option.click();
+    await expect(input).toHaveValue('project taskmon');
+    await expect(input).toBeFocused();
+    await expect(terminal.getByRole('listbox')).toHaveCount(0);
+    await expect(terminal.getByRole('status')).toHaveCount(0);
+    await expect(page).toHaveURL(/#desktop$/);
+  });
+}
+
 test('keeps focused command suggestions bounded above the field at required sizes and zoom', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'Chromium', 'Suggestion geometry runs in Chromium.');
   for (const scenario of [
