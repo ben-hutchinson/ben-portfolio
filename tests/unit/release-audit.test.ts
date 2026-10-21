@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import playwrightConfig from '../../playwright.config';
+import { commandRegistry as registeredCommands } from '../../src/apps/command/commandRegistry';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const execFileAsync = promisify(execFile);
@@ -283,7 +284,13 @@ describe('PORT-019 release hardening', () => {
     expect(geometry).toContain('export function constrainWindowSize');
     expect(geometry).toContain('export function clampWindowPosition');
     expect(commandRegistry).not.toMatch(/\busage\s*:/);
-    expect(commandRegistry).not.toMatch(/\bdescription\s*:/);
+    expect(registeredCommands.length).toBeGreaterThan(0);
+    for (const command of registeredCommands) {
+      expect(command.label, command.name).toBeTypeOf('string');
+      expect(command.label.trim(), command.name).not.toBe('');
+      expect(command.description, command.name).toBeTypeOf('string');
+      expect(command.description.trim(), command.name).not.toBe('');
+    }
     expect(commandRegistry).toContain('readonly name: string;');
     expect(commandRegistry).toContain('execute(args: readonly string[]): CommandResult;');
     expect(commandRegistry).toContain('workIds');
