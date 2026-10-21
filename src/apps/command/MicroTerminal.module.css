@@ -4,7 +4,7 @@
   bottom: var(--space-4);
   display: grid;
   width: min(100% - (var(--space-4) * 2), 28rem);
-  overflow: hidden;
+  overflow: visible;
   border: var(--border-width) solid var(--color-ink);
   border-radius: var(--radius-control);
   background: var(--color-paper);
@@ -29,6 +29,7 @@
 .signalDots { color: var(--color-orange); font-size: 0.5rem; letter-spacing: 0.12em; }
 
 .form {
+  position: relative;
   display: grid;
   min-width: 0;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -85,6 +86,53 @@
 .result span { min-width: 0; overflow-wrap: anywhere; }
 .result a { flex: 0 0 auto; font-weight: 900; }
 
+.popup {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + .25rem);
+  left: 0;
+  display: flex;
+  min-height: 0;
+  border: var(--border-width) solid var(--color-ink);
+  background: var(--color-paper);
+  box-shadow: var(--shadow-hard-small);
+  flex-direction: column;
+}
+
+.options {
+  position: relative;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.option {
+  display: grid;
+  min-height: 44px;
+  padding: var(--space-2);
+  border-bottom: var(--border-width) solid var(--color-ink);
+  gap: .2rem;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.option strong { font-size: .78rem; }
+.option span { font-size: .72rem; line-height: 1.4; }
+.option:last-child { border-bottom: 0; }
+.option:hover { background: var(--color-yellow); }
+.option[aria-selected='true'] { background: var(--color-mint); box-shadow: inset 4px 0 0 var(--color-orange); }
+
+.hint,
+.noMatches {
+  margin: 0;
+  padding: var(--space-2);
+  font-size: .65rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.hint { flex: 0 0 auto; border-top: var(--border-width) solid var(--color-ink); background: var(--color-menu-paper); }
+
 .visuallyHidden {
   position: absolute;
   width: 1px;
@@ -99,8 +147,16 @@
 
 @media (max-width: 767px), (pointer: coarse), (pointer: none) {
   .terminal {
-    position: static;
+    position: relative;
+    right: auto;
+    bottom: auto;
     width: 100%;
     margin-top: var(--space-4);
+  }
+
+  .popup {
+    position: static;
+    margin-bottom: .25rem;
+    grid-column: 1 / -1;
   }
 }

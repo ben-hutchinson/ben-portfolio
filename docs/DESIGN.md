@@ -333,6 +333,10 @@ The Desktop-owned Micro terminal is the optional expert path, rather than a sixt
 
 Unknown commands return a helpful suggestion. Commands dispatch the same application actions used by the visible UI.
 
+The Portfolio command input is an editable combobox controlling a labelled listbox. Focused-empty defaults are help, work, career, projects, contact and cv, with no active option until an arrow key. Local matching ranks exact commands, prefixes, substrings, ordered subsequences and bounded edit distance, preserving catalogue order for ties. Explicit `project ` / `work ` contexts search canonical IDs and titles; general discovery also searches descriptions. Completion fills and refocuses without running; only form submission calls the parser. Tab never selects, Escape preserves text, blur closes, query edits reset selection, and leaving Desktop clears query/list/selection. Composition events and native isComposing protect IME Enter. Stable option IDs, selected state and active-descendant semantics keep DOM focus in the input; the result remains the latest polite status.
+
+Suggestions use the terminal's Ink border, paper background and hard shadow. On desktop the popup anchors above the field; on mobile it opens in document flow above the field so Reset Layout cannot obscure options. Height stays bounded to the available viewport/desktop space, descriptions wrap and options scroll internally while the keyboard hint stays visible. Terminal overflow allows the desktop popup to render. Local utility stacking keeps the input reachable above overlapping windows without changing application ordering, positions or compact unfocused geometry.
+
 ## 9. Responsive Behaviour
 
 ### Wide desktop: 1200 pixels and above

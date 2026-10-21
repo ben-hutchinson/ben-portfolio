@@ -234,6 +234,8 @@ The Micro terminal may open Contact, but terminal use is optional.
 - Never becomes the only navigation method
 - Gives clear feedback for unknown commands
 
+Focusing an empty Portfolio command combobox opens six unselected examples: help, work, career, projects, contact and cv. Typing offers up to six local matches with exact command text and descriptions, including every canonical project and Work detail. Explicit `project ` and `work ` arguments match IDs and titles; broader searches include descriptions and tolerate bounded typos. Suggestions never execute: arrows select, Enter or a click completes the input, then a second Enter or Run command uses the strict existing parser. An unselected typo still returns a correction. Tab follows natural focus order; Escape, blur and route departure dismiss suggestions, and IME Enter never completes or runs. A bounded list above the field scrolls internally with a short keyboard hint. The unfocused Desktop stays compact, and results remain latest-only polite feedback.
+
 ### Navigation and URLs
 
 - Uses static-host-safe hash navigation
