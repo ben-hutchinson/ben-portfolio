@@ -1,6 +1,6 @@
 import { commandRegistry, type CommandResult } from './commandRegistry';
 
-function editDistance(left: string, right: string): number {
+export function editDistance(left: string, right: string): number {
   const previous = Array.from({ length: right.length + 1 }, (_, index) => index);
   for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
     const current = [leftIndex];
