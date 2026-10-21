@@ -12,6 +12,8 @@ test('keeps focused command suggestions bounded above the field at required size
     await page.setViewportSize({ width: scenario.width, height: scenario.height });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('./#desktop');
+    // A same-hash goto can preserve the previous scenario's React input state.
+    await page.reload();
     if (scenario.zoom) await page.locator('body').evaluate((body, zoom) => { body.style.zoom = String(zoom); }, scenario.zoom);
     const terminal = page.getByTestId('micro-terminal');
     const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
