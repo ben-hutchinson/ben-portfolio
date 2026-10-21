@@ -106,7 +106,7 @@ test.describe('window system mobile', () => {
     await page.goto('./#command');
 
     await expect(page).toHaveURL(/#desktop$/);
-    const input = page.getByTestId('micro-terminal').getByRole('textbox', { name: 'Portfolio command' });
+    const input = page.getByTestId('micro-terminal').getByRole('combobox', { name: 'Portfolio command' });
     await expect(input).toBeVisible();
     await expect(input).toBeFocused();
   });
@@ -118,7 +118,7 @@ test.describe('window system mobile', () => {
     for (const hash of ['#desktop', '#unknown-route', '#projects/unknown-project']) {
       await page.goto(`./${hash}`);
       await expect(page).toHaveURL(/#desktop$/);
-      const input = page.getByTestId('micro-terminal').getByRole('textbox', { name: 'Portfolio command' });
+      const input = page.getByTestId('micro-terminal').getByRole('combobox', { name: 'Portfolio command' });
       await expect(input).toBeVisible();
       await expect(input).not.toBeFocused();
     }

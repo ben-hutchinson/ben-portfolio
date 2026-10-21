@@ -1,5 +1,60 @@
 import { expect, test } from '@playwright/test';
 
+test('keeps focused command suggestions bounded above the field at required sizes and zoom', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'Chromium', 'Suggestion geometry runs in Chromium.');
+  for (const scenario of [
+    { name: 'desktop', width: 1440, height: 1000 },
+    { name: 'tablet', width: 1024, height: 768 },
+    { name: 'reduced-height', width: 1440, height: 650 },
+    { name: 'mobile', width: 390, height: 844 },
+    { name: '200-percent-zoom', width: 390, height: 844, zoom: 2 },
+  ]) {
+    await page.setViewportSize({ width: scenario.width, height: scenario.height });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('./#desktop');
+    if (scenario.zoom) await page.locator('body').evaluate((body, zoom) => { body.style.zoom = String(zoom); }, scenario.zoom);
+    const terminal = page.getByTestId('micro-terminal');
+    const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
+    await input.click();
+    const list = terminal.getByRole('listbox');
+    await expect(list).toBeVisible();
+    await expect(list.getByRole('option')).toHaveCount(6);
+    await expect(input).toBeInViewport();
+    await expect(terminal.getByRole('button', { name: 'Run command' })).toBeInViewport();
+    const listBox = await list.boundingBox();
+    const fieldBox = await input.boundingBox();
+    expect(listBox).not.toBeNull();
+    expect(fieldBox).not.toBeNull();
+    expect(listBox!.x, scenario.name).toBeGreaterThanOrEqual(0);
+    expect(listBox!.y, scenario.name).toBeGreaterThanOrEqual(0);
+    expect(listBox!.x + listBox!.width, scenario.name).toBeLessThanOrEqual(scenario.width + 1);
+    expect(listBox!.y + listBox!.height, scenario.name).toBeLessThanOrEqual(fieldBox!.y + 1);
+
+    await input.fill('project ');
+    await expect(list.getByRole('option')).toHaveCount(4);
+    expect(await list.evaluate((element) => element.scrollWidth <= element.clientWidth), scenario.name).toBe(true);
+    for (const option of await list.getByRole('option').all()) {
+      expect(await option.evaluate((element) => element.clientHeight), scenario.name).toBeGreaterThanOrEqual(44);
+    }
+    await input.press('ArrowUp');
+    await expect(list.getByRole('option', { name: /project taskmon/i })).toBeInViewport();
+    await page.screenshot({ path: testInfo.outputPath(`suggestions-${scenario.name}.png`) });
+    await input.press('Escape');
+    await expect(list).toHaveCount(0);
+    await expect(input).toHaveValue('project ');
+    await input.press('Tab');
+    await expect(terminal.getByRole('button', { name: 'Run command' })).toBeFocused();
+    await expect(page).toHaveURL(/#desktop$/);
+    await input.click();
+    await input.fill('zzzzq');
+    await expect(terminal.getByText('No matching commands. Try help.')).toBeVisible();
+    await expect(terminal.getByRole('option')).toHaveCount(0);
+    await page.getByRole('button', { name: 'About', exact: true }).click();
+    await expect(list).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), scenario.name).toBe(true);
+  }
+});
+
 test.describe('PORT-011 responsive shell', () => {
   test('uses a positive, reduced desktop gutter and does not overflow at 320 CSS pixels', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'PORT-014 shell geometry runs in Chromium.');
@@ -51,7 +106,7 @@ test.describe('PORT-011 responsive shell', () => {
 
     const terminal = page.getByTestId('micro-terminal');
     await expect(terminal).toBeVisible();
-    await expect(terminal.getByRole('textbox', { name: 'Portfolio command' })).toBeVisible();
+    await expect(terminal.getByRole('combobox', { name: 'Portfolio command' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
     await page.goto('./#career');
