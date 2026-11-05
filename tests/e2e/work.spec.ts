@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { workItems } from '../../src/data/work';
 
 const workFrame = '[data-window-id="work"]';
 
@@ -20,32 +21,40 @@ test.describe('Work.app', () => {
     test.skip(testInfo.project.name !== 'Chromium', 'Focused Work acceptance runs in Chromium.');
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
       await page.setViewportSize(viewport);
-      await page.goto('./#work/uv-ruff-migration');
-      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
-      await expect(page.getByRole('heading', { level: 1, name: 'Python Dependency Migration' })).toBeVisible();
-      await page.reload();
-      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
-      await page.goto('./#work');
-      await expect(page).toHaveURL(/#work$/);
-      const catalogue = page.locator(workFrame);
-      await expect(catalogue.getByText(/featured case study/i)).toBeVisible();
-      const open = catalogue.getByRole('button', { name: 'Open Python Dependency Migration case study' });
-      await open.focus();
-      await page.keyboard.press('Enter');
-      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
-      await page.reload();
-      await expect(page.getByRole('heading', { level: 1, name: 'Python Dependency Migration' })).toBeVisible();
-      await page.getByRole('button', { name: 'Back to work' }).click();
-      await expect(page).toHaveURL(/#work$/);
-      await page.goBack();
-      await expect(page).toHaveURL(/#work\/uv-ruff-migration$/);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-      if (viewport.width === 390) {
-        await page.getByRole('button', { name: 'Career' }).click();
-        await expect(page).toHaveURL(/#career$/);
-        expect(await page.locator('[data-window-id]').evaluateAll((frames) => frames
-          .filter((frame) => getComputedStyle(frame).display !== 'none')
-          .map((frame) => frame.getAttribute('data-window-id')))).toEqual(['career']);
+      for (const work of workItems) {
+        const detailHash = `#work/${work.id}`;
+        await page.goto(`./${detailHash}`);
+        expect(new URL(page.url()).hash).toBe(detailHash);
+        await expect(page.getByRole('heading', { level: 1, name: work.title })).toBeVisible();
+        await page.reload();
+        await expect(page.getByRole('heading', { level: 1, name: work.title })).toBeVisible();
+        expect(new URL(page.url()).hash).toBe(detailHash);
+        await page.goto('./#work');
+        await expect(page).toHaveURL(/#work$/);
+        const catalogue = page.locator(workFrame);
+        await expect(catalogue.getByText(/featured case study/i)).toBeVisible();
+        const open = catalogue.getByRole('button', { name: `Open ${work.title} case study` });
+        await open.focus();
+        await page.keyboard.press('Enter');
+        await expect(page.getByRole('heading', { level: 1, name: work.title })).toBeInViewport();
+        await expect(catalogue.getByRole('region', { name: 'Work content' })).toHaveJSProperty('scrollTop', 0);
+        expect(new URL(page.url()).hash).toBe(detailHash);
+        await page.reload();
+        await expect(page.getByRole('heading', { level: 1, name: work.title })).toBeVisible();
+        await expect(page.locator(workFrame).getByText(work.result, { exact: true })).toBeVisible();
+        await page.getByRole('button', { name: 'Back to work' }).click();
+        await expect(page).toHaveURL(/#work$/);
+        await page.goBack();
+        await expect(page.getByRole('heading', { level: 1, name: work.title })).toBeVisible();
+        expect(new URL(page.url()).hash).toBe(detailHash);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+        if (viewport.width === 390) {
+          await page.getByRole('button', { name: 'Career' }).click();
+          await expect(page).toHaveURL(/#career$/);
+          expect(await page.locator('[data-window-id]').evaluateAll((frames) => frames
+            .filter((frame) => getComputedStyle(frame).display !== 'none')
+            .map((frame) => frame.getAttribute('data-window-id')))).toEqual(['career']);
+        }
       }
     }
   });
@@ -57,7 +66,7 @@ test.describe('Work.app', () => {
     await expect(frame.getByRole('heading', { level: 1, name: 'Python Dependency Migration' })).toBeVisible();
     await expect(frame.getByRole('heading', { level: 1 })).toHaveCount(1);
     await expect(frame.locator('[data-window-title]')).toHaveText('Work');
-    const headings = await frame.locator('h1, h2, h3, h4, h5, h6').evaluateAll((elements) => elements.map((element) => ({
+    const headings = await frame.getByTestId('work-entry-uv-ruff-migration').locator('h1, h2, h3, h4, h5, h6').evaluateAll((elements) => elements.map((element) => ({
       level: Number(element.tagName.slice(1)),
       text: element.textContent?.trim(),
     })));

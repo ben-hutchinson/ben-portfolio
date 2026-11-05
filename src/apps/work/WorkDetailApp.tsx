@@ -1,4 +1,4 @@
-import type { JSX } from 'react';
+import { useLayoutEffect, useRef, type JSX } from 'react';
 import { usePortfolio } from '../../app/PortfolioContext';
 import type { WorkCaseStudy } from '../../data/models';
 import { workItems } from '../../data/work';
@@ -18,11 +18,17 @@ const caseStudySections: readonly { readonly title: 'Problem' | 'Ownership' | 'A
 
 export function WorkDetailApp(): JSX.Element | null {
   const { state, dispatch } = usePortfolio();
+  const detailRef = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const content = detailRef.current?.parentElement;
+    detailRef.current?.scrollIntoView?.({ block: 'start' });
+    if (content) content.scrollTop = 0;
+  }, [state.activeWorkId]);
   const work = workItems.find(({ id }) => id === state.activeWorkId);
   if (work === undefined) return null;
 
   return (
-    <article className={styles.detail} aria-labelledby="work-detail-title" data-work-detail={work.id}>
+    <article ref={detailRef} className={styles.detail} aria-labelledby="work-detail-title" data-work-detail={work.id}>
       <button
         className={styles.back}
         type="button"

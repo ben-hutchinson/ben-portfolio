@@ -1,5 +1,109 @@
 import { expect, test } from '@playwright/test';
 
+for (const zoom of [1, 2]) {
+  test(`keeps selected mobile command options and hint unobscured at zoom ${zoom}`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Mobile popup hit testing runs in Chromium.');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('./#desktop');
+    if (zoom !== 1) await page.locator('body').evaluate((body, scale) => { body.style.zoom = String(scale); }, zoom);
+    const terminal = page.getByTestId('micro-terminal');
+    const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
+    await input.fill('project ');
+    await input.press('ArrowUp');
+    const option = terminal.getByRole('option', { name: /project taskmon/i });
+    const hint = terminal.getByText(/Enter.*Esc/i);
+    await expect(option).toHaveAttribute('aria-selected', 'true');
+    await expect(option).toBeInViewport();
+    await expect(hint).toBeInViewport({ ratio: 1 });
+    await page.screenshot({ path: testInfo.outputPath(`mobile-hit-target-zoom-${zoom}.png`) });
+
+    for (const target of [option, hint]) {
+      const blockers = await target.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        const clip = element.closest('[role="listbox"]')?.getBoundingClientRect();
+        const left = Math.max(0, bounds.left, clip?.left ?? 0);
+        const right = Math.min(innerWidth, bounds.right, clip?.right ?? innerWidth);
+        const top = Math.max(0, bounds.top, clip?.top ?? 0);
+        const bottom = Math.min(innerHeight, bounds.bottom, clip?.bottom ?? innerHeight);
+        const blocked: string[] = [];
+        for (const xRatio of [0.25, 0.5, 0.75]) {
+          for (const yRatio of [0.25, 0.5, 0.75]) {
+            const hit = document.elementFromPoint(left + (right - left) * xRatio, top + (bottom - top) * yRatio);
+            if (hit === null || !element.contains(hit)) blocked.push(hit?.textContent?.trim() || 'No hit target');
+          }
+        }
+        return [...new Set(blocked)];
+      });
+      expect(blockers, `zoom ${zoom}: the selected option and keyboard hint must receive pointer hits`).toEqual([]);
+    }
+
+    await option.click();
+    await expect(input).toHaveValue('project taskmon');
+    await expect(input).toBeFocused();
+    await expect(terminal.getByRole('listbox')).toHaveCount(0);
+    await expect(terminal.getByRole('status')).toHaveCount(0);
+    await expect(page).toHaveURL(/#desktop$/);
+  });
+}
+
+test('keeps focused command suggestions bounded above the field at required sizes and zoom', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'Chromium', 'Suggestion geometry runs in Chromium.');
+  for (const scenario of [
+    { name: 'desktop', width: 1440, height: 1000 },
+    { name: 'tablet', width: 1024, height: 768 },
+    { name: 'reduced-height', width: 1440, height: 650 },
+    { name: 'mobile', width: 390, height: 844 },
+    { name: '200-percent-zoom', width: 390, height: 844, zoom: 2 },
+  ]) {
+    await page.setViewportSize({ width: scenario.width, height: scenario.height });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('./#desktop');
+    // A same-hash goto can preserve the previous scenario's React input state.
+    await page.reload();
+    if (scenario.zoom) await page.locator('body').evaluate((body, zoom) => { body.style.zoom = String(zoom); }, scenario.zoom);
+    const terminal = page.getByTestId('micro-terminal');
+    const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
+    await input.click();
+    const list = terminal.getByRole('listbox');
+    await expect(list).toBeVisible();
+    await expect(list.getByRole('option')).toHaveCount(6);
+    await expect(input).toBeInViewport();
+    await expect(terminal.getByRole('button', { name: 'Run command' })).toBeInViewport();
+    const listBox = await list.boundingBox();
+    const fieldBox = await input.boundingBox();
+    expect(listBox).not.toBeNull();
+    expect(fieldBox).not.toBeNull();
+    expect(listBox!.x, scenario.name).toBeGreaterThanOrEqual(0);
+    expect(listBox!.y, scenario.name).toBeGreaterThanOrEqual(0);
+    expect(listBox!.x + listBox!.width, scenario.name).toBeLessThanOrEqual(scenario.width + 1);
+    expect(listBox!.y + listBox!.height, scenario.name).toBeLessThanOrEqual(fieldBox!.y + 1);
+
+    await input.fill('project ');
+    await expect(list.getByRole('option')).toHaveCount(4);
+    expect(await list.evaluate((element) => element.scrollWidth <= element.clientWidth), scenario.name).toBe(true);
+    for (const option of await list.getByRole('option').all()) {
+      expect(await option.evaluate((element) => element.clientHeight), scenario.name).toBeGreaterThanOrEqual(44);
+    }
+    await input.press('ArrowUp');
+    await expect(list.getByRole('option', { name: /project taskmon/i })).toBeInViewport();
+    await page.screenshot({ path: testInfo.outputPath(`suggestions-${scenario.name}.png`) });
+    await input.press('Escape');
+    await expect(list).toHaveCount(0);
+    await expect(input).toHaveValue('project ');
+    await input.press('Tab');
+    await expect(terminal.getByRole('button', { name: 'Run command' })).toBeFocused();
+    await expect(page).toHaveURL(/#desktop$/);
+    await input.click();
+    await input.fill('zzzzq');
+    await expect(terminal.getByText('No matching commands. Try help.')).toBeVisible();
+    await expect(terminal.getByRole('option')).toHaveCount(0);
+    await page.getByRole('button', { name: 'About', exact: true }).click();
+    await expect(list).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), scenario.name).toBe(true);
+  }
+});
+
 test.describe('PORT-011 responsive shell', () => {
   test('uses a positive, reduced desktop gutter and does not overflow at 320 CSS pixels', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'PORT-014 shell geometry runs in Chromium.');
@@ -51,7 +155,7 @@ test.describe('PORT-011 responsive shell', () => {
 
     const terminal = page.getByTestId('micro-terminal');
     await expect(terminal).toBeVisible();
-    await expect(terminal.getByRole('textbox', { name: 'Portfolio command' })).toBeVisible();
+    await expect(terminal.getByRole('combobox', { name: 'Portfolio command' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
     await page.goto('./#career');

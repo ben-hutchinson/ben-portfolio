@@ -310,7 +310,7 @@ Use diagrams only when they can be truthful without exposing confidential detail
 
 ### Projects
 
-Projects opens a catalogue view with Pokeleximon and Safelog. Selecting a project opens a focused project window or replaces the application content. Project screenshots should feel like artefacts inside the OS, not generic marketing cards.
+Projects opens a catalogue in this order: TRIVIALISE! (Featured build), Pokeleximon Daily (Full-stack puzzle app), Safelog (Focused utility), and Taskmon (Mini project). TRIVIALISE! alone has the full-width featured layout. The remaining compact entries stagger left, right, then left. TRIVIALISE!, Pokeleximon and Safelog place their landscape screenshots below the copy, spanning the available card width with 20px media gutters. Taskmon keeps its portrait screenshot left of the copy on desktop. TRIVIALISE! and Taskmon use paper surfaces, Safelog uses mint, and Pokeleximon uses yellow; retain Ink outlines and hard shadows. Center each screenshot in a padded media area; Taskmon remains vertically centered beside its copy on desktop. Keep copy before media in semantic order; mobile uses a single column in that order. Screenshots retain their natural aspect ratios without cropping or letterboxing. Taskmon retains its 27rem desktop and 24rem mobile image height caps. Landscape screenshots have no height cap. Every catalogue screenshot is wrapped in an accessible native link that opens its existing asset in a new tab for zooming; give it a title-specific accessible name, a visible keyboard focus outline and a zoom-in cursor, with no standalone caption link. Categories and the displayed count come from typed project data. Selecting an entry opens its exact detail hash and resets desktop content scrolling and mobile document scrolling so the title and Back control are in view. A direct project switch starts with independent screenshot error state. Project screenshots should feel like artefacts inside the OS, not generic marketing cards. Exact project hashes, selection actions, and optional project commands validate against the canonical catalogue; extra command arguments do not execute.
 
 ### Contact
 
@@ -332,6 +332,10 @@ The Desktop-owned Micro terminal is the optional expert path, rather than a sixt
 - clear
 
 Unknown commands return a helpful suggestion. Commands dispatch the same application actions used by the visible UI.
+
+The Portfolio command input is an editable combobox controlling a labelled listbox. Focused-empty defaults are help, work, career, projects, contact and cv, with no active option until an arrow key. Local matching ranks exact commands, prefixes, substrings, ordered subsequences and bounded edit distance, preserving catalogue order for ties. Explicit `project ` / `work ` contexts search canonical IDs and titles; general discovery also searches descriptions. Completion fills and refocuses without running; only form submission calls the parser. Tab never selects, Escape preserves text, blur closes, query edits reset selection, and leaving Desktop clears query/list/selection. Composition events and native isComposing protect IME Enter. Stable option IDs, selected state and active-descendant semantics keep DOM focus in the input; the result remains the latest polite status.
+
+Suggestions use the terminal's Ink border, paper background and hard shadow. On desktop the popup anchors above the field; on mobile it opens in document flow above the field so Reset Layout cannot obscure options. Height stays bounded to the available viewport/desktop space, descriptions wrap and options scroll internally while the keyboard hint stays visible. Terminal overflow allows the desktop popup to render. Local utility stacking keeps the input reachable above overlapping windows without changing application ordering, positions or compact unfocused geometry.
 
 ## 9. Responsive Behaviour
 
@@ -481,6 +485,8 @@ Map supported hashes to application state:
 - #projects
 - #projects/pokeleximon
 - #projects/safelog
+- #projects/trivialise
+- #projects/taskmon
 - #contact
 
 Unknown hashes fall back to Desktop and may show a non-blocking message.

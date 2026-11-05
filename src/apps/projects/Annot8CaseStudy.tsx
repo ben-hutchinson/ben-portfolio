@@ -1,0 +1,20 @@
+import styles from './ProjectDetailApp.module.css';
+
+const sections = [
+  ['From frustration to a prototype', 'On 5 November 2026, I took annot8 from an initial frustration to a working terminal editor and live documentation site. This is a personal prototype, built collaboratively with a coding agent. I wanted familiar modern controls, immediate typing, and minimal setup: existing editors felt awkward because of their shortcuts, editing modes, or configuration. Git diffs and coding-agent previews also felt difficult to read. The product direction is to make editing and reviewing changes equally approachable.'],
+  ['Make the editor the default', 'Hands-on testing made the first interface feel overwhelming. I simplified it into a quiet editing view, with the sidebar and Change Desk hidden until needed. A compact toolbar holds Open, Save, Changes, Settings, and Actions. Escape dismisses supporting UI and returns focus to the text. A searchable file picker and a separate sidebar toggle keep opening a file distinct from managing the workspace.'],
+  ['Familiar controls, considered safeguards', 'Save, copy, cut, paste, select-all, undo, redo, and search work alongside mouse selection, syntax highlighting, and line numbers. Option+Left/Right moves by word; Ctrl+E moves to the end of the line. The locally installed annot8 filename command works from any directory, creating new files when saved. Unsaved-edit prompts and external-edit checks protect work before saving. Settings cover wrapping, line numbers, indentation, and Ink, Paper, and Moss colour schemes.'],
+  ['The Change Desk: two independent baselines', 'Git changes compares the current document with HEAD, including unsaved buffer edits. Agent changes compares against a saved snapshot taken before an agent starts, separating existing personal work from subsequent edits. This is snapshot-based comparison; it does not automatically detect authorship. Explicit BEFORE/AFTER labels, line numbers, character-level highlights, and expandable context make the review easier to follow.'],
+  ['Feedback changed the details', 'I separated overlapping shortcuts, fixed Escape handling in menus, and closed a command-palette quit path that bypassed unsaved-edit protection. The latest annot8 verification reported 18 passing automated tests, covering editing interactions, navigation, file creation, saves, external-edit protection, independent comparison baselines, snapshot persistence, and layout behaviour. Opening, saving, and quitting from another working directory was also checked in a real terminal.'],
+  ['A small, practical documentation site', 'The live site takes inspiration from vim.org’s practical navigation: an introduction, manual, updates page, source download, pixel-style wordmark, and Paper/Ink/Moss page colours. It uses plain HTML and CSS with a little JavaScript, no framework, and no build requirement. Desktop and mobile layouts, navigation, theme persistence, and local links were checked. I deployed it through GitHub-connected Cloudflare Pages; the repository remains private.'],
+  ['Working today; room to grow', 'Tested on macOS, annot8 currently requires Python 3.10+; standalone installers have not been built. It supports one buffer, UTF-8 text files up to 2 MB, manual external refresh, and one retained agent snapshot. Hunk acceptance and reversion, snapshot history, line comments, and agent review bundles are future ideas. This is an early working prototype with a clear direction, rather than a claim of production readiness.'],
+];
+
+export function Annot8CaseStudy() {
+  return <div className={styles.caseStudy}>
+    {sections.map(([title, text], index) => <section key={title}>
+      <h2>{title}</h2><p>{text}</p>
+      {index === 3 && <figure><img src={`${import.meta.env.BASE_URL}assets/ui/project-annot8-review.svg`} alt="Actual annot8 terminal screen export showing the Change Desk review interface" loading="lazy" /><figcaption>Change Desk — application screen exported with Textual / Rich.</figcaption></figure>}
+    </section>)}
+  </div>;
+}

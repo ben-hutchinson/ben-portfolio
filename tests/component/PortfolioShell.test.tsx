@@ -94,7 +94,7 @@ describe('PortfolioShell', () => {
       ['region', 'Work content'],
       ['button', 'View Work'],
       ['button', 'Reset layout'],
-      ['textbox', 'Portfolio command'],
+      ['combobox', 'Portfolio command'],
       ['button', 'Run command'],
       ['button', 'About'],
       ['button', 'Work'],

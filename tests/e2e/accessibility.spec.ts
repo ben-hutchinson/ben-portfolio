@@ -15,6 +15,43 @@ async function seriousCriticalAndContrastViolations(page: Page) {
 }
 
 test.describe('PORT-011 accessible shell', () => {
+  test('has no serious, critical or contrast violations on expanded project and Work routes @a11y', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Expanded-route accessibility coverage runs in Chromium.');
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(viewport);
+      for (const [hash, title] of [
+        ['#projects', 'Engineering projects'],
+        ['#projects/trivialise', 'TRIVIALISE!'],
+        ['#projects/taskmon', 'Taskmon'],
+        ['#work/skao-software-catalogue', 'SKAO Software Catalogue'],
+      ]) {
+        await page.goto(`./${hash}`);
+        await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible();
+        expect(await seriousCriticalAndContrastViolations(page), `${viewport.width} ${hash}`).toEqual([]);
+      }
+    }
+  });
+
+  test('has no serious, critical or contrast violations in open command suggestion states @a11y', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Combobox-state accessibility coverage runs in Chromium.');
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+      await page.setViewportSize(viewport);
+      await page.goto('./#desktop');
+      await page.reload();
+      const input = page.getByRole('combobox', { name: 'Portfolio command' });
+      await input.click();
+      await expect(page.getByRole('option')).toHaveCount(6);
+      expect(await seriousCriticalAndContrastViolations(page), `${viewport.width} defaults`).toEqual([]);
+      await input.fill('project ');
+      await input.press('ArrowUp');
+      await expect(page.getByRole('option', { name: /project taskmon/i })).toHaveAttribute('aria-selected', 'true');
+      expect(await seriousCriticalAndContrastViolations(page), `${viewport.width} selected`).toEqual([]);
+      await input.fill('zzzzq');
+      await expect(page.getByText('No matching commands. Try help.')).toBeVisible();
+      expect(await seriousCriticalAndContrastViolations(page), `${viewport.width} no matches`).toEqual([]);
+    }
+  });
+
   test('keeps named landmarks, ordered headings, labelled Career controls, and visible keyboard focus @a11y', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Desktop accessibility coverage runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });

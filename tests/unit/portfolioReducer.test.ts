@@ -15,6 +15,8 @@ const routeCases: readonly [PortfolioRoute, string, string | null][] = [
   [{ kind: 'projects' }, 'projects', 'projects'],
   [{ kind: 'project', projectId: 'pokeleximon' }, 'project', 'projects'],
   [{ kind: 'project', projectId: 'safelog' }, 'project', 'projects'],
+  [{ kind: 'project', projectId: 'trivialise' }, 'project', 'projects'],
+  [{ kind: 'project', projectId: 'taskmon' }, 'project', 'projects'],
   [{ kind: 'contact' }, 'contact', 'contact'],
 ];
 
@@ -67,6 +69,27 @@ describe('createInitialPortfolioState', () => {
 });
 
 describe('portfolioReducer routes', () => {
+  it.each(['trivialise', 'taskmon'] as const)('selects %s through the shared Projects window action', (projectId) => {
+    const initial = createInitialPortfolioState();
+    const opened = portfolioReducer(initial, { type: 'OPEN_APP', appId: 'projects' });
+    const minimized = portfolioReducer(opened, { type: 'MINIMIZE_WINDOW', appId: 'projects' });
+    expect(minimized.minimizedAppIds).toContain('projects');
+    const selected = portfolioReducer(minimized, { type: 'SELECT_PROJECT', projectId });
+
+    expect(selected).toMatchObject({
+      route: { kind: 'project', projectId }, activeProjectId: projectId, focusedAppId: 'projects',
+    });
+    expect(selected.openAppIds).toContain('projects');
+    expect(selected.minimizedAppIds).not.toContain('projects');
+    expect(last(selected.windowOrder)).toBe('projects');
+    expect(selected.windowPositions).toEqual(initial.windowPositions);
+    expectWindowInvariants(selected);
+    expect(portfolioReducer(selected, { type: 'SELECT_PROJECT', projectId })).toBe(selected);
+
+    const catalogue = portfolioReducer(selected, { type: 'OPEN_APP', appId: 'projects' });
+    expect(catalogue).toMatchObject({ route: { kind: 'projects' }, activeProjectId: null });
+  });
+
   it.each(routeCases)('NAVIGATE %o opens and focuses its available target', (route, kind, target) => {
     const state = portfolioReducer(createInitialPortfolioState(), { type: 'NAVIGATE', route });
 

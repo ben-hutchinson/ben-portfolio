@@ -1,6 +1,47 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Contact and optional Micro terminal paths', () => {
+  test('accepts a keyboard suggestion without navigating until the second Enter', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Focused completion journey runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('./#desktop');
+    const terminal = page.getByTestId('micro-terminal');
+    const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
+    await input.fill('triv');
+    await expect(input).not.toHaveAttribute('aria-activedescendant');
+    await input.press('ArrowDown');
+    const option = terminal.getByRole('option', { name: /project trivialise/i });
+    await expect(input).toHaveAttribute('aria-activedescendant', await option.getAttribute('id') ?? '');
+    await input.press('Enter');
+    await expect(input).toHaveValue('project trivialise');
+    await expect(input).toBeFocused();
+    await expect(terminal.getByRole('listbox')).toHaveCount(0);
+    await expect(terminal.getByRole('status')).toHaveCount(0);
+    await expect(page).toHaveURL(/#desktop$/);
+    await input.press('Enter');
+    await expect(page).toHaveURL(/#projects\/trivialise$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'TRIVIALISE!' })).toBeInViewport();
+    await expect(terminal).toHaveCount(0);
+  });
+
+  test('keeps a real mouse suggestion click through blur and submits only on Run command', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'Chromium', 'Mouse completion journey runs in Chromium.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('./#desktop');
+    const terminal = page.getByTestId('micro-terminal');
+    const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
+    await input.fill('task');
+    await terminal.getByRole('option', { name: /project taskmon/i }).click();
+    await expect(input).toHaveValue('project taskmon');
+    await expect(input).toBeFocused();
+    await expect(terminal.getByRole('listbox')).toHaveCount(0);
+    await expect(page).toHaveURL(/#desktop$/);
+    await terminal.getByRole('button', { name: 'Run command' }).click();
+    await expect(page).toHaveURL(/#projects\/taskmon$/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Taskmon' })).toBeInViewport();
+  });
+
   test('loads Contact directly with all semantic actions and no external navigation', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'Chromium', 'Desktop contact journey runs in Chromium.');
     await page.setViewportSize({ width: 1440, height: 1000 });
@@ -18,7 +59,7 @@ test.describe('Contact and optional Micro terminal paths', () => {
     test.skip(testInfo.project.name !== 'Chromium', 'Desktop Micro terminal journey runs in Chromium.');
     await page.goto('./#desktop');
     const terminal = page.getByTestId('micro-terminal');
-    const input = terminal.getByRole('textbox', { name: 'Portfolio command' });
+    const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
     const status = terminal.getByRole('status');
 
     await expect(terminal).toHaveAttribute('data-micro-terminal');

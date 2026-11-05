@@ -5,13 +5,13 @@ import { projects } from '../../src/data/projects';
 
 describe('ProjectMedia', () => {
   it('uses the deploy base and a meaningful image alternative', () => {
-    render(<ProjectMedia project={projects[0]} />);
+    render(<ProjectMedia project={projects.find(({ id }) => id === 'pokeleximon')!} />);
     const image = screen.getByRole('img', { name: 'Pokeleximon Daily project interface' });
     expect(image).toHaveAttribute('src', `${import.meta.env.BASE_URL}assets/ui/project-pokeleximon.webp`);
   });
 
   it('replaces a failed image with a labelled tactile fallback', () => {
-    render(<ProjectMedia project={projects[1]} />);
+    render(<ProjectMedia project={projects.find(({ id }) => id === 'safelog')!} />);
     fireEvent.error(screen.getByRole('img', { name: 'Safelog project interface' }));
 
     expect(screen.queryByRole('img', { name: 'Safelog project interface' })).not.toBeInTheDocument();

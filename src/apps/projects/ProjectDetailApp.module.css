@@ -13,3 +13,11 @@
 .actions { display: flex; padding: var(--space-3); border: var(--border-heavy) solid var(--color-ink); background: var(--color-orange); gap: var(--space-3); flex-wrap: wrap; box-shadow: var(--shadow-hard-small); }
 .actions a { min-height: 44px; padding: .65rem .9rem; border: var(--border-width) solid var(--color-ink); background: var(--color-paper); color: var(--color-ink); font-weight: 950; }
 @media (max-width: 640px) { .header h1 { overflow-wrap: break-word; } .evidence { grid-template-columns: minmax(0, 1fr); } .evidence section + section { border-left: 0; } }
+
+.caseStudy { display: grid; gap: var(--space-4); }
+.caseStudy section { padding: var(--space-4); border-bottom: var(--border-width) solid var(--color-ink); }
+.caseStudy h2 { font-family: var(--font-display); font-size: 1.3rem; }
+.caseStudy p { max-width: 72ch; line-height: 1.65; }
+.caseStudy figure { margin: var(--space-4) 0 0; }
+.caseStudy img { display: block; width: 100%; height: auto; }
+.caseStudy figcaption { margin-top: var(--space-2); font-size: .8rem; }

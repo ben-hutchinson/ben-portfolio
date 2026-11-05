@@ -1,5 +1,5 @@
 import type { PortfolioAction } from '../../app/portfolioReducer';
-import type { ProjectId } from '../../data/models';
+import { isProjectId, projectIds } from '../../data/projects';
 import { isWorkId, workIds } from '../../data/work';
 
 export type CommandResult =
@@ -10,6 +10,8 @@ export type CommandResult =
 
 export interface CommandDefinition {
   readonly name: string;
+  readonly label: string;
+  readonly description: string;
   execute(args: readonly string[]): CommandResult;
 }
 
@@ -19,22 +21,26 @@ const route = (kind: 'work' | 'career' | 'projects' | 'contact'): CommandDefinit
   action: { type: 'NAVIGATE', route: { kind } },
 });
 
-const projectIds: readonly ProjectId[] = ['pokeleximon', 'safelog'];
-
 export const commandRegistry: readonly CommandDefinition[] = [
   {
     name: 'help',
+    label: 'Command help',
+    description: 'See the supported portfolio commands.',
     execute: () => ({
       kind: 'message',
-      output: `Try: help, about, work, work <${workIds.join(', ')}>, career, projects, project <pokeleximon|safelog>, contact, cv, reset, clear.`,
+      output: `Try: help, about, work, work <${workIds.join(', ')}>, career, projects, project <${projectIds.join('|')}>, contact, cv, reset, clear.`,
     }),
   },
   {
     name: 'about',
+    label: 'About Ben',
+    description: 'Read about Ben and his engineering approach.',
     execute: () => ({ kind: 'action', output: 'Opening about.', action: { type: 'OPEN_APP', appId: 'about' } }),
   },
   {
     name: 'work',
+    label: 'Professional work',
+    description: 'Explore engineering case studies from SKAO.',
     execute: (args) => {
       const workId = args[0];
       if (workId === undefined) return route('work')([]);
@@ -48,29 +54,37 @@ export const commandRegistry: readonly CommandDefinition[] = [
       };
     },
   },
-  { name: 'career', execute: route('career') },
-  { name: 'projects', execute: route('projects') },
+  { name: 'career', label: 'Career', description: 'Explore roles and milestones through the career timeline.', execute: route('career') },
+  { name: 'projects', label: 'Personal projects', description: 'Browse independent builds and focused utilities.', execute: route('projects') },
   {
     name: 'project',
+    label: 'Open a project',
+    description: 'Choose a personal project case study.',
     execute: (args) => {
       const projectId = args[0];
-      if (projectId === undefined) return { kind: 'message', output: 'Choose a project: pokeleximon or safelog.' };
-      if (!projectIds.includes(projectId as ProjectId)) return { kind: 'message', output: `Unknown project “${projectId}”. Try pokeleximon or safelog.` };
+      if (projectId === undefined) return { kind: 'message', output: `Choose a project: ${projectIds.join(', ')}.` };
+      if (args.length !== 1 || !isProjectId(projectId)) {
+        return { kind: 'message', output: `Unknown project “${projectId}”. Try: ${projectIds.join(', ')}.` };
+      }
       return {
         kind: 'action',
         output: `Opening ${projectId}.`,
-        action: { type: 'SELECT_PROJECT', projectId: projectId as ProjectId },
+        action: { type: 'SELECT_PROJECT', projectId },
       };
     },
   },
-  { name: 'contact', execute: route('contact') },
+  { name: 'contact', label: 'Contact', description: 'Find email and professional profile links.', execute: route('contact') },
   {
     name: 'cv',
+    label: 'Download CV',
+    description: 'Get Ben’s CV as a PDF.',
     execute: () => ({ kind: 'download', output: 'CV ready to download.' }),
   },
   {
     name: 'reset',
+    label: 'Reset layout',
+    description: 'Return windows to the starting desktop layout.',
     execute: () => ({ kind: 'action', output: 'Desktop layout reset.', action: { type: 'RESET_LAYOUT' } }),
   },
-  { name: 'clear', execute: () => ({ kind: 'clear' }) },
+  { name: 'clear', label: 'Clear terminal', description: 'Clear the latest command result.', execute: () => ({ kind: 'clear' }) },
 ];

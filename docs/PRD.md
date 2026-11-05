@@ -150,10 +150,14 @@ Each stage changes:
 
 Projects presents personal projects as engineering case studies, not equal generic cards.
 
-Initial featured projects:
+The catalogue keeps this order and displays a category for each entry:
 
-- Pokeleximon Daily
-- Safelog
+- TRIVIALISE! — Featured build
+- Pokeleximon Daily — Full-stack puzzle app
+- Safelog — Focused utility
+- Taskmon — Mini project
+
+TRIVIALISE! has the full-width featured layout. The remaining compact entries stagger left, right, then left. Landscape screenshots appear below their descriptions across nearly the full card width for readability; Taskmon retains its side-by-side portrait presentation on desktop. TRIVIALISE! and Taskmon use paper surfaces, Safelog uses mint, and Pokeleximon supplies a yellow accent card. Each screenshot is centered in a padded media area, preserving its natural aspect ratio without cropping; portrait height is bounded to keep comfortable breathing room. Landscape screenshots scale from the available width without a height cap. Every catalogue screenshot is itself a native link to the full-size image, with a title-specific accessible name and no separate text caption. Mobile presents one column with copy before each screenshot. The visible project count comes from the catalogue. Each catalogue card pairs its case-study action with GitHub: Pokeleximon, Safelog and Taskmon open their supplied repository URLs in a new tab; TRIVIALISE! has no repository yet and displays a disabled GitHub button labelled as not available. Every entry opens by button or exact `#projects/<project-id>` hash, and the optional `project <project-id>` command accepts the same canonical IDs. Unknown IDs and surplus command arguments never navigate. Opening a detail places its title and Back control in view on desktop and mobile, including after catalogue scrolling. Switching directly between projects resets screenshot error state. Public actions appear only where verified; TRIVIALISE! has no invented live or source link.
 
 Each case study includes:
 
@@ -229,6 +233,8 @@ The Micro terminal may open Contact, but terminal use is optional.
 - Never executes arbitrary code
 - Never becomes the only navigation method
 - Gives clear feedback for unknown commands
+
+Focusing an empty Portfolio command combobox opens six unselected examples: help, work, career, projects, contact and cv. Typing offers up to six local matches with exact command text and descriptions, including every canonical project and Work detail. Explicit `project ` and `work ` arguments match IDs and titles; broader searches include descriptions and tolerate bounded typos. Suggestions never execute: arrows select, Enter or a click completes the input, then a second Enter or Run command uses the strict existing parser. An unselected typo still returns a correction. Tab follows natural focus order; Escape, blur and route departure dismiss suggestions, and IME Enter never completes or runs. A bounded list above the field scrolls internally with a short keyboard hint. The unfocused Desktop stays compact, and results remain latest-only polite feedback.
 
 ### Navigation and URLs
 
