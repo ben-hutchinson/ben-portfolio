@@ -108,6 +108,26 @@ describe('Projects application', () => {
     }
   });
 
+  it('opens annot8 and presents its prototype scope and verified documentation without a public repository', async () => {
+    const user = userEvent.setup();
+    renderProjects();
+    await user.click(within(projectsFrame()).getByRole('button', { name: 'Open annot8 case study' }));
+    expect(window.location.hash).toBe('#projects/annot8');
+    const frame = projectsFrame();
+    expect(within(frame).getByRole('heading', { level: 1, name: 'annot8' })).toBeVisible();
+    expect(within(frame).getByRole('heading', { name: 'The Change Desk: two independent baselines' })).toBeVisible();
+    expect(frame).toHaveTextContent('it does not automatically detect authorship');
+    expect(frame).toHaveTextContent('Python 3.10+');
+    expect(frame).toHaveTextContent('one retained agent snapshot');
+    expect(within(frame).getByRole('img', { name: /Actual annot8 terminal screen export/ })).toHaveAttribute('src', expect.stringContaining('project-annot8-review.svg'));
+    const documentation = within(frame).getByRole('link', { name: 'Live documentation' });
+    expect(documentation).toHaveAttribute('href', 'https://annot8.pages.dev/');
+    expect(documentation).toHaveAttribute('rel', 'noreferrer noopener');
+    expect(within(frame).queryByRole('link', { name: /GitHub/ })).not.toBeInTheDocument();
+    await user.click(within(frame).getByRole('button', { name: 'Back to projects' }));
+    expect(window.location.hash).toBe('#projects');
+  });
+
   it('resets the Projects content scroll when opening a detail from the catalogue', async () => {
     const user = userEvent.setup();
     renderProjects();
