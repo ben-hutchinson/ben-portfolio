@@ -2,7 +2,7 @@ export type AppId = 'about' | 'work' | 'career' | 'projects' | 'contact';
 
 export type CareerStageId = 'graduate' | 'observability' | 'associate' | 'skao';
 
-export type ProjectId = 'pokeleximon' | 'safelog' | 'trivialise' | 'taskmon';
+export type ProjectId = 'pokeleximon' | 'safelog' | 'trivialise' | 'taskmon' | 'annot8';
 
 export interface CareerStage {
   id: CareerStageId;
@@ -26,6 +26,7 @@ export interface Project {
   title: string;
   blurb: string;
   image: string;
+  repositoryUrl?: `https://github.com/${string}`;
   tags: readonly string[];
   links: readonly ExternalLink[];
   trailer?: {

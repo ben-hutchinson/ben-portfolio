@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, type JSX } from 'react';
 import { usePortfolio } from '../../app/PortfolioContext';
 import { ProjectMedia } from '../../components/ProjectMedia';
 import { ProjectTrailer } from '../../components/ProjectTrailer';
+import { Annot8CaseStudy } from './Annot8CaseStudy';
 import { projects } from '../../data/projects';
 import styles from './ProjectDetailApp.module.css';
 
@@ -35,6 +36,7 @@ export function ProjectDetailApp(): JSX.Element | null {
           <ul>{project.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
         </section>
       </div>
+      {project.id === 'annot8' && <Annot8CaseStudy />}
       <footer className={styles.actions} aria-label={`${project.title} links`}>
         {project.links.map((link) => <a aria-label={link.label} href={link.href} target="_blank" rel="noreferrer noopener" key={`${link.label}-${link.href}`}>{link.label} ↗</a>)}
       </footer>

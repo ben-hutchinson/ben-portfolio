@@ -97,7 +97,7 @@ describe('command suggestions with canonical portfolio data', () => {
   it('detects trailing-space project and Work contexts before trimming', async () => {
     const get = await loadMatcher();
     expect(commands(get('project '))).toEqual([
-      'project pokeleximon', 'project safelog', 'project trivialise', 'project taskmon',
+      'project trivialise', 'project pokeleximon', 'project safelog', 'project taskmon', 'project annot8',
     ]);
     expect(commands(get('work '))).toEqual(['work uv-ruff-migration', 'work skao-software-catalogue']);
     expect(get('  PROJECT   ')).toEqual(get('project '));

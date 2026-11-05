@@ -4,7 +4,9 @@ import { PortfolioProvider } from '../../src/app/PortfolioContext';
 import { projects } from '../../src/data/projects';
 import { PortfolioShell } from '../../src/shell/PortfolioShell';
 
-const trivialise = projects[2];
+const trivialise = projects.find(
+  (project): project is Extract<(typeof projects)[number], { id: 'trivialise' }> => project.id === 'trivialise',
+)!;
 
 function renderProject(hash = '#projects/trivialise') {
   vi.stubGlobal('matchMedia', vi.fn(() => ({

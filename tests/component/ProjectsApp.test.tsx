@@ -32,18 +32,55 @@ describe('Projects application', () => {
     const frame = projectsFrame();
 
     expect(within(frame).getByRole('heading', { level: 1, name: 'Engineering projects' })).toBeVisible();
-    expect(within(frame).getByTestId('project-entry-pokeleximon')).toHaveAttribute('data-featured', 'true');
+    expect(within(frame).getByTestId('project-entry-trivialise')).toHaveAttribute('data-featured', 'true');
     expect(within(frame).getByTestId('project-entry-safelog')).not.toHaveAttribute('data-featured');
-    expect(frame).toHaveTextContent(/Personal systems\s*\/\s*0?4/);
+    expect(frame).toHaveTextContent(/Personal systems\s*\/\s*0?5/);
     expect(within(frame).getAllByTestId(/^project-entry-/).map((entry) => entry.dataset.testid)).toEqual([
-      'project-entry-pokeleximon', 'project-entry-safelog', 'project-entry-trivialise', 'project-entry-taskmon',
+      'project-entry-trivialise', 'project-entry-pokeleximon', 'project-entry-safelog', 'project-entry-taskmon', 'project-entry-annot8',
     ]);
     for (const project of projects) {
       expect(within(frame).getByRole('heading', { name: project.title })).toBeVisible();
       expect(frame).toHaveTextContent(project.blurb);
       const entry = within(frame).getByTestId(`project-entry-${project.id}`);
       expect(entry).toHaveTextContent(project.category);
-      if (project.id !== 'pokeleximon') expect(entry).not.toHaveAttribute('data-featured');
+      if (project.id !== 'trivialise') expect(entry).not.toHaveAttribute('data-featured');
+      const fullSize = within(entry).getByRole('link', { name: `View ${project.title} screenshot full size` });
+      expect(fullSize).toHaveAttribute('href', `${import.meta.env.BASE_URL}${project.image}`);
+      expect(fullSize).toHaveAttribute('target', '_blank');
+      expect(fullSize).toHaveAttribute('rel', expect.stringContaining('noopener'));
+      expect(fullSize).toHaveAttribute('rel', expect.stringContaining('noreferrer'));
+      expect(within(fullSize).getByRole('img', { name: `${project.title} project interface` })).toBeVisible();
+      expect(fullSize).toHaveTextContent(/^$/);
+      expect(within(entry).queryByText(/View full-size screenshot/)).not.toBeInTheDocument();
+    }
+  });
+
+  it.each([
+    { id: 'trivialise', title: 'TRIVIALISE!', repositoryUrl: undefined },
+    { id: 'pokeleximon', title: 'Pokeleximon Daily', repositoryUrl: 'https://github.com/ben-hutchinson/pokeleximon' },
+    { id: 'safelog', title: 'Safelog', repositoryUrl: 'https://github.com/ben-hutchinson/safelog' },
+    { id: 'taskmon', title: 'Taskmon', repositoryUrl: 'https://github.com/ben-hutchinson/taskmon' },
+  ])('shows a safe GitHub action for $title without inventing a repository URL', ({ id, title, repositoryUrl }) => {
+    renderProjects();
+    const entry = within(projectsFrame()).getByTestId(`project-entry-${id}`);
+    const github = within(entry).getByRole(repositoryUrl ? 'link' : 'button', { name: /GitHub/i });
+    expect(github).toBeVisible();
+    expect(github).toHaveTextContent(/^$/);
+    const icon = github.querySelector('svg');
+    expect(icon).toBeVisible();
+    expect(icon).toHaveAttribute('aria-hidden', 'true');
+    expect(icon).toHaveAttribute('focusable', 'false');
+    expect(icon?.querySelector('path')).toHaveAttribute('d', expect.stringMatching(/\S/));
+    expect(github).toHaveAccessibleName(expect.stringContaining(title));
+    if (repositoryUrl) {
+      expect(github).toHaveAttribute('href', repositoryUrl);
+      expect(github).toHaveAttribute('target', '_blank');
+      expect(github).toHaveAttribute('rel', expect.stringContaining('noopener'));
+      expect(github).toHaveAttribute('rel', expect.stringContaining('noreferrer'));
+    } else {
+      expect(github).toBeDisabled();
+      expect(github).not.toHaveAttribute('href');
+      expect(github).toHaveAttribute('title', 'GitHub repository not available yet');
     }
   });
 

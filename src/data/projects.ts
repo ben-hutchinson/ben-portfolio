@@ -2,31 +2,9 @@ import type { Project, ProjectId } from './models';
 
 export const projects = [
   {
-    id: 'pokeleximon',
-    kind: 'personal',
-    category: 'Featured build',
-    title: 'Pokeleximon Daily',
-    blurb:
-      'Pokeleximon is a full-stack daily puzzle app for Pokemon fans, with crosswords, cryptic clues, and Connections-style games. Built with React, TypeScript, Vite, FastAPI, PostgreSQL, Redis, and Docker, it includes custom puzzle-generation pipelines, publishing workflows, admin tooling, and player analytics.',
-    image: 'assets/ui/project-pokeleximon.webp',
-    tags: ['React', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
-    links: [{ label: 'Overview', href: 'https://github.com/ben-hutchinson/pokeleximon' }],
-  },
-  {
-    id: 'safelog',
-    kind: 'personal',
-    category: 'Focused utility',
-    title: 'Safelog',
-    blurb:
-      'Privacy-first log analysis for developers. Detect, redact, and analyze logs locally so you can debug without leaking sensitive data.',
-    image: 'assets/ui/project-safelog.webp',
-    tags: ['Python', 'CLI', 'Privacy', 'Log Analysis'],
-    links: [{ label: 'GitHub', href: 'https://github.com/ben-hutchinson/safelog' }],
-  },
-  {
     id: 'trivialise',
     kind: 'personal',
-    category: 'Realtime board game',
+    category: 'Featured build',
     title: 'TRIVIALISE!',
     blurb:
       'An online trivia board game where knowledge earns movement, branching routes create choices, and tactical cards add chaos. A shared display and private phone controllers connect to authoritative realtime rooms, with reconnect recovery and deterministic game rules.',
@@ -42,7 +20,32 @@ export const projects = [
     },
   },
   {
+    id: 'pokeleximon',
+    repositoryUrl: 'https://github.com/ben-hutchinson/pokeleximon',
+    kind: 'personal',
+    category: 'Full-stack puzzle app',
+    title: 'Pokeleximon Daily',
+    blurb:
+      'Pokeleximon is a full-stack daily puzzle app for Pokemon fans, with crosswords, cryptic clues, and Connections-style games. Built with React, TypeScript, Vite, FastAPI, PostgreSQL, Redis, and Docker, it includes custom puzzle-generation pipelines, publishing workflows, admin tooling, and player analytics.',
+    image: 'assets/ui/project-pokeleximon.webp',
+    tags: ['React', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker'],
+    links: [{ label: 'Overview', href: 'https://github.com/ben-hutchinson/pokeleximon' }],
+  },
+  {
+    id: 'safelog',
+    repositoryUrl: 'https://github.com/ben-hutchinson/safelog',
+    kind: 'personal',
+    category: 'Focused utility',
+    title: 'Safelog',
+    blurb:
+      'Privacy-first log analysis for developers. Detect, redact, and analyze logs locally so you can debug without leaking sensitive data.',
+    image: 'assets/ui/project-safelog.webp',
+    tags: ['Python', 'CLI', 'Privacy', 'Log Analysis'],
+    links: [{ label: 'GitHub', href: 'https://github.com/ben-hutchinson/safelog' }],
+  },
+  {
     id: 'taskmon',
+    repositoryUrl: 'https://github.com/ben-hutchinson/taskmon',
     kind: 'personal',
     category: 'Mini project',
     title: 'Taskmon',
@@ -51,6 +54,16 @@ export const projects = [
     image: 'assets/ui/project-taskmon.webp',
     tags: ['React', 'TypeScript', 'PWA', 'IndexedDB'],
     links: [{ label: 'Live app', href: 'https://taskmon.pages.dev' }],
+  },
+  {
+    id: 'annot8',
+    kind: 'personal',
+    category: 'Working prototype / 5 November 2026',
+    title: 'annot8',
+    blurb: "I didn't like the terminal text editors out there....so I built my own",
+    image: 'assets/ui/project-annot8.svg',
+    tags: ['Python', 'Textual', 'Rich', 'Git', 'HTML / CSS / JavaScript', 'Cloudflare Pages'],
+    links: [{ label: 'Live documentation', href: 'https://annot8.pages.dev/' }],
   },
 ] as const satisfies readonly Project[];
 

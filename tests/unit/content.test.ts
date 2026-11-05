@@ -12,13 +12,14 @@ const canonicalMigrationSentence =
 
 const supportedAppIds: readonly AppId[] = ['about', 'work', 'career', 'projects', 'contact'];
 const expectedCareerIds: readonly CareerStageId[] = ['graduate', 'observability', 'associate', 'skao'];
-const expectedProjectIds = ['pokeleximon', 'safelog', 'trivialise', 'taskmon'];
+const expectedProjectIds = ['trivialise', 'pokeleximon', 'safelog', 'taskmon', 'annot8'];
 const allowedCareerAccents = ['orange', 'yellow', 'blue', 'mint'];
 const supportedProjectHashes = [
+  '#projects/trivialise',
   '#projects/pokeleximon',
   '#projects/safelog',
-  '#projects/trivialise',
   '#projects/taskmon',
+  '#projects/annot8',
 ];
 
 type ProjectRecord = (typeof projectData.projects)[number] & {
@@ -97,7 +98,7 @@ describe('canonical portfolio content', () => {
     expect(supportedAppIds).toEqual(['about', 'work', 'career', 'projects', 'contact']);
     expect(WINDOW_APP_ORDER).toEqual(['about', 'work', 'career', 'projects', 'contact']);
     expect(expectedCareerIds).toEqual(['graduate', 'observability', 'associate', 'skao']);
-    expect(expectedProjectIds).toEqual(['pokeleximon', 'safelog', 'trivialise', 'taskmon']);
+    expect(expectedProjectIds).toEqual(['trivialise', 'pokeleximon', 'safelog', 'taskmon', 'annot8']);
   });
 
   it('keeps career stages unique, ordered, and complete', () => {
@@ -157,12 +158,12 @@ describe('canonical portfolio content', () => {
 
   it('gives every project its own data-backed catalogue category', () => {
     expect(projects.map(({ category }) => category)).toEqual([
-      'Featured build', 'Focused utility', 'Realtime board game', 'Mini project',
+      'Featured build', 'Full-stack puzzle app', 'Focused utility', 'Mini project', 'Working prototype / 5 November 2026',
     ]);
   });
 
-  it('preserves the original featured and utility project records', () => {
-    expect(projects.slice(0, 2)).toMatchObject([
+  it('preserves the original puzzle and utility project records', () => {
+    expect(['pokeleximon', 'safelog'].map((id) => projects.find((project) => project.id === id))).toMatchObject([
       {
         id: 'pokeleximon', title: 'Pokeleximon Daily', kind: 'personal',
         image: 'assets/ui/project-pokeleximon.webp',
