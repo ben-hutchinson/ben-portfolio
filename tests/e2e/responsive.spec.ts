@@ -11,7 +11,7 @@ for (const zoom of [1, 2]) {
     const input = terminal.getByRole('combobox', { name: 'Portfolio command' });
     await input.fill('project ');
     await input.press('ArrowUp');
-    const option = terminal.getByRole('option', { name: /project taskmon/i });
+    const option = terminal.getByRole('option', { name: /project annot8/i });
     const hint = terminal.getByText(/Enter.*Esc/i);
     await expect(option).toHaveAttribute('aria-selected', 'true');
     await expect(option).toBeInViewport();
@@ -39,7 +39,7 @@ for (const zoom of [1, 2]) {
     }
 
     await option.click();
-    await expect(input).toHaveValue('project taskmon');
+    await expect(input).toHaveValue('project annot8');
     await expect(input).toBeFocused();
     await expect(terminal.getByRole('listbox')).toHaveCount(0);
     await expect(terminal.getByRole('status')).toHaveCount(0);
@@ -80,13 +80,13 @@ test('keeps focused command suggestions bounded above the field at required size
     expect(listBox!.y + listBox!.height, scenario.name).toBeLessThanOrEqual(fieldBox!.y + 1);
 
     await input.fill('project ');
-    await expect(list.getByRole('option')).toHaveCount(4);
+    await expect(list.getByRole('option')).toHaveCount(5);
     expect(await list.evaluate((element) => element.scrollWidth <= element.clientWidth), scenario.name).toBe(true);
     for (const option of await list.getByRole('option').all()) {
       expect(await option.evaluate((element) => element.clientHeight), scenario.name).toBeGreaterThanOrEqual(44);
     }
     await input.press('ArrowUp');
-    await expect(list.getByRole('option', { name: /project taskmon/i })).toBeInViewport();
+    await expect(list.getByRole('option', { name: /project annot8/i })).toBeInViewport();
     await page.screenshot({ path: testInfo.outputPath(`suggestions-${scenario.name}.png`) });
     await input.press('Escape');
     await expect(list).toHaveCount(0);

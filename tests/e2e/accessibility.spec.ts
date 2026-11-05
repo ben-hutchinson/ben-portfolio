@@ -44,7 +44,7 @@ test.describe('PORT-011 accessible shell', () => {
       expect(await seriousCriticalAndContrastViolations(page), `${viewport.width} defaults`).toEqual([]);
       await input.fill('project ');
       await input.press('ArrowUp');
-      await expect(page.getByRole('option', { name: /project taskmon/i })).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByRole('option', { name: /project annot8/i })).toHaveAttribute('aria-selected', 'true');
       expect(await seriousCriticalAndContrastViolations(page), `${viewport.width} selected`).toEqual([]);
       await input.fill('zzzzq');
       await expect(page.getByText('No matching commands. Try help.')).toBeVisible();
